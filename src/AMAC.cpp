@@ -3,6 +3,7 @@
 AMAC::AMAC(unsigned id, I2CCom *i2c) {
     m_id = id;
     m_i2c = i2c;
+    m_i2c->enableI2C();
 }
 
 AMAC::~AMAC() {
@@ -10,7 +11,7 @@ AMAC::~AMAC() {
 }
 
 //Reads the according bits from the according AMAC register
-int AMAC::readAMAC(AMACreg reg, unsigned &val){
+int AMAC::read(AMACreg reg, unsigned &val){
 	switch(reg){
 		case AMACreg::STATUS_HV_ILOCK: 	return this->readBits(0,1,0, val);
 		case AMACreg::STATUS_LV_ILOCK: 	return this->readBits(0,1,1, val);
@@ -72,7 +73,7 @@ int AMAC::readAMAC(AMACreg reg, unsigned &val){
 }
 
 //Writes the according bits in the according AMAC register
-int AMAC::writeAMAC(AMACreg reg, unsigned val){
+int AMAC::write(AMACreg reg, unsigned val){
 	switch(reg){
 		case AMACreg::LEFT_RAMP_GAIN: 		return this->writeBits(45,2,0,val);	
 		case AMACreg::RIGHT_RAMP_GAIN: 		return this->writeBits(45,2,4,val);	

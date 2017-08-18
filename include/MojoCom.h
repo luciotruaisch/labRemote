@@ -2,8 +2,12 @@
 #define MOJOCOM_H
 
 #include <iostream>
+#include <thread>
+#include <chrono>
+
 #include "SerialCom.h"
 #include "I2CCom.h"
+#include "Logger.h"
 
 class MojoCom : public I2CCom {
     public:

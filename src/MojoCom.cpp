@@ -2,9 +2,27 @@
 
 MojoCom::MojoCom(SerialCom *com) {
     m_com = com;
+    // Reset
+    
+    char obuf[2] = {'\n', '\r'};
+    char ibuf[2] = {' ', ' '};
+    for (unsigned n=0; n<10; n++) {
+        m_com->write(obuf, 2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        for (unsigned i=0; i<2; i+=m_com->read(&ibuf[i], 2-i))
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        if (ibuf[1] != '\n') {
+            log(logERROR) << __PRETTY_FUNCTION__ << " : Reset failed!";
+        }
+    }
+}
+
+MojoCom::~MojoCom() {
+
 }
 
 int MojoCom::writeReg(unsigned reg, unsigned val) {
+    log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ") val(" << val << ")";
     char outbuf[7], inbuf[4];
 
     // Prepare buffer
@@ -17,17 +35,32 @@ int MojoCom::writeReg(unsigned reg, unsigned val) {
     outbuf[6] = '\n';
 
     // Write buffer
-    if (m_com->write(outbuf, 7) < 7) return -1;
+    if (m_com->write(outbuf, 7) < 7) {
+        log(logERROR) << __PRETTY_FUNCTION__ << " : Failed writing all bytes!";
+        return -1;
+    }
     // Read status
-    if (m_com->read(inbuf, 2) < 2) return -1;
+    
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    for (unsigned i=0; i<2; i+=m_com->read(&inbuf[i], 2-i))
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    /*
+    if (m_com->read(inbuf, 2) < 2) {
+        log(logERROR) << __PRETTY_FUNCTION__ << " : Failed reading status bytes!";
+        return -1;
+    }
+    */
     // Check status
-    if ((inbuf[0] & 0xF) > 0) return -1;
-    if (inbuf[1] != '\n') return -1;
+    if (((inbuf[0] & 0xF) > 0) || (inbuf[1] != '\n')) {
+        log(logERROR) << __PRETTY_FUNCTION__<< " : Status signals error!";
+        return -1;
+    }
 
     return 0;
 }
 
 int MojoCom::readReg(unsigned reg, unsigned &val) {
+    log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ")";
     char outbuf[3], inbuf[8];
 
     // Prepare output
@@ -38,21 +71,30 @@ int MojoCom::readReg(unsigned reg, unsigned &val) {
     // Write output
     if (m_com->write(outbuf, 3) < 3) return -1;
     // Read status
-    if (m_com->read(inbuf, 2) < 2) return -1;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    for (unsigned i=0; i<2; i+=m_com->read(&inbuf[i], 2-i))
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    
+    //if (m_com->read(inbuf, 2) < 2) return -1;
     // Check status
     if (!(inbuf[0] & 0x8)) return -1;
+   
     // Read data
-    if (m_com->read(&inbuf[2], 4) < 4) return -1;
+    for (unsigned i=0; i<4; i+=m_com->read(&inbuf[2+i], 4-i))
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    //if (m_com->read(&inbuf[2], 4) < 4) return -1;
     // Check status
     if (inbuf[5] != '\n') return -1;
     // Trasnfer data
     for(int i = 1; i < 5; i++) val = (val<<8) + (unsigned char)inbuf[i];
-
+    log(logDEBUG1) << __PRETTY_FUNCTION__ << " : val(" << val << ")";
     return 0;
 }
 
 int MojoCom::enableI2C() {
     // Do some magic
+    log(logINFO) << __PRETTY_FUNCTION__ << " : Enabling I2C!";
+    if (this->writeReg(0x4c, 0x03)) return -1;
     if (this->writeReg(0x100, 0x00)) return -1;
     if (this->writeReg(0x101, 0x01)) return -1;
     if (this->writeReg(0x102, 0x80)) return -1;

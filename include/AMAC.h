@@ -11,8 +11,8 @@ class AMAC {
         AMAC(unsigned id, I2CCom *i2c);
         ~AMAC();
 
-        int readAMAC(AMACreg reg, unsigned &val);
-        int writeAMAC(AMACreg reg, unsigned val);
+        int read(AMACreg reg, unsigned &val);
+        int write(AMACreg reg, unsigned val);
     private:
         unsigned m_id;
         I2CCom *m_i2c;
