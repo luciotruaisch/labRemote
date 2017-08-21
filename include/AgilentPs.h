@@ -2,7 +2,7 @@
 #define AGILENTPS_H
 
 // ####################
-// BK85xx Programmable DC load
+// Agilent/Keysight Power supply
 // Author: Timon Heim
 // Date: Feb 2017
 // Notes: Assuming Prologix GPIB to USB

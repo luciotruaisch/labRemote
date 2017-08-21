@@ -1,12 +1,12 @@
 #include <iostream>
 
 #include "Logger.h"
-#include "SerialCom.h"
 #include "MojoCom.h"
 #include "I2CCom.h"
 #include "AMAC.h"
 #include "Bk85xx.h"
 #include "AgilentPs.h"
+
 loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[]) {

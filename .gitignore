@@ -1,6 +1,6 @@
-*
+*.*
 !*.cpp
 !.gitignore
-!src
-!include
+!src/*.cpp
+!include/*.h
 !README
