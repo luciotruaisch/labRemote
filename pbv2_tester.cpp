@@ -1,30 +1,46 @@
 #include <iostream>
+
 #include "Logger.h"
 #include "SerialCom.h"
 #include "MojoCom.h"
 #include "I2CCom.h"
 #include "AMAC.h"
 #include "Bk85xx.h"
-
+#include "AgilentPs.h"
 loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[]) {
 
-    if (argc < 2) {
+    if (argc < 4) {
         log(logERROR) << "Not enough parameters!";
-        log(logERROR) << "Useage: " << argv[0] << " <Mojo Serial> <..>";
+        log(logERROR) << "Useage: " << argv[0] << " <Mojo> <BK85XX> <Agilent>";
         return -1;
     }
 
     std::string mojoDev = argv[1];
-    std::string agilentDev;
     std::string bkDev = argv[2];
+    std::string agilentDev = argv[3];
 
     log(logINFO) << "Initialising ...";
+    
+    log(logINFO) << " ... Agilent PS:";
+    AgilentPs ps(agilentDev, 10);
+    ps.init();
+    ps.setRange(20);
+    ps.setVoltage(11.0);
+    ps.setCurrent(2.00);
+    ps.turnOn();
 
+    log(logINFO) << " ... DC Load:";
+    Bk85xx dc(bkDev);
+    dc.setRemote();
+    dc.setRemoteSense();
+    dc.setModeCC();
+    dc.setCurrent(0);
+    dc.turnOn();
+  
     log(logINFO) << " ... AMAC:";
-    SerialCom mojoSerial(mojoDev, B115200);
-    MojoCom mojo(&mojoSerial);
+    MojoCom mojo(mojoDev);
     AMAC amac(0, dynamic_cast<I2CCom*>(&mojo));
     
     log(logINFO) << "  ++Init";
@@ -44,15 +60,8 @@ int main(int argc, char* argv[]) {
 
     log(logINFO) << "  ++Enable HV";
     amac.write(AMACreg::HV_ENABLE, 0x1);
-
-    log(logINFO) << " ... DC Load:";
-    Bk85xx dc(bkDev);
-    dc.setRemote();
-    dc.setModeCC();
-    dc.setCurrent(0);
-    dc.turnOn();
-   
-    log(logINFO) << "Measuring Current ...";
+#if 0
+    log(logINFO) << "Measuring Current Sense Amp ...";
     double iout_min = 100;
     double iout_max = 3500;
     double iout_step = 50;
@@ -62,10 +71,25 @@ int main(int argc, char* argv[]) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         unsigned val = 0;
         amac.read(AMACreg::VALUE_RIGHT_CH2, val);
-        log(logINFO) << iout << "\t" << val;
+        log(logINFO) << iout << "mA =\t" << val;
     }
 
     dc.turnOff();
+#endif
+    log(logINFO) << "Measuring VIN measurement ...";
+    amac.write(AMACreg::LV_ENABLE, 0x0);
+
+    double vin_min = 6.0;
+    double vin_max = 12.0;
+    double vin_step = 0.1;
+
+    for (double vin=vin_min; vin<=vin_max; vin+=vin_step) {
+        ps.setVoltage(vin);
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        unsigned val = 0;
+        amac.read(AMACreg::VALUE_RIGHT_CH0, val);
+        log(logINFO) << vin << "V = \t" << val;
+    }
 
 
 

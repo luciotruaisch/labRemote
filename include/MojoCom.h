@@ -4,6 +4,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <string>
 
 #include "SerialCom.h"
 #include "I2CCom.h"
@@ -11,7 +12,7 @@
 
 class MojoCom : public I2CCom {
     public:
-        MojoCom(SerialCom *com);
+        MojoCom(std::string dev);
         ~MojoCom();
 
         int enableI2C();

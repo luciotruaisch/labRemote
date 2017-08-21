@@ -1,7 +1,7 @@
 #include "MojoCom.h"
 
-MojoCom::MojoCom(SerialCom *com) {
-    m_com = com;
+MojoCom::MojoCom(std::string dev) {
+    m_com = new SerialCom(dev, B115200);
     // Reset
     
     char obuf[2] = {'\n', '\r'};
@@ -18,7 +18,7 @@ MojoCom::MojoCom(SerialCom *com) {
 }
 
 MojoCom::~MojoCom() {
-
+    delete m_com;
 }
 
 int MojoCom::writeReg(unsigned reg, unsigned val) {
