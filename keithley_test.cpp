@@ -10,9 +10,10 @@ int main(int argc, char*argv[]) {
     Keithley24XX meter(argv[1], 9);
     meter.init();
 
-    meter.setSource(KeithleyMode::VOLTAGE, 1.0, 1.0);
-    meter.setSense(KeithleyMode::CURRENT, 0.1, 0.1);
+    meter.setSource(KeithleyMode::CURRENT, 1e-3, -10e-6);
+    meter.setSense(KeithleyMode::VOLTAGE, 10, 10);
 
+    return 0;
     meter.turnOn();
 
     for (unsigned i=0; i<10; i++) {
