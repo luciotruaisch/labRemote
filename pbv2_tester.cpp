@@ -84,17 +84,20 @@ int main(int argc, char* argv[]) {
     log(logINFO) << "Test LV enable: ";
     dc.setCurrent(0);
     dc.turnOn();
-    double lv_on = dc.getValues().vol;
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    double lv_on = dc.getValues().vol;//mV
     amac.write(AMACreg::LV_ENABLE, 0x0);
-    double lv_off = dc.getValues().vol;
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    double lv_off = dc.getValues().vol;//mV
     amac.write(AMACreg::LV_ENABLE, 0x1);
-    if (!(lv_on > 1.4 && lv_on < 1.6 && lv_off < 0.1)) {
-        log(logERROR) << " ++ LV enable not working!";
+    if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
+        log(logERROR) << " ++ LV enable not working! " << lv_on << " " << lv_off;
         return -1;
     } else {
         log(logINFO) << " ++ LV enable good!";
     }
 
+#if 0
     log(logINFO) << "Test HV enable: ";
     sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
     sm.setSense(KeithleyMode::VOLTAGE, 100, 100);
@@ -106,12 +109,13 @@ int main(int argc, char* argv[]) {
     double hv_on = std::stod(sm.sense().substr(0,13));
     // If HVmux does not conduct, source meter will go into compliance
     if (!(hv_off > 90.0 && hv_on < 1.0)) {
-        log(logERROR) << " ++ HV enable not working!";
+        log(logERROR) << " ++ HV enable not working! " << hv_off << " " << hv_on;
         return -1;
     } else {
         log(logINFO) << " ++ HV enable good!";
     }
     sm.turnOff();
+#endif
 
     log(logINFO) << "Testing Current Sense Amp & Efficiency...";
     double iout_min = 0;
@@ -126,7 +130,7 @@ int main(int argc, char* argv[]) {
         unsigned ptat = 0;
         amac.read(AMACreg::VALUE_RIGHT_CH3, ptat);
         unsigned ntc = 0;
-        amac.read(AMACreg::VALUE_LEFT_CH2, ntc);
+        amac.read(AMACreg::VALUE_RIGHT_CH2, ntc);
         std::cout << iout << "\t" << dc.getValues().vol << "\t" << cur << "\t" << ps.getCurrent() << "\t" << ntc << "\t" << ptat << std::endl;
     }
     dc.setCurrent(1000);
@@ -148,6 +152,8 @@ int main(int argc, char* argv[]) {
 
 
     log(logINFO) << "Testing Ileak measurement ...";
+    amac.write(AMACreg::HV_ENABLE, 0x1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     double ileak_min = 1e-6;
     double ileak_max = 5e-3;
     double ileak_step = 1e-6;
