@@ -7,6 +7,7 @@
         <file>qml/Motion.qml</file>
         <file>qml/Measurement.qml</file>
         <file>qml/Yarr.qml</file>
+        <file>images/arrow.png</file>
         <file>images/drawer.png</file>
         <file>images/menu.png</file>
         <file>images/bio-photo.jpg</file>

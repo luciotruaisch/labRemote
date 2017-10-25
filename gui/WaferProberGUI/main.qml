@@ -8,7 +8,7 @@ import io.qt.examples.backend 1.0
 ApplicationWindow {
     id: window
     visible: true
-    width: 750
+    width: 850
     height: 750
     title: qsTr("Wafter Probing console table")
 
@@ -65,14 +65,10 @@ ApplicationWindow {
                             Label { text: "  "}
                             Label { text: "X [mm]"}
                             Label { text: "Y [mm]"}
-                            Label { text: "absolute location: "}
+                            Label { text: "Absolute location: "}
                             Label { text: "0." }
                             Label { text: "0." }
-                            Label {
-                                text: "In Contact"
-                                color: "green"
-                            }
-                            Label { text: "current chip:" }
+                            Label { text: "Current chip:" }
                             Label { text: "1" }
                         }
                     }
@@ -125,14 +121,22 @@ ApplicationWindow {
         }
 
         Frame {
+            implicitHeight: 100
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            TextField {
-                id: output
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                Layout.minimumHeight: 150
-                text: "Output field"
+
+            ScrollView {
+                id: sv_text
+                anchors.fill: parent
+
+                TextArea {
+                    id: output
+                    Layout.fillWidth: true
+                    text: "Program started..."
+                    verticalAlignment: TextEdit.AlignBottom
+                }
+
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+
             }
         }
     }
