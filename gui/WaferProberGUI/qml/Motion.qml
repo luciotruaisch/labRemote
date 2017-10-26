@@ -16,7 +16,6 @@ Item {
 
     function go_separate() {
         if(isContact)   {
-
             backend.rel_z = -1*backend.zSep
             isContact = false
         }
@@ -26,7 +25,6 @@ Item {
 
     function go_contact() {
         if(!isContact) {
-            // backend.zContact = true
             backend.rel_z = backend.zSep
             isContact = true
         }
@@ -94,16 +92,12 @@ Item {
                         leftPadding: btn_is_contact.indicator.width + btn_is_contact.spacing
                     }                    
                     onClicked: {
-                        console.log("Is checked: " + btn_is_contact.checked)
                         if(isContact && ! btn_is_contact.checked) {
                             go_separate()
-                            console.log("Status " + isContact)
                         }
                         if(!isContact && btn_is_contact.checked) {
                             go_contact()
-                            console.log("Status " + isContact)
                         }
-                        console.log("Is checked: " + btn_is_contact.checked)
                     }
                 }
             }
