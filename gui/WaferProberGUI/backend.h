@@ -8,8 +8,10 @@
 #include <string>
 #include <vector>
 
-#define X_MAX 305  // unit of mm. range is: [0, 305] mm
-#define Y_MAX 305  // unit of mm. range is: [0, 305] mm
+#define X_MAX 200  // unit of mm.
+#define X_MIN 100
+#define Y_MAX 200  // unit of mm.
+#define X_MIN 100
 #define Z_MAX 9    // unit of mm. range is: [0, 9] mm
 
 #include "backendattachedtype.h"

@@ -55,11 +55,12 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         GridLayout {
                             anchors.fill: parent
-                            columns: 3
+                            columns: 4
 
                             Label { text: "  "}
                             Label { text: "X [mm]"}
                             Label { text: "Y [mm]"}
+                            Label { text: "Z [mm]"}
                             Label { text: "Absolute location: "}
                             Label {
                                 id: txt_pos_x
@@ -69,10 +70,18 @@ ApplicationWindow {
                                 id: txt_pos_y
                                 text: "0."
                             }
+                            Label {
+                                id: txt_pos_z
+                                text: "0."
+                            }
+
                             Label { text: "Current chip:" }
                             Label {
                                 text: "1"
                             }
+//                            BusyIndicator {
+
+//                            }
                         }
                     }
                 }
@@ -111,9 +120,12 @@ ApplicationWindow {
 
                         Motion {
                             id: motion_content
-                            onXyPostionChanged: {
+                            onXyPositionChanged: {
                                 txt_pos_x.text = Number(backend.getPosX).toLocaleString()
                                 txt_pos_y.text = Number(backend.getPosY).toLocaleString()
+                            }
+                            onZPositionChanged: {
+                                txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
                             }
                         }
 
@@ -148,8 +160,4 @@ ApplicationWindow {
             }
         }
     }
-
-/**    Page1 {
-    }
-**/
 }

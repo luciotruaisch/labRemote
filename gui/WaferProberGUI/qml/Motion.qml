@@ -8,19 +8,31 @@ Item {
 
     property int idx_frame: 0
     property var connectResult: -999
-    property var isContact: btn_is_contact.checked
+    property var isContact: false
     property var checkedSeparation: false
 
-    signal xyPostionChanged()
+    signal xyPositionChanged()
+    signal zPositionChanged()
 
     function go_separate() {
-        backend.zContact = false
-        btn_is_contact.checked = false
+        if(isContact)   {
+
+            backend.rel_z = -1*backend.zSep
+            isContact = false
+        }
+        if(btn_is_contact.checked)  btn_is_contact.checked = false
+
     }
 
     function go_contact() {
-        backend.zContact = true
-        btn_is_contact.checked = true
+        if(!isContact) {
+            // backend.zContact = true
+            backend.rel_z = backend.zSep
+            isContact = true
+        }
+        if(!btn_is_contact.checked){
+            btn_is_contact.checked = true
+        }
     }
 
 
@@ -39,7 +51,8 @@ Item {
                     output.insert(0, "Connection is established\n")
 
                     // set current location and speed
-                    root.xyPostionChanged()
+                    root.xyPositionChanged()
+                    root.zPositionChanged()
 
                     txt_abs_x.text = txt_pos_x.text
                     txt_abs_y.text = txt_pos_y.text
@@ -53,6 +66,7 @@ Item {
                 } else {
                     output.insert(0, "Z station not connected. Check Ethernet\n")
                 }
+
             }
         }
 
@@ -61,6 +75,7 @@ Item {
             RowLayout {
                 anchors.fill: parent
                 Button {
+                    enabled: connectResult==0
                     text: "Set Separate"
                     onClicked: {
                         idx_frame = 1
@@ -77,10 +92,18 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: btn_is_contact.indicator.width + btn_is_contact.spacing
-                    }
-
+                    }                    
                     onClicked: {
-                        output.insert(0, "checked: " + isContact + "\n")
+                        console.log("Is checked: " + btn_is_contact.checked)
+                        if(isContact && ! btn_is_contact.checked) {
+                            go_separate()
+                            console.log("Status " + isContact)
+                        }
+                        if(!isContact && btn_is_contact.checked) {
+                            go_contact()
+                            console.log("Status " + isContact)
+                        }
+                        console.log("Is checked: " + btn_is_contact.checked)
                     }
                 }
             }
@@ -107,7 +130,7 @@ Item {
                             flow: GridLayout.TopToBottom
                             ToolButton {
                                 // text: Left
-                                enabled: !btn_is_contact.checked
+                                enabled: !isContact
                                 Layout.row: 1
                                 Layout.column: 1
                                 contentItem: Image {
@@ -118,15 +141,14 @@ Item {
 
                                 autoRepeat: true
                                 onClicked: {
-                                    if(isContact) go_separate()
-                                    var left_x = txt_speed_x.text * (-1)
-                                    backend.rel_x = left_x.toString()
-                                    root.xyPostionChanged()
+                                    if(isContact) go_separate()                                    
+                                    backend.rel_x = txt_speed_x.text.toString()
+                                    root.xyPositionChanged()
                                 }
                             }
                             ToolButton {
                                  // text: "Up"
-                                enabled: !btn_is_contact.checked
+                                enabled: !isContact
                                 Layout.row: 0
                                 Layout.column: 2
                                 contentItem: Image {
@@ -138,14 +160,14 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = txt_speed_y.text.toString()
-                                    root.xyPostionChanged()
+                                    backend.rel_y = (-1*txt_speed_y.text).toString()
+                                    root.xyPositionChanged()
                                 }
                             }
 
                             ToolButton {
                                 // text: "Down"
-                                enabled: !btn_is_contact.checked
+                                enabled: !isContact
                                 Layout.row: 2
                                 Layout.column: 2
                                 contentItem: Image {
@@ -157,14 +179,14 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = ( -1* txt_speed_y.text ).toString()
-                                    root.xyPostionChanged()
+                                    backend.rel_y = txt_speed_y.text.toString()
+                                    root.xyPositionChanged()
                                 }
                             }
 
                             ToolButton {
                                 // text: "Right"
-                                enabled: !btn_is_contact.checked
+                                enabled: !isContact
                                 Layout.row: 1
                                 Layout.column: 3
                                 contentItem: Image {
@@ -177,8 +199,8 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_x = txt_speed_x.text.toString()
-                                    root.xyPostionChanged()
+                                    backend.rel_x = (-1*txt_speed_x.text).toString()
+                                    root.xyPositionChanged()
                                 }
                             }
                             Button {
@@ -197,7 +219,7 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.runSH
-                                            root.xyPostionChanged()
+                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
@@ -205,7 +227,7 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.runSM
-                                            root.xyPostionChanged()
+                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuSeparator{
@@ -218,7 +240,7 @@ Item {
                                             if(isContact) go_separate()
 
                                             backend.scanX = 1
-                                            root.xyPostionChanged()
+                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
@@ -226,7 +248,7 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.testXY = 0
-                                            root.xyPostionChanged()
+                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
@@ -234,7 +256,7 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.testXY = 1
-                                            root.xyPostionChanged()
+                                            root.xyPositionChanged()
                                         }
                                     }
                                 }
@@ -353,7 +375,7 @@ Item {
                             }
                             TextField{
                                 id: txt_speed_z
-                                text: "0.005"
+                                text: "0.1"
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
@@ -386,7 +408,7 @@ Item {
                                 id: btn_z_up
                                 text: "Go Up"
                                 Layout.fillWidth: true
-                                autoRepeat: true
+                                //autoRepeat: true
                                 contentItem: Text {
                                     text: btn_z_up.text
                                     font: btn_z_up.font
@@ -394,13 +416,14 @@ Item {
                                 }
                                 onClicked: {
                                     backend.rel_z = txt_speed_z.text.toString()
+                                    root.zPositionChanged()
                                 }
                             }
                             Button {
                                 id: btn_z_down
                                 text: "Go Down"
                                 Layout.fillWidth: true
-                                autoRepeat: true
+                                //autoRepeat: true
                                 contentItem: Text {
                                     text: btn_z_down.text
                                     font: btn_z_down.font
@@ -408,8 +431,19 @@ Item {
                                 }
                                 onClicked: {
                                     backend.rel_z = (-1 * txt_speed_z.text).toString()
+                                    root.zPositionChanged()
                                 }
                             }
+                            Button {
+                                id: btn_z_stop
+                                text: "Stop"
+                                Layout.fillWidth: true
+                                onClicked: {
+                                    backend.stop
+                                    root.zPositionChanged()
+                                }
+                            }
+
                         }
                     }
                     RowLayout {
@@ -451,6 +485,7 @@ Item {
         standardButtons: Dialog.Ok | Dialog.Cancel
 
         onAccepted: {
+            isContact = true
             btn_is_contact.enabled = true
             btn_is_contact.checked = true
             checkedSeparation = true

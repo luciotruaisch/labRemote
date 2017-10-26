@@ -39,7 +39,7 @@ INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
 
 unix:!macx{
-    LIBS += -L../../build/lib -lWaferProb -gclibo -gclib
+    LIBS += -L../../build/lib -lWaferProb -lgclibo -lgclib
 }
 
 macx: {
