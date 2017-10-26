@@ -59,7 +59,7 @@ Item {
                     backend.speedX = txt_speed_x.text.toString()
                     backend.speedY = txt_speed_y.text.toString()
                     backend.speedZ = txt_speed_z.text.toString()
-                } else if(connectResult == -1) {
+                } else if(connectResult == 1) {
                     output.insert(0, "XY station failed connection\n")
                 } else {
                     output.insert(0, "Z station not connected. Check Ethernet\n")

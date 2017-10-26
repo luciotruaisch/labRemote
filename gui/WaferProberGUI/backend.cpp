@@ -6,7 +6,7 @@
 BackEnd::BackEnd(QObject *parent) : QObject(parent)
 {
     // device name is hardcoded!
-    m_ctrl = new MotionController("/dev/ttyACM0");
+    m_ctrl = new MotionController("/dev/ttyACM1");
 
     m_current_x = m_current_y = m_current_z = -1.0;
     unit = 1000;
