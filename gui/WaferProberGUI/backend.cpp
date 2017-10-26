@@ -11,7 +11,7 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
     m_current_x = m_current_y = m_current_z = -1.0;
     unit = 1000;
     m_z_sep = 0.700; // unit of mm.
-    m_z_isContact = true;
+    m_z_isContact = false;
 }
 
 int BackEnd::connectDevice()

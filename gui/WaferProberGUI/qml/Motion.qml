@@ -74,7 +74,7 @@ Item {
                 anchors.fill: parent
                 Button {
                     enabled: connectResult==0
-                    text: "Set Separate"
+                    text: "Set Contact Position"
                     onClicked: {
                         idx_frame = 1
                     }
@@ -109,7 +109,7 @@ Item {
 
             //the frame for controling x-y.
             Pane {
-                enabled: checkedSeparation
+                // enabled: checkedSeparation
                 Layout.fillWidth: true
                 ColumnLayout{
                     anchors.fill:parent
@@ -483,6 +483,7 @@ Item {
             btn_is_contact.enabled = true
             btn_is_contact.checked = true
             checkedSeparation = true
+            backend.IsAtContact = true
         }
         onRejected: {
 

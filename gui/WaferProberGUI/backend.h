@@ -8,10 +8,10 @@
 #include <string>
 #include <vector>
 
-#define X_MAX 200  // unit of mm.
-#define X_MIN 100
-#define Y_MAX 200  // unit of mm.
-#define X_MIN 100
+#define X_MAX 305  // unit of mm.
+#define X_MIN 0
+#define Y_MAX 305  // unit of mm.
+#define Y_MIN 0
 #define Z_MAX 9    // unit of mm. range is: [0, 9] mm
 
 #include "backendattachedtype.h"
@@ -45,6 +45,7 @@ class BackEnd : public QObject
     // z-axis.
     Q_PROPERTY(bool zContact READ zContact WRITE setZContact)
     Q_PROPERTY(float zSep READ zSep WRITE setZSep)
+    Q_PROPERTY(bool IsAtContact READ IsAtContact WRITE setIsAtContact)
     Q_PROPERTY(bool zTop READ zTop)
     Q_PROPERTY(bool zBottom READ zBottom)
     Q_PROPERTY(bool zMid READ zMid)
@@ -123,6 +124,11 @@ public:
         } else {
             // don't move
         }
+    }
+
+    bool IsAtContact() {return m_z_isContact; }
+    void setIsAtContact(bool is_contact) {
+        m_z_isContact = is_contact;
     }
 
     float zSep(){return m_z_sep;}
@@ -209,10 +215,10 @@ private:
 
 private: // private functions
     bool is_valid_x(float x){
-        return x >= 0 && x <= X_MAX;
+        return x >= X_MIN && x <= X_MAX;
     }
     bool is_valid_y(float y){
-        return y >= 0 && y <= Y_MAX;
+        return y >= Y_MIN && y <= Y_MAX;
     }
     bool is_valid_z(float z){
         return z >=0 && z <= Z_MAX;
