@@ -27,7 +27,7 @@ int BackEnd::connectDevice()
 }
 
 bool BackEnd::dismiss(){
-    m_ctrl->disconnect();
+    if (m_ctrl != 0) m_ctrl->disconnect();
     return true;
 }
 
