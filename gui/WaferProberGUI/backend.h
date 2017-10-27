@@ -13,8 +13,9 @@
 #define Y_MAX 305  // unit of mm.
 #define Y_MIN 0
 #define Z_MAX 9    // unit of mm. range is: [0, 9] mm
+#define Z_MIN 0
 
-#include "backendattachedtype.h"
+
 
 class BackEnd : public QObject
 {
@@ -23,7 +24,7 @@ class BackEnd : public QObject
     Q_PROPERTY(bool dismiss READ dismiss)
     Q_PROPERTY(float rel_x READ rel_x WRITE setRel_x NOTIFY posXChanged)
     Q_PROPERTY(float rel_y READ rel_y WRITE setRel_y NOTIFY posYChanged)
-    Q_PROPERTY(float rel_z READ rel_z WRITE setRel_z)
+    Q_PROPERTY(float rel_z READ rel_z WRITE setRel_z NOTIFY posZChanged)
     Q_PROPERTY(float abs_x READ abs_x WRITE setAbs_x NOTIFY posXChanged)
     Q_PROPERTY(float abs_y READ abs_y WRITE setAbs_y NOTIFY posYChanged)
 
@@ -62,12 +63,6 @@ class BackEnd : public QObject
 
     // calibrate Z-axis
     Q_PROPERTY(bool calibrateZ READ calibrateZ)
-
-public:
-    static BackendAttachedType *qmlAttachedProperties(QObject *object)
-    {
-        return new BackendAttachedType(object);
-    }
 
 public:
     explicit BackEnd(QObject *parent = nullptr);
@@ -165,6 +160,7 @@ signals:
 
     void posXChanged();
     void posYChanged();
+    void posZChanged();
 
     void shPerformed(); // "set home" performed
     void smPerformed(); // "set middle"
@@ -221,10 +217,10 @@ private: // private functions
         return y >= Y_MIN && y <= Y_MAX;
     }
     bool is_valid_z(float z){
-        return z >=0 && z <= Z_MAX;
+        return z >= Z_MIN && z <= Z_MAX;
     }
     void get_pos_xy();
 };
 
-QML_DECLARE_TYPEINFO(BackEnd, QML_HAS_ATTACHED_PROPERTIES)
+// QML_DECLARE_TYPEINFO(BackEnd, QML_HAS_ATTACHED_PROPERTIES)
 #endif // BACKEND_H

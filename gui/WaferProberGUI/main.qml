@@ -2,21 +2,32 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
+
 import "qml" // Housing customized Items
+import "settings.js" as Settings
 
 import io.qt.examples.backend 1.0
 
 ApplicationWindow {
     id: window
     visible: true
-    width: 850
-    height: 750
-    title: qsTr("Wafter Probing console table")
+    width: Settings.image_width + 500
+    height: Settings.image_height+ 500
+    title: qsTr("Wafter Probing console table. " + width + " x " + height)
+
 
     BackEnd {
         id: backend
+        onPosXChanged: {
+            txt_pos_x.text = Number(backend.getPosX).toLocaleString()
+        }
+        onPosYChanged: {
+            txt_pos_y.text = Number(backend.getPosY).toLocaleString()
+        }
+        onPosZChanged: {
+            txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
+        }
     }
-//    property alias motion_content: motion_content
 
     onClosing: {
         if(motion_content.isContact) {
@@ -43,12 +54,28 @@ ApplicationWindow {
                     id: left_top_frame
                     anchors.fill: parent
 
-                    ToolButton {
-                        anchors.left: parent.left
-                        contentItem: Image {
-                            source: "images/bio-photo.jpg"
-                        }
+//                    ToolButton {
+//                        anchors.left: parent.left
+//                        contentItem: Image {
+//                            source: "images/bio-photo.jpg"
+//                        }
+//                    }
+
+                    ICamera {
+
                     }
+//                    Image {
+//                        width: Settings.image_width
+//                        height: Settings.image_height
+//                        // anchors.fill: parent
+//                        id: photoPreview
+
+//                        source: "qrc:images/bio-photo.jpg"
+//                        sourceSize.width: Settings.image_width
+//                        sourceSize.height: Settings.image_height
+
+//                    }
+
 
                     GroupBox {
                         title: "status report"
@@ -120,13 +147,6 @@ ApplicationWindow {
 
                         Motion {
                             id: motion_content
-                            onXyPositionChanged: {
-                                txt_pos_x.text = Number(backend.getPosX).toLocaleString()
-                                txt_pos_y.text = Number(backend.getPosY).toLocaleString()
-                            }
-                            onZPositionChanged: {
-                                txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
-                            }
                         }
 
                         Measurement {}
@@ -146,13 +166,27 @@ ApplicationWindow {
             ScrollView {
                 id: sv_text
                 anchors.fill: parent
+                contentWidth: output.paintedWidth
+                contentHeight: output.paintedHeight
+                clip: true
 
-                TextArea {
+//                function ensureVisible(r) {
+//                    if(contentX >= r.x) contentX = r.x;
+//                    else if (contentX + width <= r.x + r.width) contentX = r.x + r.width - width;
+
+//                    if(contentY >= r.y) contentY = r.y;
+//                    else if (contentY + height <= r.y + r.height) contentY = r.y + r.height - height;
+//                }
+
+
+                TextEdit {
                     id: output
                     Layout.fillWidth: true
-                    clip: true
+                    focus: true
+                    readOnly: true
+                    wrapMode: TextEdit.Wrap
                     text: "Program started..."
-                    // verticalAlignment: TextEdit.AlignBottom
+//                    onCursorRectangleChanged: sv_text.ensureVisible(cursorRectangle)
                 }
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOn

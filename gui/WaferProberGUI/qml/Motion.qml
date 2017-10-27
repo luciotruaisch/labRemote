@@ -11,9 +11,6 @@ Item {
     property var isContact: false
     property var checkedSeparation: false
 
-    signal xyPositionChanged()
-    signal zPositionChanged()
-
     function go_separate() {
         if(isContact)   {
             backend.rel_z = -1*backend.zSep
@@ -41,16 +38,13 @@ Item {
 
 
         Button {            
-            Layout.alignment: Qt.AlignHCenter
+            // Layout.alignment: Qt.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             text: "connect"
             onClicked: {
                 connectResult = backend.to_connect
                 if (connectResult == 0) {
-                    output.insert(0, "Connection is established\n")
-
-                    // set current location and speed
-                    root.xyPositionChanged()
-                    root.zPositionChanged()
+                    output.append("Connection is established\n")
 
                     txt_abs_x.text = txt_pos_x.text
                     txt_abs_y.text = txt_pos_y.text
@@ -62,9 +56,9 @@ Item {
                 } else if(connectResult == 1) {
                     output.insert(0, "XY station failed connection\n")
                 } else {
-                    output.insert(0, "Z station not connected. Check Ethernet\n")
+                    output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
+                    // output.cursorPosition = output.lineCount
                 }
-
             }
         }
 
@@ -136,8 +130,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()                                    
-                                    backend.rel_x = txt_speed_x.text.toString()
-                                    root.xyPositionChanged()
+                                    backend.rel_x = txt_inc_x.text.toString()
                                 }
                             }
                             ToolButton {
@@ -154,8 +147,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = (-1*txt_speed_y.text).toString()
-                                    root.xyPositionChanged()
+                                    backend.rel_y = (-1*txt_inc_y.text).toString()
                                 }
                             }
 
@@ -173,8 +165,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = txt_speed_y.text.toString()
-                                    root.xyPositionChanged()
+                                    backend.rel_y = txt_inc_y.text.toString()
                                 }
                             }
 
@@ -193,8 +184,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_x = (-1*txt_speed_x.text).toString()
-                                    root.xyPositionChanged()
+                                    backend.rel_x = (-1*txt_inc_x.text).toString()
                                 }
                             }
                             Button {
@@ -213,7 +203,6 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.runSH
-                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
@@ -221,7 +210,6 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.runSM
-                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuSeparator{
@@ -234,15 +222,13 @@ Item {
                                             if(isContact) go_separate()
 
                                             backend.scanX = 1
-                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
                                         text: "TEST X"
                                         onTriggered: {
                                             if(isContact) go_separate()
-                                            backend.testXY = 0
-                                            root.xyPositionChanged()
+                                            backend.testXY = 0                                            
                                         }
                                     }
                                     MenuItem {
@@ -250,7 +236,6 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.testXY = 1
-                                            root.xyPositionChanged()
                                         }
                                     }
                                 }
@@ -270,13 +255,13 @@ Item {
                             Label { text: "   " }
                             Label {
                                 text: "X [mm]"
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Label.AlignVCenter
+                                horizontalAlignment: Label.AlignHCenter
                             }
                             Label {
                                 text: "Y [mm]"
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Label.AlignVCenter
+                                horizontalAlignment: Label.AlignHCenter
                             }
                             // move absolute
                             Button {
@@ -285,7 +270,6 @@ Item {
                                     if(isContact) go_separate()
                                     backend.abs_x = txt_abs_x.text.toString()
                                     backend.abs_y = txt_abs_y.text.toString()
-                                    fill_xy_pos()
                                 }
                             }
                             TextField {
@@ -307,7 +291,6 @@ Item {
                                     if (isContact) go_separate()
                                     backend.rel_x = txt_rel_x.text.toString()
                                     backend.rel_y = txt_rel_y.text.toString()
-                                    fill_xy_pos()
                                 }
                             }
                             TextField {
@@ -323,12 +306,12 @@ Item {
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             // set speed
-                            Button {
+                            Label {
                                 text: "SET SPEED"
-                                onClicked: {
-                                    backend.speedX = txt_speed_x.text.toString()
-                                    backend.speedY = txt_speed_y.text.toString()
-                                }
+//                                onClicked: {
+//                                    backend.speedX = txt_speed_x.text.toString()
+//                                    backend.speedY = txt_speed_y.text.toString()
+//                                }
                             }
 
                             TextField {
@@ -336,9 +319,32 @@ Item {
                                 text: "10."
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
+                                onTextChanged: {
+                                    backend.speedX = txt_speed_x.text.toString()
+                                }
                             }
                             TextField {
                                 id: txt_speed_y
+                                text: "10."
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                                onTextChanged: {
+                                    backend.speedY = txt_speed_y.text.toString()
+                                }
+                            }
+                            // set increment
+                            Label {
+                                text: "Set Increment"
+                            }
+
+                            TextField {
+                                id: txt_inc_x
+                                text: "10."
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                            TextField {
+                                id: txt_inc_y
                                 text: "10."
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
@@ -361,17 +367,20 @@ Item {
                         GridLayout {
                             anchors.fill: parent
                             columns: 3
-                            Button{
+                            Label {
                                 text: "Z speed"
-                                onClicked: {
-                                    backend.speedZ = txt_speed_z.text.toString()
-                                }
+//                                onClicked: {
+//                                    backend.speedZ = txt_speed_z.text.toString()
+//                                }
                             }
                             TextField{
                                 id: txt_speed_z
                                 text: "0.1"
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
+                                onTextChanged: {
+                                    backend.speedZ = txt_speed_z.text.toString()
+                                }
                             }
                             Label {
                                 text: "mm/s"
@@ -410,7 +419,6 @@ Item {
                                 }
                                 onClicked: {
                                     backend.rel_z = txt_speed_z.text.toString()
-                                    root.zPositionChanged()
                                 }
                             }
                             Button {
@@ -425,7 +433,7 @@ Item {
                                 }
                                 onClicked: {
                                     backend.rel_z = (-1 * txt_speed_z.text).toString()
-                                    root.zPositionChanged()
+
                                 }
                             }
                             Button {
@@ -434,7 +442,7 @@ Item {
                                 Layout.fillWidth: true
                                 onClicked: {
                                     backend.stop
-                                    root.zPositionChanged()
+
                                 }
                             }
 
