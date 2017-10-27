@@ -18,8 +18,6 @@ Item {
 
         imageCapture {            
             onImageCaptured: {
-                // output.append(capturedImagePath)
-                // photoPreview.source = preview
             }
         }
     }

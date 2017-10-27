@@ -18,6 +18,12 @@ ApplicationWindow {
 
     BackEnd {
         id: backend
+        onDeviceConnected: {
+            txt_pos_x.text = Number(backend.getPosX).toLocaleString()
+            txt_pos_y.text = Number(backend.getPosY).toLocaleString()
+            txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
+        }
+
         onPosXChanged: {
             txt_pos_x.text = Number(backend.getPosX).toLocaleString()
         }
@@ -54,28 +60,7 @@ ApplicationWindow {
                     id: left_top_frame
                     anchors.fill: parent
 
-//                    ToolButton {
-//                        anchors.left: parent.left
-//                        contentItem: Image {
-//                            source: "images/bio-photo.jpg"
-//                        }
-//                    }
-
-                    ICamera {
-
-                    }
-//                    Image {
-//                        width: Settings.image_width
-//                        height: Settings.image_height
-//                        // anchors.fill: parent
-//                        id: photoPreview
-
-//                        source: "qrc:images/bio-photo.jpg"
-//                        sourceSize.width: Settings.image_width
-//                        sourceSize.height: Settings.image_height
-
-//                    }
-
+                    ICamera { }
 
                     GroupBox {
                         title: "status report"

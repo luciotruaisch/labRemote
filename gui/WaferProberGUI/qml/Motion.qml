@@ -53,8 +53,10 @@ Item {
                     backend.speedX = txt_speed_x.text.toString()
                     backend.speedY = txt_speed_y.text.toString()
                     backend.speedZ = txt_speed_z.text.toString()
+
                 } else if(connectResult == 1) {
-                    output.insert(0, "XY station failed connection\n")
+                    output.append("XY station failed connection\n")
+                    output.append("check if /dev/ttyACM0 is avaiable!")
                 } else {
                     output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
                     // output.cursorPosition = output.lineCount
@@ -212,6 +214,20 @@ Item {
                                             backend.runSM
                                         }
                                     }
+                                    MenuItem {
+                                        text: "GO X MIN"
+                                    }
+                                    MenuItem {
+                                        text: "GO X MAX"
+                                    }
+                                    MenuItem {
+                                        text: "GO Y MAX"
+                                    }
+
+                                    MenuItem {
+                                        text: "GO Y MIN"
+                                    }
+
                                     MenuSeparator{
                                         visible: true
                                     }
@@ -334,7 +350,7 @@ Item {
                             }
                             // set increment
                             Label {
-                                text: "Set Increment"
+                                text: "SET INCREMENT"
                             }
 
                             TextField {
