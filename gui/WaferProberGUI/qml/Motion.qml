@@ -2,6 +2,8 @@ import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 
+import "qrc:settings.js" as Settings
+
 Item {
     id: root
     Layout.fillWidth: true
@@ -36,30 +38,41 @@ Item {
         id: column
         anchors.fill: parent
 
+        Pane {
+            Layout.fillWidth: true
+            RowLayout {
+                anchors.fill: parent
+                Button {
+                    // Layout.alignment: Qt.AlignHCenter
+                    // anchors.horizontalCenter: parent.horizontalCenter
+                    text: "connect"
+                    onClicked: {                        
+                        connectResult = backend.to_connect
+                        if (connectResult == 0) {
+                            output.append("Connection is established\n")
 
-        Button {            
-            // Layout.alignment: Qt.AlignHCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "connect"
-            onClicked: {
-                connectResult = backend.to_connect
-                if (connectResult == 0) {
-                    output.append("Connection is established\n")
+                            txt_abs_x.text = txt_pos_x.text
+                            txt_abs_y.text = txt_pos_y.text
 
-                    txt_abs_x.text = txt_pos_x.text
-                    txt_abs_y.text = txt_pos_y.text
+                            // set speed to default value
+                            backend.speedX = txt_speed_x.text.toString()
+                            backend.speedY = txt_speed_y.text.toString()
+                            backend.speedZ = txt_speed_z.text.toString()
 
-                    // set speed to default value
-                    backend.speedX = txt_speed_x.text.toString()
-                    backend.speedY = txt_speed_y.text.toString()
-                    backend.speedZ = txt_speed_z.text.toString()
-
-                } else if(connectResult == 1) {
-                    output.append("XY station failed connection\n")
-                    output.append("check if /dev/ttyACM0 is avaiable!")
-                } else {
-                    output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
-                    // output.cursorPosition = output.lineCount
+                        } else if(connectResult == 1) {
+                            output.append("XY station failed connection\n")
+                            output.append("check if "+ Settings.xy_device +" is avaiable!")
+                        } else {
+                            output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
+                            // output.cursorPosition = output.lineCount
+                        }
+                    }
+                }
+                Button {
+                    text: "HELP"
+                    onClicked:  {
+                        output.append()
+                    }
                 }
             }
         }
