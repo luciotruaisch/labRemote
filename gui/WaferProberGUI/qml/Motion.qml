@@ -130,7 +130,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()                                    
-                                    backend.rel_x = txt_speed_x.text.toString()
+                                    backend.rel_x = txt_inc_x.text.toString()
                                 }
                             }
                             ToolButton {
@@ -147,7 +147,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = (-1*txt_speed_y.text).toString()
+                                    backend.rel_y = (-1*txt_inc_y.text).toString()
                                 }
                             }
 
@@ -165,7 +165,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = txt_speed_y.text.toString()
+                                    backend.rel_y = txt_inc_y.text.toString()
                                 }
                             }
 
@@ -184,7 +184,7 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_x = (-1*txt_speed_x.text).toString()
+                                    backend.rel_x = (-1*txt_inc_x.text).toString()
                                 }
                             }
                             Button {
@@ -255,13 +255,13 @@ Item {
                             Label { text: "   " }
                             Label {
                                 text: "X [mm]"
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Label.AlignVCenter
+                                horizontalAlignment: Label.AlignHCenter
                             }
                             Label {
                                 text: "Y [mm]"
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Label.AlignVCenter
+                                horizontalAlignment: Label.AlignHCenter
                             }
                             // move absolute
                             Button {
@@ -270,7 +270,6 @@ Item {
                                     if(isContact) go_separate()
                                     backend.abs_x = txt_abs_x.text.toString()
                                     backend.abs_y = txt_abs_y.text.toString()
-                                    fill_xy_pos()
                                 }
                             }
                             TextField {
@@ -292,7 +291,6 @@ Item {
                                     if (isContact) go_separate()
                                     backend.rel_x = txt_rel_x.text.toString()
                                     backend.rel_y = txt_rel_y.text.toString()
-                                    fill_xy_pos()
                                 }
                             }
                             TextField {
@@ -308,12 +306,12 @@ Item {
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             // set speed
-                            Button {
+                            Label {
                                 text: "SET SPEED"
-                                onClicked: {
-                                    backend.speedX = txt_speed_x.text.toString()
-                                    backend.speedY = txt_speed_y.text.toString()
-                                }
+//                                onClicked: {
+//                                    backend.speedX = txt_speed_x.text.toString()
+//                                    backend.speedY = txt_speed_y.text.toString()
+//                                }
                             }
 
                             TextField {
@@ -321,9 +319,32 @@ Item {
                                 text: "10."
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
+                                onTextChanged: {
+                                    backend.speedX = txt_speed_x.text.toString()
+                                }
                             }
                             TextField {
                                 id: txt_speed_y
+                                text: "10."
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                                onTextChanged: {
+                                    backend.speedY = txt_speed_y.text.toString()
+                                }
+                            }
+                            // set increment
+                            Label {
+                                text: "Set Increment"
+                            }
+
+                            TextField {
+                                id: txt_inc_x
+                                text: "10."
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+                            TextField {
+                                id: txt_inc_y
                                 text: "10."
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
@@ -346,17 +367,20 @@ Item {
                         GridLayout {
                             anchors.fill: parent
                             columns: 3
-                            Button{
+                            Label {
                                 text: "Z speed"
-                                onClicked: {
-                                    backend.speedZ = txt_speed_z.text.toString()
-                                }
+//                                onClicked: {
+//                                    backend.speedZ = txt_speed_z.text.toString()
+//                                }
                             }
                             TextField{
                                 id: txt_speed_z
                                 text: "0.1"
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
+                                onTextChanged: {
+                                    backend.speedZ = txt_speed_z.text.toString()
+                                }
                             }
                             Label {
                                 text: "mm/s"

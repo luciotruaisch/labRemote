@@ -28,7 +28,6 @@ ApplicationWindow {
             txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
         }
     }
-//    property alias motion_content: motion_content
 
     onClosing: {
         if(motion_content.isContact) {
