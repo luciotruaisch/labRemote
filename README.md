@@ -1,4 +1,5 @@
 # Small library to control and read out lab equipment.
+Forked from [braramsel](https://github.com/baramsel/labRemote).
 GUI is built on Qt 5.9.2
 
 To start with:
@@ -9,4 +10,5 @@ cd build
 cmake ../src
 make
 ```
-Then open **Qt Creator** to import the project: *gui/WaferProberGUI/WaferProbeGUI.pro*
+Then open **Qt Creator** to import the project: _gui/WaferProberGUI/WaferProbeGUI.pro_
+

@@ -71,7 +71,7 @@ Item {
                 Button {
                     text: "HELP"
                     onClicked:  {
-                        output.append()
+                        Qt.openUrlExternally("https://github.com/xju2/labRemote/wiki")
                     }
                 }
             }
