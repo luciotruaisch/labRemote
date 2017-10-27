@@ -11,9 +11,6 @@ Item {
     property var isContact: false
     property var checkedSeparation: false
 
-    signal xyPositionChanged()
-    signal zPositionChanged()
-
     function go_separate() {
         if(isContact)   {
             backend.rel_z = -1*backend.zSep
@@ -41,16 +38,13 @@ Item {
 
 
         Button {            
-            Layout.alignment: Qt.AlignHCenter
+            // Layout.alignment: Qt.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             text: "connect"
             onClicked: {
                 connectResult = backend.to_connect
                 if (connectResult == 0) {
-                    output.insert(0, "Connection is established\n")
-
-                    // set current location and speed
-                    root.xyPositionChanged()
-                    root.zPositionChanged()
+                    output.append("Connection is established\n")
 
                     txt_abs_x.text = txt_pos_x.text
                     txt_abs_y.text = txt_pos_y.text
@@ -60,11 +54,11 @@ Item {
                     backend.speedY = txt_speed_y.text.toString()
                     backend.speedZ = txt_speed_z.text.toString()
                 } else if(connectResult == -1) {
-                    output.insert(0, "XY station failed connection\n")
+                    output.append("XY station failed connection")
                 } else {
-                    output.insert(0, "Z station not connected. Check Ethernet\n")
+                    output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
+                    // output.cursorPosition = output.lineCount
                 }
-
             }
         }
 
@@ -137,7 +131,6 @@ Item {
                                 onClicked: {
                                     if(isContact) go_separate()                                    
                                     backend.rel_x = txt_speed_x.text.toString()
-                                    root.xyPositionChanged()
                                 }
                             }
                             ToolButton {
@@ -155,7 +148,6 @@ Item {
                                 onClicked: {
                                     if(isContact) go_separate()
                                     backend.rel_y = (-1*txt_speed_y.text).toString()
-                                    root.xyPositionChanged()
                                 }
                             }
 
@@ -174,7 +166,6 @@ Item {
                                 onClicked: {
                                     if(isContact) go_separate()
                                     backend.rel_y = txt_speed_y.text.toString()
-                                    root.xyPositionChanged()
                                 }
                             }
 
@@ -194,7 +185,6 @@ Item {
                                 onClicked: {
                                     if(isContact) go_separate()
                                     backend.rel_x = (-1*txt_speed_x.text).toString()
-                                    root.xyPositionChanged()
                                 }
                             }
                             Button {
@@ -213,7 +203,6 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.runSH
-                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
@@ -221,7 +210,6 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.runSM
-                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuSeparator{
@@ -234,15 +222,13 @@ Item {
                                             if(isContact) go_separate()
 
                                             backend.scanX = 1
-                                            root.xyPositionChanged()
                                         }
                                     }
                                     MenuItem {
                                         text: "TEST X"
                                         onTriggered: {
                                             if(isContact) go_separate()
-                                            backend.testXY = 0
-                                            root.xyPositionChanged()
+                                            backend.testXY = 0                                            
                                         }
                                     }
                                     MenuItem {
@@ -250,7 +236,6 @@ Item {
                                         onTriggered: {
                                             if(isContact) go_separate()
                                             backend.testXY = 1
-                                            root.xyPositionChanged()
                                         }
                                     }
                                 }
@@ -410,7 +395,6 @@ Item {
                                 }
                                 onClicked: {
                                     backend.rel_z = txt_speed_z.text.toString()
-                                    root.zPositionChanged()
                                 }
                             }
                             Button {
@@ -425,7 +409,7 @@ Item {
                                 }
                                 onClicked: {
                                     backend.rel_z = (-1 * txt_speed_z.text).toString()
-                                    root.zPositionChanged()
+
                                 }
                             }
                             Button {
@@ -434,7 +418,7 @@ Item {
                                 Layout.fillWidth: true
                                 onClicked: {
                                     backend.stop
-                                    root.zPositionChanged()
+
                                 }
                             }
 

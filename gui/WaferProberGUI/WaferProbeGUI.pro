@@ -3,8 +3,7 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    backend.cpp \
-    backendattachedtype.cpp
+    backend.cpp
 
 RESOURCES += qml.qrc
 
