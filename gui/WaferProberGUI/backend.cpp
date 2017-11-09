@@ -80,6 +80,7 @@ void BackEnd::setRel_z(float z){
     m_ctrl->mv_rel(2, m_rel_z);
     m_ctrl->get_pos_z();
     m_current_z = m_ctrl->m_position[2];
+    emit posZChanged();
 }
 
 bool BackEnd::runSH(){

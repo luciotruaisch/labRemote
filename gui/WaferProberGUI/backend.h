@@ -50,6 +50,8 @@ class BackEnd : public QObject
     Q_PROPERTY(bool zTop READ zTop)
     Q_PROPERTY(bool zBottom READ zBottom)
     Q_PROPERTY(bool zMid READ zMid)
+    // calibrate Z-axis
+    Q_PROPERTY(bool calibrateZ READ calibrateZ)
 
     // scan X and Y
     Q_PROPERTY(int scanX READ readScanX WRITE scanX)
@@ -61,8 +63,7 @@ class BackEnd : public QObject
     // Test X or Y
     Q_PROPERTY(int testXY WRITE setTestXY)
 
-    // calibrate Z-axis
-    Q_PROPERTY(bool calibrateZ READ calibrateZ)
+
 
 public:
     explicit BackEnd(QObject *parent = nullptr);

@@ -236,7 +236,8 @@ Item {
                                         text: "SCAN X"
                                         onTriggered: {
                                             if(isContact) go_separate()
-
+                                            txt_speed_x.text = 0.5
+                                            backend.speedX = txt_speed_x.text.toString()
                                             backend.scanX = 1
                                         }
                                     }
@@ -259,7 +260,7 @@ Item {
                         }
                     }
 
-                    // move x-y station, grouped with pre-defined functions.
+                    // move x-y station
                     Pane {
                         // title: "move x-y"
                         Layout.fillWidth: true
@@ -335,7 +336,7 @@ Item {
                                 text: "10."
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
-                                onTextChanged: {
+                                onEditingFinished: {
                                     backend.speedX = txt_speed_x.text.toString()
                                 }
                             }
@@ -344,7 +345,7 @@ Item {
                                 text: "10."
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
-                                onTextChanged: {
+                                onEditingFinished: {
                                     backend.speedY = txt_speed_y.text.toString()
                                 }
                             }
@@ -394,7 +395,7 @@ Item {
                                 text: "0.1"
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
-                                onTextChanged: {
+                                onEditingFinished: {
                                     backend.speedZ = txt_speed_z.text.toString()
                                 }
                             }
@@ -452,13 +453,21 @@ Item {
 
                                 }
                             }
+//                            Button {
+//                                id: btn_z_stop
+//                                text: "Stop"
+//                                Layout.fillWidth: true
+//                                onClicked: {
+//                                    backend.stop
+
+//                                }
+//                            }
                             Button {
-                                id: btn_z_stop
-                                text: "Stop"
+                                id: btx_z_calibrate
+                                text: "CalibrateZ"
                                 Layout.fillWidth: true
                                 onClicked: {
-                                    backend.stop
-
+                                    backend.calibrateZ
                                 }
                             }
 
@@ -508,6 +517,7 @@ Item {
             btn_is_contact.checked = true
             checkedSeparation = true
             backend.IsAtContact = true
+            txt_speed_z.text = 0.7
         }
         onRejected: {
 
@@ -522,7 +532,7 @@ Item {
             text: "Leave without finishing calibrating contact position?"
         }
         standardButtons: Dialog.Ok | Dialog.Cancel
-        onAccepted: {
+        onAccepted: {            
             idx_frame = 0
         }
         onRejected: {

@@ -8,17 +8,21 @@ import "qrc:settings.js" as Settings
 
 Item {
 
-    //        ColumnLayout {
     width: Settings.image_width
     height: Settings.image_height
 
     Camera {
         id: camera
-        imageProcessing.whiteBalanceMode: CameraImageProcessing.WhiteBalanceFlash
+        //imageProcessing.whiteBalanceMode: CameraImageProcessing.WhiteBalanceFlash
 
         imageCapture {            
             onImageCaptured: {
             }
+        }
+
+        videoRecorder {
+             resolution: "640x480"
+             frameRate: 30
         }
     }
 
@@ -33,11 +37,10 @@ Item {
     Button {
         text: "Snapshot"
         onClicked: {
-            // camera.imageCapture.capture()
             if(camera.imageCapture.ready) {
                 camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
             }
         }
     }
-    //        }
+
 }
