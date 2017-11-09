@@ -18,6 +18,7 @@ ApplicationWindow {
 
     BackEnd {
         id: backend
+
         onDeviceConnected: {
             txt_pos_x.text = Number(backend.getPosX).toLocaleString()
             txt_pos_y.text = Number(backend.getPosY).toLocaleString()
@@ -33,6 +34,9 @@ ApplicationWindow {
         onPosZChanged: {
             txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
         }
+        Component.onCompleted: {
+            xyDeviceName = Settings.xy_device.toString()
+        }
     }
 
     onClosing: {
@@ -42,13 +46,9 @@ ApplicationWindow {
         backend.dismiss
     }
 
-    property int margin: 5
-    // property alias txt_pos_x: txt_pos_x
-    // property alias txt_pos_y: txt_pos_y
-
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: margin
+        anchors.margins: Settings.margin
 
         RowLayout {
 

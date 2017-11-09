@@ -5,9 +5,7 @@
 
 BackEnd::BackEnd(QObject *parent) : QObject(parent)
 {
-    // device name is hardcoded!
-    m_ctrl = new MotionController("/dev/ttyACM0");
-
+    m_ctrl = 0;
     m_current_x = m_current_y = m_current_z = -1.0;
     unit = 1000;
     m_z_sep = 0.700; // unit of mm.
@@ -16,6 +14,10 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
 
 int BackEnd::connectDevice()
 {
+    if(m_ctrl == 0) {
+        const char* deviceName = m_xyDeviceName.toLatin1().data();
+        m_ctrl = new MotionController(deviceName);
+    }
     int status = m_ctrl->connect();
     if(status == 0){
         get_pos_xy();
@@ -25,7 +27,7 @@ int BackEnd::connectDevice()
 }
 
 bool BackEnd::dismiss(){
-    m_ctrl->disconnect();
+    if (m_ctrl != 0) m_ctrl->disconnect();
     return true;
 }
 

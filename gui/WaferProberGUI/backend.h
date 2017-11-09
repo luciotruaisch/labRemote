@@ -20,6 +20,8 @@
 class BackEnd : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString xyDeviceName READ xyDeviceName WRITE setXyDeviceName NOTIFY xyDeviceNameChanged)
+
     Q_PROPERTY(int to_connect READ connectDevice NOTIFY deviceConnected)
     Q_PROPERTY(bool dismiss READ dismiss)
     Q_PROPERTY(float rel_x READ rel_x WRITE setRel_x NOTIFY posXChanged)
@@ -67,6 +69,12 @@ class BackEnd : public QObject
 
 public:
     explicit BackEnd(QObject *parent = nullptr);
+
+    QString xyDeviceName(){ return m_xyDeviceName; }
+    void setXyDeviceName(QString& name) {
+        m_xyDeviceName = name;
+        emit xyDeviceNameChanged();
+    }
 
     int connectDevice();
     bool dismiss();
@@ -157,6 +165,7 @@ public:
     }
 
 signals:
+    void xyDeviceNameChanged();
     void deviceConnected();
 
     void posXChanged();
@@ -177,6 +186,7 @@ signals:
 public slots:
 
 private:
+    QString m_xyDeviceName;
     MotionController* m_ctrl;
 
     float m_current_x;
