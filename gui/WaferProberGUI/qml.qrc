@@ -3,8 +3,6 @@
         <file>main.qml</file>
         <file>settings.js</file>
         <file>qtquickcontrols2.conf</file>
-        <file>qml/Page1.qml</file>
-        <file>qml/Page1Form.ui.qml</file>
         <file>qml/Motion.qml</file>
         <file>qml/Measurement.qml</file>
         <file>qml/Yarr.qml</file>

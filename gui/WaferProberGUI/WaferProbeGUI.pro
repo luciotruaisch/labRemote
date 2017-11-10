@@ -1,9 +1,9 @@
-QT += qml quick
+QT += qml quick multimedia
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    backend.cpp
+SOURCES += src/main.cpp \
+    src/backend.cpp
 
 RESOURCES += qml.qrc
 
@@ -30,12 +30,16 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    backend.h \
-    backendattachedtype.h
+    src/backend.h
 
 INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
+
+# add open CV
+#INCLUDEPATH += /usr/local/include
+#LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui
+
 
 unix:!macx{
     LIBS += -L../../build/lib -lWaferProb -lgclibo -lgclib
@@ -45,3 +49,7 @@ macx: {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
     LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
+
+# include qml CV camera
+# include(cvcamera/qml-cvcamera.pro)
+# INCLUDEPATH += cvcamera
