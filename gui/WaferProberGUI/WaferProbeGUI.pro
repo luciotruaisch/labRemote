@@ -2,6 +2,8 @@ QT += qml quick multimedia
 
 CONFIG += c++11
 
+# PKGCONFIG += opencv
+
 SOURCES += src/main.cpp \
     src/backend.cpp
 
@@ -36,11 +38,6 @@ INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
 
-# add open CV
-#INCLUDEPATH += /usr/local/include
-#LIBS += -L/usr/local/lib -lopencv_core -lopencv_imgcodecs -lopencv_highgui
-
-
 unix:!macx{
     LIBS += -L../../build/lib -lWaferProb -lgclibo -lgclib
 }
@@ -50,6 +47,5 @@ macx: {
     LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
 
-# include qml CV camera
-# include(cvcamera/qml-cvcamera.pro)
-# INCLUDEPATH += cvcamera
+#INCLUDEPATH += /usr/local/include
+#LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio
