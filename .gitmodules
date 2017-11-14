@@ -1,3 +1,0 @@
-[submodule "gui/WaferProberGUI/cvcamera"]
-	path = gui/WaferProberGUI/cvcamera
-	url = https://github.com/xju2/qml-cvcamera
