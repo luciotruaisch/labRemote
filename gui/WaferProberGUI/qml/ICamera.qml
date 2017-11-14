@@ -6,30 +6,20 @@ import QtMultimedia 5.8
 
 import "qrc:settings.js" as Settings
 
+import CVCamera 1.0
+
 Item {
 
     width: Settings.image_width
     height: Settings.image_height
 
-    Camera {
+    CVCamera {
         id: camera
-        //imageProcessing.whiteBalanceMode: CameraImageProcessing.WhiteBalanceFlash
-
-        imageCapture {            
-            onImageCaptured: {
-            }
-        }
-
-        videoRecorder {
-             resolution: "640x480"
-             frameRate: 30
-        }
     }
-
 
     VideoOutput {
         source: camera
-         anchors.fill: parent
+        anchors.fill: parent
         Layout.fillWidth: true
         focus: visible
     }

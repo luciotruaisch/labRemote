@@ -60,7 +60,7 @@ ApplicationWindow {
                     id: left_top_frame
                     anchors.fill: parent
 
-                    //ICamera { }
+                    ICamera { }
 
                     GroupBox {
                         title: "status report"
