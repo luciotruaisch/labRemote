@@ -10,6 +10,17 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
     unit = 1000;
     m_z_sep = 0.700; // unit of mm.
     m_z_isContact = false;
+
+    // everytime xy position is changed, update the location.
+    connect(this, SIGNAL(posXChanged()), this, SLOT(getPosXY()));
+    connect(this, SIGNAL(posYChanged()), this, SLOT(getPosXY()));
+    connect(this, SIGNAL(posXYChanged()), this, SLOT(getPosXY()));
+
+
+    workerThread.setObjectName("StupidName");
+    Worker* worker = new Worker;
+    worker->moveToThread(&workerThread);
+    connect(&workerThread, SIGNAL(started()), worker, SLOT(count_less()) );
 }
 
 int BackEnd::connectDevice()
@@ -35,7 +46,6 @@ void BackEnd::setAbs_x(float x){
     if(x != m_current_x && is_valid_x(x)){
         m_abs_x = x;
         m_ctrl->mv_abs(0, m_abs_x*unit);
-        get_pos_xy();
         emit posXChanged();
     }
 }
@@ -44,7 +54,6 @@ void BackEnd::setAbs_y(float y){
     if(y != m_current_y && is_valid_y(y)){
         m_abs_y = y;
         m_ctrl->mv_abs(1, m_abs_y*unit);
-        get_pos_xy();
         emit posYChanged();
     }
 }
@@ -53,7 +62,6 @@ void BackEnd::setRel_x(float x){
     if(is_valid_x(x+m_current_x)){
         m_rel_x = x;
         m_ctrl->mv_rel(0, m_rel_x*unit);
-        get_pos_xy();
         emit posXChanged();
     }
 }
@@ -62,7 +70,6 @@ void BackEnd::setRel_y(float y){
     if(is_valid_y(y+m_current_y)){
         m_rel_y = y;
         m_ctrl->mv_rel(1, m_rel_y*unit);
-        get_pos_xy();
         emit posYChanged();
     }
 }
@@ -88,17 +95,15 @@ void BackEnd::setRel_z(float z){
 bool BackEnd::runSH(){
     m_ctrl->set_home();
     // update current position
-    get_pos_xy();
-    emit shPerformed();
+
+    emit posXYChanged();
     return m_runSH;
 }
 
 bool BackEnd::runSM(){
     m_ctrl->set_center();
-    // update current position
-    get_pos_xy();
 
-    emit smPerformed();
+    emit posXYChanged();
     return m_runSM;
 }
 
@@ -127,7 +132,6 @@ void BackEnd::setSpeedZ(float speed_z){
 }
 
 bool BackEnd::zTop(){
-    // m_ctrl->mv_abs(2, 14.189);
     m_ctrl->mv_abs(2, Z_MAX);
     m_ctrl->get_pos_z();
     m_current_z = m_ctrl->m_position[2];

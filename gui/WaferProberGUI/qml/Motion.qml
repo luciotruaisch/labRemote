@@ -68,6 +68,20 @@ Item {
                         }
                     }
                 }
+
+                Button {
+                    text: "Stop"
+                    onClicked: {
+                        backend.stop
+                    }
+                }
+                Button {
+                    text: "Start"
+                    onClicked: {
+                        backend.start
+                    }
+                }
+
                 Button {
                     text: "HELP"
                     onClicked:  {

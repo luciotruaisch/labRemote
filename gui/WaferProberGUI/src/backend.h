@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QQmlEngine>
+#include <QThread>
+#include <QDebug>
 
 #include "MotionController.h"
 #include <string>
@@ -15,15 +17,16 @@
 #define Z_MAX 9    // unit of mm. range is: [0, 9] mm
 #define Z_MIN 0
 
-
-
 class BackEnd : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString xyDeviceName READ xyDeviceName WRITE setXyDeviceName NOTIFY xyDeviceNameChanged)
 
+    // connect and disconnect devices.
     Q_PROPERTY(int to_connect READ connectDevice NOTIFY deviceConnected)
     Q_PROPERTY(bool dismiss READ dismiss)
+
+    // move relative/absolute x-,y-,z-axis
     Q_PROPERTY(float rel_x READ rel_x WRITE setRel_x NOTIFY posXChanged)
     Q_PROPERTY(float rel_y READ rel_y WRITE setRel_y NOTIFY posYChanged)
     Q_PROPERTY(float rel_z READ rel_z WRITE setRel_z NOTIFY posZChanged)
@@ -31,14 +34,14 @@ class BackEnd : public QObject
     Q_PROPERTY(float abs_y READ abs_y WRITE setAbs_y NOTIFY posYChanged)
 
     // commands for movements.
-    Q_PROPERTY(bool runSH READ runSH NOTIFY shPerformed)
-    Q_PROPERTY(bool runSM READ runSM NOTIFY smPerformed)
+    Q_PROPERTY(bool runSH READ runSH NOTIFY posXYChanged)
+    Q_PROPERTY(bool runSM READ runSM NOTIFY posXYChanged)
 
     // retrieve positions
     Q_PROPERTY(float getPosX READ getPosX NOTIFY posXGot)
     Q_PROPERTY(float getPosY READ getPosY NOTIFY posYGot)
     Q_PROPERTY(float getPosZ READ getPosZ NOTIFY posZGot)
-    Q_PROPERTY(bool getPosXY READ getPosXY)
+    // Q_PROPERTY(bool getPosXY READ getPosXY)
 
     // set speed
     Q_PROPERTY(float speedX READ getSpeedX WRITE setSpeedX NOTIFY speedXSet)
@@ -49,9 +52,9 @@ class BackEnd : public QObject
     Q_PROPERTY(bool zContact READ zContact WRITE setZContact)
     Q_PROPERTY(float zSep READ zSep WRITE setZSep)
     Q_PROPERTY(bool IsAtContact READ IsAtContact WRITE setIsAtContact)
-    Q_PROPERTY(bool zTop READ zTop)
-    Q_PROPERTY(bool zBottom READ zBottom)
-    Q_PROPERTY(bool zMid READ zMid)
+//    Q_PROPERTY(bool zTop READ zTop)
+//    Q_PROPERTY(bool zBottom READ zBottom)
+//    Q_PROPERTY(bool zMid READ zMid)
     // calibrate Z-axis
     Q_PROPERTY(bool calibrateZ READ calibrateZ)
 
@@ -61,9 +64,11 @@ class BackEnd : public QObject
 
     // STOP
     Q_PROPERTY(bool stop READ stop)
+    // STOP
+    Q_PROPERTY(bool start READ start)
 
     // Test X or Y
-    Q_PROPERTY(int testXY WRITE setTestXY)
+//    Q_PROPERTY(int testXY WRITE setTestXY)
 
 
 
@@ -96,7 +101,7 @@ public:
 
     bool runSH();
     bool runSM();
-    bool getPosXY(){ get_pos_xy(); return true;}
+
     float getPosX(){ return m_current_x; emit posXGot(); }
     float getPosY(){ return m_current_y; emit posYGot(); }
     float getPosZ(){
@@ -153,7 +158,18 @@ public:
 
     // stop motions
     bool stop(){
-        m_ctrl->stop();
+        // m_ctrl->stop();
+
+        if(worker != NULL) {
+            worker->stop = true;
+        }
+        workerThread.quit();
+        workerThread.wait();
+        return true;
+    }
+
+    bool start(){
+        workerThread.start();
         return true;
     }
 
@@ -172,8 +188,8 @@ signals:
     void posYChanged();
     void posZChanged();
 
-    void shPerformed(); // "set home" performed
-    void smPerformed(); // "set middle"
+    void posXYChanged();
+    void posXYChanged();
 
     void posXGot(); // X postion returned
     void posYGot(); // Y postion returned
@@ -184,6 +200,9 @@ signals:
     void speedZSet();
 
 public slots:
+    void getPosXY(){
+        get_pos_xy();
+    }
 
 private:
     QString m_xyDeviceName;
@@ -231,6 +250,10 @@ private: // private functions
         return z >= Z_MIN && z <= Z_MAX;
     }
     void get_pos_xy();
+
+private:
+    QThread workerThread;
+    Worker* worker;
 };
 
 // QML_DECLARE_TYPEINFO(BackEnd, QML_HAS_ATTACHED_PROPERTIES)
