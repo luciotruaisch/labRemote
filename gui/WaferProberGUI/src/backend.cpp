@@ -17,10 +17,10 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
     connect(this, SIGNAL(posXYChanged()), this, SLOT(getPosXY()));
 
 
-    workerThread.setObjectName("StupidName");
-    Worker* worker = new Worker;
-    worker->moveToThread(&workerThread);
-    connect(&workerThread, SIGNAL(started()), worker, SLOT(count_less()) );
+//    workerThread.setObjectName("StupidName");
+//    Worker* worker = new Worker;
+//    worker->moveToThread(&workerThread);
+//    connect(&workerThread, SIGNAL(started()), worker, SLOT(count_less()) );
 }
 
 int BackEnd::connectDevice()

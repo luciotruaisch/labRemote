@@ -11,9 +11,13 @@ import io.qt.examples.backend 1.0
 ApplicationWindow {
     id: window
     visible: true
-    width: Settings.image_width + 500
-    height: Settings.image_height+ 500
+//    width: Settings.image_width + 500
+//    height: Settings.image_height+ 500
+    width: 800
+    height: 800
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
+
+    property var withCamera: false
 
 
     BackEnd {
@@ -60,7 +64,7 @@ ApplicationWindow {
                     id: left_top_frame
                     anchors.fill: parent
 
-                    ICamera { }
+                    // ICamera {  }
 
                     GroupBox {
                         title: "status report"

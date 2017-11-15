@@ -137,9 +137,9 @@ Item {
                 ColumnLayout{
                     anchors.fill:parent
 
-
                     // general x-y controller, with graphics.
-                    Pane {
+                    GroupBox {
+                        title: "Control NEEDLE"
                         Layout.fillWidth: true
                         GridLayout{
                             anchors.fill: parent
@@ -360,7 +360,7 @@ Item {
 
                             TextField {
                                 id: txt_speed_x
-                                text: "10."
+                                text: Settings.speed_x
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 onEditingFinished: {
@@ -369,7 +369,7 @@ Item {
                             }
                             TextField {
                                 id: txt_speed_y
-                                text: "10."
+                                text: Settings.speed_y
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 onEditingFinished: {
@@ -383,13 +383,13 @@ Item {
 
                             TextField {
                                 id: txt_inc_x
-                                text: "10."
+                                text: Settings.incre_x
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             TextField {
                                 id: txt_inc_y
-                                text: "10."
+                                text: Settings.incre_y
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }

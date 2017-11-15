@@ -31,6 +31,7 @@ public:
 
     // unit of length: micro-meter
     virtual int set_speed(int axis, float value) = 0;
+    // virtual int set_accelerate(int axis, float value) = 0;
 
     virtual int mv_abs(int axis, float value) = 0; // move w.r.t home-position
     virtual int mv_rel(int axis, float value) = 0; // move w.r.t current-position

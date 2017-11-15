@@ -160,9 +160,9 @@ public:
     bool stop(){
         // m_ctrl->stop();
 
-        if(worker != NULL) {
-            worker->stop = true;
-        }
+//        if(worker != NULL) {
+//            worker->stop = true;
+//        }
         workerThread.quit();
         workerThread.wait();
         return true;
@@ -188,7 +188,6 @@ signals:
     void posYChanged();
     void posZChanged();
 
-    void posXYChanged();
     void posXYChanged();
 
     void posXGot(); // X postion returned
@@ -253,7 +252,6 @@ private: // private functions
 
 private:
     QThread workerThread;
-    Worker* worker;
 };
 
 // QML_DECLARE_TYPEINFO(BackEnd, QML_HAS_ATTACHED_PROPERTIES)
