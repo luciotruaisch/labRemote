@@ -198,11 +198,6 @@ signals:
     void speedYSet();
     void speedZSet();
 
-public slots:
-    void getPosXY(){
-        get_pos_xy();
-    }
-
 private:
     QString m_xyDeviceName;
     MotionController* m_ctrl;

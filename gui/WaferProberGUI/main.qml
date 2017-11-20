@@ -38,6 +38,10 @@ ApplicationWindow {
         onPosZChanged: {
             txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
         }
+        onPosXYChanged: {
+            txt_pos_x.text = Number(backend.getPosX).toLocaleString()
+            txt_pos_y.text = Number(backend.getPosY).toLocaleString()
+        }
         Component.onCompleted: {
             xyDeviceName = Settings.xy_device.toString()
         }

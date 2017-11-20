@@ -241,23 +241,15 @@ Item {
                                             backend.runSM
                                         }
                                     }
-                                    MenuItem {
-                                        text: "GO X MIN"
-                                    }
-                                    MenuItem {
-                                        text: "GO X MAX"
-                                    }
-                                    MenuItem {
-                                        text: "GO Y MAX"
-                                    }
-
-                                    MenuItem {
-                                        text: "GO Y MIN"
+                                    MenuItem{
+                                        text: "Load Wafer"
+                                        onTriggered: {
+                                            if(isContact) go_separate()
+                                            backend.abs_x = (152.5).toString()
+                                            backend.abs_y = (305.0).toString()
+                                        }
                                     }
 
-                                    MenuSeparator{
-                                        visible: true
-                                    }
 
                                     MenuItem {
                                         text: "SCAN X"
