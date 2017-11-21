@@ -179,7 +179,7 @@ Item {
                                     if(isContact) go_separate()
                                     // backend.rel_y = (-1*txt_inc_y.text).toString()
                                     command = "MR Y " + (-1*txt_inc_y.text).toString()
-                                    backend.run_cmd = command
+                                    backend.run_cmd(command)
                                 }
                             }
 
@@ -199,7 +199,7 @@ Item {
                                     if(isContact) go_separate()
 //                                    backend.rel_y = txt_inc_y.text.toString()
                                     command = "MR Y " + (txt_inc_y.text).toString()
-                                    backend.run_cmd = command
+                                    backend.run_cmd(command)
                                 }
                             }
 

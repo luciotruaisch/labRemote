@@ -95,8 +95,8 @@ class BackEnd : public QObject
     // STOP
     Q_PROPERTY(bool start READ start)
 
-    // run command
-    Q_PROPERTY(QString run_cmd WRITE run_cmd)
+public:
+    Q_INVOKABLE void run_cmd(QString cmd);
 
 public:
     explicit BackEnd(QObject *parent = nullptr);
@@ -203,12 +203,13 @@ public:
         return true;
     }
 
-    void run_cmd(QString cmd);
+
 
 signals:
     void xyDeviceNameChanged();
     void deviceConnected();
 
+    void positionChanged(int axis);
     void posXChanged();
     void posYChanged();
     void posZChanged();
