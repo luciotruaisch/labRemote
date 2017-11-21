@@ -1,26 +1,63 @@
 #include "backend.h"
+#include "Helper.h" // from libWaferProb
+
 #include <QDebug>
-#include "Helper.h"
 #include <QThread> // for sleep function.
+
+#include <vector>
+#include <string>
+
+using namespace std;
+MotionWorker::MotionWorker(MotionController* ctrl)
+{
+    cmd_queue.clear();
+    this->backend = ctrl;
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(run()));
+}
+
+void MotionWorker::start(){
+    m_timer->start(1000);
+}
+
+void MotionWorker::stop() {
+    m_timer->stop();
+    cmd_queue.clear();
+}
+
+void MotionWorker::run_cmd(QString cmd)
+{
+    cmd_queue.push_back(cmd);
+}
+
+void MotionWorker::run()
+{
+    if(!cmd_queue.empty()){
+        QString& current_cmd = cmd_queue.first();
+        backend->run_cmd(current_cmd.toLatin1().data());
+        cmd_queue.pop_front();
+    }
+}
+
 
 BackEnd::BackEnd(QObject *parent) : QObject(parent)
 {
+
     m_ctrl = 0;
     m_current_x = m_current_y = m_current_z = -1.0;
     unit = 1000;
     m_z_sep = 0.700; // unit of mm.
     m_z_isContact = false;
 
-    // everytime xy position is changed, update the location.
-    connect(this, SIGNAL(posXChanged()), this, SLOT(getPosXY()));
-    connect(this, SIGNAL(posYChanged()), this, SLOT(getPosXY()));
-    connect(this, SIGNAL(posXYChanged()), this, SLOT(getPosXY()));
+    // thread to control motion...
+    m_motionControlThread = new QThread(this);
+    MotionWorker* worker = new MotionWorker(m_ctrl);
+    worker->moveToThread(m_motionControlThread);
+    connect(m_motionControlThread, SIGNAL(started()), worker, SLOT(start()));
+    connect(m_motionControlThread, SIGNAL(finished()), worker, SLOT(stop()));
+//    connect(worker, SIGNAL(finished()), m_motionControlThread, SLOT(quit()));
+    m_motionControlThread->start();
 
-
-//    workerThread.setObjectName("StupidName");
-//    Worker* worker = new Worker;
-//    worker->moveToThread(&workerThread);
-//    connect(&workerThread, SIGNAL(started()), worker, SLOT(count_less()) );
 }
 
 int BackEnd::connectDevice()
@@ -39,6 +76,9 @@ int BackEnd::connectDevice()
 
 bool BackEnd::dismiss(){
     if (m_ctrl != 0) m_ctrl->disconnect();
+
+    m_motionControlThread->quit();
+
     return true;
 }
 

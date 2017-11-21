@@ -43,6 +43,15 @@ ApplicationWindow {
         }
     }
 
+    WorkerScript {
+        id: motionWorker
+        source: "src/motion_thread.js"
+
+        onMessage: {
+
+        }
+    }
+
     onClosing: {
         if(motion_content.isContact) {
             backend.zContact = false

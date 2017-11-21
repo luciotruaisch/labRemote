@@ -48,6 +48,8 @@ public:
     }
     int write(int axis, const string& cmd);
 
+	void run_cmd(const string& cmd);
+
     void calibrate_Z(){
         z_ctrl->find_max_min();
     }
