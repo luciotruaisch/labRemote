@@ -29,19 +29,16 @@ ApplicationWindow {
             txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
         }
 
-        onPosXChanged: {
-            txt_pos_x.text = Number(backend.getPosX).toLocaleString()
+        onPositionChanged: {
+            if(axis == 0) {
+                txt_pos_x.text = Number(backend.getPosX()).toLocaleString()
+            } else if(axis == 1) {
+                txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
+            } else if (axis == 2) {
+                txt_pos_z.text = Number(backend.getPosZ()).toLocaleString()
+            } else {}
         }
-        onPosYChanged: {
-            txt_pos_y.text = Number(backend.getPosY).toLocaleString()
-        }
-        onPosZChanged: {
-            txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
-        }
-        onPosXYChanged: {
-            txt_pos_x.text = Number(backend.getPosX).toLocaleString()
-            txt_pos_y.text = Number(backend.getPosY).toLocaleString()
-        }
+
         Component.onCompleted: {
             xyDeviceName = Settings.xy_device.toString()
         }
@@ -60,7 +57,7 @@ ApplicationWindow {
         if(motion_content.isContact) {
             backend.zContact = false
         }
-        backend.dismiss
+        backend.dismiss()
     }
 
     ColumnLayout {

@@ -48,7 +48,7 @@ Item {
                     // anchors.horizontalCenter: parent.horizontalCenter
                     text: "connect"
                     onClicked: {                        
-                        connectResult = backend.to_connect
+                        connectResult = backend.connectDevice()
                         if (connectResult == 0) {
                             output.append("Connection is established\n")
 
@@ -73,16 +73,9 @@ Item {
                 Button {
                     text: "Stop"
                     onClicked: {
-                        backend.stop
+                        backend.stop()
                     }
                 }
-                Button {
-                    text: "Start"
-                    onClicked: {
-                        backend.start
-                    }
-                }
-
                 Button {
                     text: "HELP"
                     onClicked:  {
@@ -159,8 +152,9 @@ Item {
 
                                 autoRepeat: true
                                 onClicked: {
-                                    if(isContact) go_separate()                                    
-                                    backend.rel_x = txt_inc_x.text.toString()
+                                    if(isContact) go_separate()
+                                    command = "MR X " + (txt_inc_x.text).toString()
+                                    backend.run_cmd(command)
                                 }
                             }
                             ToolButton {
@@ -176,8 +170,7 @@ Item {
 
                                 autoRepeat: true
                                 onClicked: {
-                                    if(isContact) go_separate()
-                                    // backend.rel_y = (-1*txt_inc_y.text).toString()
+                                    if(isContact) go_separate()                                   
                                     command = "MR Y " + (-1*txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
@@ -197,7 +190,6 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-//                                    backend.rel_y = txt_inc_y.text.toString()
                                     command = "MR Y " + (txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
@@ -218,7 +210,8 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_x = (-1*txt_inc_x.text).toString()
+                                    command = "MR X " + (-1*txt_inc_x.text).toString()
+                                    backend.run_cmd(command)
                                 }
                             }
                             Button {
@@ -236,22 +229,22 @@ Item {
                                         text: "GO HOME"
                                         onTriggered: {
                                             if(isContact) go_separate()
-                                            backend.runSH
+                                            backend.run_cmd("SH")
                                         }
                                     }
                                     MenuItem {
                                         text: "GO MIDDLE"
                                         onTriggered: {
                                             if(isContact) go_separate()
-                                            backend.runSM
+                                            backend.run_cmd("SM")
                                         }
                                     }
                                     MenuItem{
                                         text: "Load Wafer"
                                         onTriggered: {
                                             if(isContact) go_separate()
-                                            backend.abs_x = (152.5).toString()
-                                            backend.abs_y = (305.0).toString()
+                                            backend.run_cmd("MA X 152.5")
+                                            backend.run_cmd("MA Y 305")
                                         }
                                     }
 
@@ -262,23 +255,23 @@ Item {
                                             if(isContact) go_separate()
                                             txt_speed_x.text = 0.5
                                             backend.speedX = txt_speed_x.text.toString()
-                                            backend.scanX = 1
+                                            backend.scanX()
                                         }
                                     }
-                                    MenuItem {
-                                        text: "TEST X"
-                                        onTriggered: {
-                                            if(isContact) go_separate()
-                                            backend.testXY = 0                                            
-                                        }
-                                    }
-                                    MenuItem {
-                                        text: "TEST Y"
-                                        onTriggered: {
-                                            if(isContact) go_separate()
-                                            backend.testXY = 1
-                                        }
-                                    }
+//                                    MenuItem {
+//                                        text: "TEST X"
+//                                        onTriggered: {
+//                                            if(isContact) go_separate()
+//                                            backend.testXY = 0
+//                                        }
+//                                    }
+//                                    MenuItem {
+//                                        text: "TEST Y"
+//                                        onTriggered: {
+//                                            if(isContact) go_separate()
+//                                            backend.testXY = 1
+//                                        }
+//                                    }
                                 }
                             }
                         }
@@ -309,8 +302,8 @@ Item {
                                 text: "mv absolute"
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.abs_x = txt_abs_x.text.toString()
-                                    backend.abs_y = txt_abs_y.text.toString()
+                                    backend.run_cmd("MA X " + txt_abs_x.text.toString())
+                                    backend.run_cmd("MA Y " + txt_abs_y.text.toString())
                                 }
                             }
                             TextField {
@@ -330,8 +323,8 @@ Item {
                                 text: "mv relative"
                                 onClicked: {
                                     if (isContact) go_separate()
-                                    backend.rel_x = txt_rel_x.text.toString()
-                                    backend.rel_y = txt_rel_y.text.toString()
+                                    backend.run_cmd("MR X " + txt_rel_x.text.toString())
+                                    backend.run_cmd("MR Y " + txt_rel_y.text.toString())
                                 }
                             }
                             TextField {
@@ -349,10 +342,6 @@ Item {
                             // set speed
                             Label {
                                 text: "SET SPEED"
-//                                onClicked: {
-//                                    backend.speedX = txt_speed_x.text.toString()
-//                                    backend.speedY = txt_speed_y.text.toString()
-//                                }
                             }
 
                             TextField {
@@ -410,9 +399,6 @@ Item {
                             columns: 3
                             Label {
                                 text: "Z speed"
-//                                onClicked: {
-//                                    backend.speedZ = txt_speed_z.text.toString()
-//                                }
                             }
                             TextField{
                                 id: txt_speed_z
@@ -459,7 +445,8 @@ Item {
                                     color: "red"
                                 }
                                 onClicked: {
-                                    backend.rel_z = txt_speed_z.text.toString()
+                                    command = "MR Z " + txt_speed_z.text.toString()
+                                    backend.run_cmd(command)
                                 }
                             }
                             Button {
@@ -473,25 +460,18 @@ Item {
                                     color: "green"
                                 }
                                 onClicked: {
-                                    backend.rel_z = (-1 * txt_speed_z.text).toString()
+                                    command = "MR Z " + (-1 * txt_speed_z.text).toString()
+                                    backend.run_cmd(command)
 
                                 }
                             }
-//                            Button {
-//                                id: btn_z_stop
-//                                text: "Stop"
-//                                Layout.fillWidth: true
-//                                onClicked: {
-//                                    backend.stop
 
-//                                }
-//                            }
                             Button {
                                 id: btx_z_calibrate
                                 text: "CalibrateZ"
                                 Layout.fillWidth: true
                                 onClicked: {
-                                    backend.calibrateZ
+                                    backend.calibrateZ()
                                 }
                             }
 

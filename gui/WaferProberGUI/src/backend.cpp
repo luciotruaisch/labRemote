@@ -48,7 +48,8 @@ void MotionWorker::run()
         cmd_queue->pop_front();
         m_cmdQueueMutex.unlock();
 
-        backend->run_cmd(current_cmd.toLatin1().data());
+        int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
+        emit positionChanged(axis_changed);
     }
 }
 
@@ -83,7 +84,8 @@ int BackEnd::connectDevice()
     worker->moveToThread(m_motionControlThread);
     connect(m_motionControlThread, SIGNAL(started()), worker, SLOT(start()));
     connect(m_motionControlThread, SIGNAL(finished()), worker, SLOT(stop()));
-//    connect(worker, SIGNAL(finished()), m_motionControlThread, SLOT(quit()));
+
+    connect(worker, SIGNAL(positionChanged(int)), this, SLOT(checkPositionInfo(int)));
     m_motionControlThread->start();
 
     return status;

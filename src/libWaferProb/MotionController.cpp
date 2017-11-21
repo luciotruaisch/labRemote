@@ -126,11 +126,12 @@ int MotionController::set_center(){
     return xy_ctrl->set_center();
 }
 
-void MotionController::run_cmd(const string& cmd) 
+int MotionController::run_cmd(const string& cmd) 
 {
+    int axis = -1;
     float unit_scale = 1000.;
     if(cmd.empty()){
-        return;
+        return axis;
     }
     vector<string> raw_items;
     WaferProb::tokenizeString(cmd, ' ', raw_items);
@@ -148,18 +149,18 @@ void MotionController::run_cmd(const string& cmd)
         if(items.size() != 3){
             printf("argument of MA is wrong\n"
                     "MA X/Y/Z 10\n");
-            return;
+            return axis;
         }
-        int axis = WaferProb::axis_number(items[1]);
+        axis = WaferProb::axis_number(items[1]);
         this->mv_abs(axis, unit_scale * atof(items[2].c_str()));
     } else if (action == "MR")
     {
         if(items.size() != 3){
             printf("argument of MR is wrong\n"
                     "MR X/Y/Z 10\n");
-            return;
+            return axis;
         }
-        int axis = WaferProb::axis_number(items[1]);
+        axis = WaferProb::axis_number(items[1]);
         this->mv_rel(axis, unit_scale * atof(items[2].c_str()));
     } else if (action == "SH")
     {
@@ -172,18 +173,18 @@ void MotionController::run_cmd(const string& cmd)
         if (items.size() != 3){
             printf("argument of SP is wrong\n"
                     "SP X/Y/Z 10000\n");
-            return;
+            return axis;
         }
-        int axis = WaferProb::axis_number(items[1]);
+        axis = WaferProb::axis_number(items[1]);
         this->set_speed(axis, unit_scale * atof(items[2].c_str()));
     }else if (action == "TEST"){
         vector<int> steps{20, 46, 73, 100, 126, 152, 179, 206, 226};
         if (items.size() != 2){
             printf("argument of TEST is wrong\n"
                     "TEST X/Y \n");
-            return;
+            return axis;
         }
-        int axis = WaferProb::axis_number(items[1]);
+        axis = WaferProb::axis_number(items[1]);
         for(int step : steps){
             this->mv_abs(axis, unit_scale * step);
             sleep(10);
@@ -192,4 +193,5 @@ void MotionController::run_cmd(const string& cmd)
         printf("%s not supported yet!\n", action.c_str());
         // print_cmd();
     }
+    return axis;
 }
