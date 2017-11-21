@@ -5,8 +5,10 @@
 #include <QQmlEngine>
 #include <QThread>
 #include <QDebug>
+#include <QTimer>
 
-#include "MotionController.h"
+#include "MotionController.h" // from libWaferProb
+
 #include <string>
 #include <vector>
 
@@ -17,6 +19,27 @@
 #define Z_MAX 9    // unit of mm. range is: [0, 9] mm
 #define Z_MIN 0
 
+class MotionWorker : public QObject {
+    Q_OBJECT
+
+public:
+    explicit MotionWorker(MotionController* backend);
+
+    void add_cmd(QString cmd);
+
+public slots:
+    void start();
+    void stop();
+
+
+public slots:
+    void run();
+
+protected:
+   QVector<QString> cmd_queue;
+   MotionController* backend;
+   QTimer* m_timer;
+};
 
 
 class BackEnd : public QObject
@@ -69,10 +92,8 @@ class BackEnd : public QObject
     // STOP
     Q_PROPERTY(bool start READ start)
 
-    // Test X or Y
-//    Q_PROPERTY(int testXY WRITE setTestXY)
-
-
+    // run command
+    Q_PROPERTY(QString run_cmd WRITE run_cmd)
 
 public:
     explicit BackEnd(QObject *parent = nullptr);
@@ -158,29 +179,25 @@ public:
     int readScanX(){ return m_scan_x; }
     int readScanY(){ return m_scan_y; }
 
-    // stop motions
-    bool stop(){
-        // m_ctrl->stop();
-
-//        if(worker != NULL) {
-//            worker->stop = true;
-//        }
-        workerThread.quit();
-        workerThread.wait();
-        return true;
-    }
-
-    bool start(){
-        workerThread.start();
-        return true;
-    }
-
     void setTestXY(float axis);
 
     bool calibrateZ(){
         m_ctrl->calibrate_Z();
         return true;
     }
+
+    // stop motions
+    bool stop(){
+        worker->stop();
+        return true;
+    }
+
+    bool start(){
+        worker->start();
+        return true;
+    }
+
+    void run_cmd(QString cmd);
 
 signals:
     void xyDeviceNameChanged();
@@ -248,7 +265,8 @@ private: // private functions
     void get_pos_xy();
 
 private:
-    QThread workerThread;
+    QThread* m_motionControlThread;
+    MotionWorker* worker;
 };
 
 // QML_DECLARE_TYPEINFO(BackEnd, QML_HAS_ATTACHED_PROPERTIES)

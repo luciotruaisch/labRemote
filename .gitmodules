@@ -1,3 +1,6 @@
 [submodule "gui/WaferProberGUI/cvCamera"]
 	path = gui/WaferProberGUI/cvCamera
 	url = git@github.com:xju2/qml-cvcamera.git
+[submodule "image_process/opencv_helper"]
+	path = image_process/opencv_helper
+	url = git@github.com:xju2/opencv_helper.git

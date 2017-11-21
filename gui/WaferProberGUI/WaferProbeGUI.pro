@@ -3,6 +3,8 @@ QT += qml quick multimedia
 CONFIG += c++11
 
 # PKGCONFIG += opencv
+HEADERS += \
+    src/backend.h
 
 SOURCES += src/main.cpp \
     src/backend.cpp
@@ -31,8 +33,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-HEADERS += \
-    src/backend.h
+
 
 INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
