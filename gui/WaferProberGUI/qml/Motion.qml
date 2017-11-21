@@ -12,6 +12,7 @@ Item {
     property var connectResult: -999
     property var isContact: false
     property var checkedSeparation: false
+    property string command: " "
 
     function go_separate() {
         if(isContact)   {
@@ -176,7 +177,9 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = (-1*txt_inc_y.text).toString()
+                                    // backend.rel_y = (-1*txt_inc_y.text).toString()
+                                    command = "MR Y " + (-1*txt_inc_y.text).toString()
+                                    backend.run_cmd = command
                                 }
                             }
 
@@ -194,7 +197,9 @@ Item {
                                 autoRepeat: true
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.rel_y = txt_inc_y.text.toString()
+//                                    backend.rel_y = txt_inc_y.text.toString()
+                                    command = "MR Y " + (txt_inc_y.text).toString()
+                                    backend.run_cmd = command
                                 }
                             }
 

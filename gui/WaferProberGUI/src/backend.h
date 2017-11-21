@@ -6,11 +6,13 @@
 #include <QThread>
 #include <QDebug>
 #include <QTimer>
+#include <QMutex>
 
 #include "MotionController.h" // from libWaferProb
 
 #include <string>
 #include <vector>
+
 
 #define X_MAX 305  // unit of mm.
 #define X_MIN 0
@@ -36,8 +38,9 @@ public slots:
     void run();
 
 protected:
-   QVector<QString> cmd_queue;
+   QVector<QString>* cmd_queue;
    MotionController* backend;
+   QMutex m_cmdQueueMutex;
    QTimer* m_timer;
 };
 
@@ -188,12 +191,15 @@ public:
 
     // stop motions
     bool stop(){
-        worker->stop();
+        m_motionControlThread->exit();
+        m_ctrl->stop();
+
+        m_motionControlThread->start();
         return true;
     }
 
     bool start(){
-        worker->start();
+        m_motionControlThread->start();
         return true;
     }
 

@@ -10,32 +10,45 @@
 using namespace std;
 MotionWorker::MotionWorker(MotionController* ctrl)
 {
-    cmd_queue.clear();
+    cmd_queue = new QVector<QString>();
     this->backend = ctrl;
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(run()));
 }
 
 void MotionWorker::start(){
-    m_timer->start(1000);
+    qInfo() << "timer started";
+    m_timer->start(2000);
 }
 
 void MotionWorker::stop() {
-    m_timer->stop();
-    cmd_queue.clear();
+    m_cmdQueueMutex.lock();
+    cmd_queue->clear();
+    m_cmdQueueMutex.unlock();
 }
 
 void MotionWorker::add_cmd(QString cmd)
 {
-    cmd_queue.push_back(cmd);
+    m_cmdQueueMutex.lock();
+    cmd_queue->push_back(cmd);
+    m_cmdQueueMutex.unlock();
+
+    qInfo() << "command size: " << cmd_queue->size();
 }
 
 void MotionWorker::run()
 {
-    if(!cmd_queue.empty()){
-        QString& current_cmd = cmd_queue.first();
+    qInfo() << "entered run()";
+    if(!cmd_queue->empty()){
+
+        m_cmdQueueMutex.lock();
+        qInfo() << "command size: " << cmd_queue->size();
+        QString current_cmd = cmd_queue->first();
+        qInfo() << "start to run: " << current_cmd;
+        cmd_queue->pop_front();
+        m_cmdQueueMutex.unlock();
+
         backend->run_cmd(current_cmd.toLatin1().data());
-        cmd_queue.pop_front();
     }
 }
 
@@ -49,15 +62,6 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
     m_z_sep = 0.700; // unit of mm.
     m_z_isContact = false;
 
-    // thread to control motion...
-    m_motionControlThread = new QThread(this);
-    MotionWorker* worker = new MotionWorker(m_ctrl);
-    worker->moveToThread(m_motionControlThread);
-    connect(m_motionControlThread, SIGNAL(started()), worker, SLOT(start()));
-    connect(m_motionControlThread, SIGNAL(finished()), worker, SLOT(stop()));
-//    connect(worker, SIGNAL(finished()), m_motionControlThread, SLOT(quit()));
-    m_motionControlThread->start();
-
 }
 
 int BackEnd::connectDevice()
@@ -65,12 +69,23 @@ int BackEnd::connectDevice()
     if(m_ctrl == 0) {
         const char* deviceName = m_xyDeviceName.toLatin1().data();
         m_ctrl = new MotionController(deviceName);
+
     }
     int status = m_ctrl->connect();
     if(status == 0){
         get_pos_xy();
     }
     emit deviceConnected();
+
+    // thread to control motion...
+    m_motionControlThread = new QThread(this);
+    worker = new MotionWorker(m_ctrl);
+    worker->moveToThread(m_motionControlThread);
+    connect(m_motionControlThread, SIGNAL(started()), worker, SLOT(start()));
+    connect(m_motionControlThread, SIGNAL(finished()), worker, SLOT(stop()));
+//    connect(worker, SIGNAL(finished()), m_motionControlThread, SLOT(quit()));
+    m_motionControlThread->start();
+
     return status;
 }
 
@@ -229,5 +244,6 @@ void BackEnd::setTestXY(float axis){
 }
 
 void BackEnd::run_cmd(QString cmd) {
+    qInfo() << "added command: " << cmd;
     worker->add_cmd(cmd);
 }
