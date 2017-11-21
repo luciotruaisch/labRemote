@@ -25,7 +25,7 @@ void MotionWorker::stop() {
     cmd_queue.clear();
 }
 
-void MotionWorker::run_cmd(QString cmd)
+void MotionWorker::add_cmd(QString cmd)
 {
     cmd_queue.push_back(cmd);
 }
@@ -222,4 +222,8 @@ void BackEnd::setTestXY(float axis){
         m_ctrl->mv_abs(axis, unit*step);
         QThread::sleep(6);
     }
+}
+
+void BackEnd::run_cmd(QString cmd) {
+    worker->add_cmd(cmd);
 }

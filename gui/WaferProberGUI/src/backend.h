@@ -25,7 +25,7 @@ class MotionWorker : public QObject {
 public:
     explicit MotionWorker(MotionController* backend);
 
-    void run_cmd(QString cmd);
+    void add_cmd(QString cmd);
 
 public slots:
     void start();
@@ -90,6 +90,9 @@ class BackEnd : public QObject
     Q_PROPERTY(bool stop READ stop)
     // STOP
     Q_PROPERTY(bool start READ start)
+
+    // run command
+    Q_PROPERTY(QString run_cmd WRITE run_cmd)
 
 public:
     explicit BackEnd(QObject *parent = nullptr);
@@ -192,6 +195,8 @@ public:
         worker->start();
         return true;
     }
+
+    void run_cmd(QString cmd);
 
 signals:
     void xyDeviceNameChanged();
