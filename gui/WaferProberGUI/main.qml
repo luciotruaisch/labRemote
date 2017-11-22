@@ -13,8 +13,7 @@ ApplicationWindow {
     visible: true
     width: Settings.image_width + 500
     height: Settings.image_height+ 500
-//    width: 800
-//    height: 800
+
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
@@ -36,7 +35,11 @@ ApplicationWindow {
                 txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
             } else if (axis == 2) {
                 txt_pos_z.text = Number(backend.getPosZ()).toLocaleString()
-            } else {}
+            } else if (axis == 3) {
+                txt_pos_x.text = Number(backend.getPosX()).toLocaleString()
+                txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
+            } else {
+            }
         }
 
         Component.onCompleted: {

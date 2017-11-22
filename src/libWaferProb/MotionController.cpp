@@ -169,9 +169,11 @@ int MotionController::run_cmd(const string& cmd)
     } else if (action == "SH")
     {
         this->set_home();
+        axis = 3;
     } else if (action == "SM")
     {
         this->set_center();
+        axis = 3;
     } else if (action == "SP")
     {
         if (items.size() != 3){

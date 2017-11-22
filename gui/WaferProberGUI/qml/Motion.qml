@@ -279,6 +279,7 @@ Item {
 
                     // move x-y station
                     Pane {
+                        enabled: connectResult==0
                         // title: "move x-y"
                         Layout.fillWidth: true
                         GridLayout {

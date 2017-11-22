@@ -24,13 +24,13 @@ Item {
         focus: visible
     }
 
-    Button {
-        text: "Snapshot"
-        onClicked: {
-            if(camera.imageCapture.ready) {
-                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
-            }
-        }
-    }
+//    Button {
+//        text: "Snapshot"
+//        onClicked: {
+//            if(camera.imageCapture.ready) {
+//                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
+//            }
+//        }
+//    }
 
 }
