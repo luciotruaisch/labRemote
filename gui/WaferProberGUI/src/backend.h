@@ -71,10 +71,6 @@ public:
 
     Q_INVOKABLE void run_cmd(QString cmd);
 
-    // scan X and Y direction
-    Q_INVOKABLE void scanX(int times);
-    Q_INVOKABLE void scanY(int times);
-
     Q_INVOKABLE void calibrateZ(){
         m_ctrl->calibrate_Z();
     }

@@ -16,7 +16,7 @@ Item {
 
     function go_separate() {
         if(isContact)   {
-            backend.rel_z = -1*backend.zSep
+            backend.run_cmd("MR Z " + (-1*backend.zSep) )
             isContact = false
         }
         if(btn_is_contact.checked)  btn_is_contact.checked = false
@@ -25,7 +25,7 @@ Item {
 
     function go_contact() {
         if(!isContact) {
-            backend.rel_z = backend.zSep
+            backend.run_cmd("MR Z " + backend.zSep )
             isContact = true
         }
         if(!btn_is_contact.checked){
@@ -255,7 +255,7 @@ Item {
                                             if(isContact) go_separate()
                                             txt_speed_x.text = 0.5
                                             backend.speedX = txt_speed_x.text.toString()
-                                            backend.scanX()
+                                            backend.run_cmd("SCAN X")
                                         }
                                     }
 //                                    MenuItem {

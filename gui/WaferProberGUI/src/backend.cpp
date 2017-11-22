@@ -127,28 +127,6 @@ void BackEnd::setSpeedZ(float speed_z){
     emit speedZSet();
 }
 
-void BackEnd::scanX(int times){
-    if(times < 0) { times = 1; }
-
-    for(int i = 0; i < times; i++){
-        m_ctrl->mv_abs(0, 0);
-        QThread::sleep(3);
-        m_ctrl->mv_abs(0, X_MAX*unit);
-        QThread::sleep(3);
-    }
-}
-
-void BackEnd::scanY(int times){
-    if(times < 0) { times = 1; }
-
-    for(int i = 0; i < times; i++){
-        m_ctrl->mv_abs(1, 0);
-        QThread::sleep(3);
-        m_ctrl->mv_abs(1, Y_MAX*unit);
-        QThread::sleep(3);
-    }
-}
-
 void BackEnd::setTestXY(float axis){
     vector<int> steps{20, 46, 73, 100, 126, 152, 179, 206, 226};
     for(int step: steps){

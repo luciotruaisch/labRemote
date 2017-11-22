@@ -193,6 +193,22 @@ int MotionController::run_cmd(const string& cmd)
             this->mv_abs(axis, unit_scale * step);
             sleep(10);
         }
+    }else if (action == "SCAN"){
+        if(items.size() != 2) {
+            printf("argument of SCAN is wrong\n"
+                    "SCAN X/Y \n");
+            return axis;
+        }
+        axis = WaferProb::axis_number(items[1]);
+        // protect from axis being z-axis
+        if(axis == 0) {
+            this->mv_abs(axis, 0);
+            sleep(1);
+        }
+        if(axis == 1) {
+            this->mv_abs(axis, 305);
+            sleep(1);
+        }
     } else {
         printf("%s not supported yet!\n", action.c_str());
         // print_cmd();
