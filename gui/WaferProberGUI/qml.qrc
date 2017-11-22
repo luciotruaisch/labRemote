@@ -3,7 +3,6 @@
         <file>main.qml</file>
         <file>settings.js</file>
         <file>qtquickcontrols2.conf</file>
-        <file>src/motion_thread.js</file>
         <file>qml/Motion.qml</file>
         <file>qml/Measurement.qml</file>
         <file>qml/Yarr.qml</file>

@@ -48,15 +48,6 @@ ApplicationWindow {
         }
     }
 
-    WorkerScript {
-        id: motionWorker
-        source: "src/motion_thread.js"
-
-        onMessage: {
-
-        }
-    }
-
     onClosing: {
         if(motion_content.isContact) {
             backend.zContact = false
@@ -109,9 +100,6 @@ ApplicationWindow {
                             Label {
                                 text: "1"
                             }
-//                            BusyIndicator {
-
-//                            }
                         }
                     }
                 }
@@ -173,15 +161,6 @@ ApplicationWindow {
                 contentHeight: output.paintedHeight
                 clip: true
 
-//                function ensureVisible(r) {
-//                    if(contentX >= r.x) contentX = r.x;
-//                    else if (contentX + width <= r.x + r.width) contentX = r.x + r.width - width;
-
-//                    if(contentY >= r.y) contentY = r.y;
-//                    else if (contentY + height <= r.y + r.height) contentY = r.y + r.height - height;
-//                }
-
-
                 TextEdit {
                     id: output
                     Layout.fillWidth: true
@@ -189,7 +168,6 @@ ApplicationWindow {
                     readOnly: true
                     wrapMode: TextEdit.Wrap
                     text: "Program started..."
-//                    onCursorRectangleChanged: sv_text.ensureVisible(cursorRectangle)
                 }
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOn
