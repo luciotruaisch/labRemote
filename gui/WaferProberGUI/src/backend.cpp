@@ -49,6 +49,7 @@ void MotionWorker::run()
         m_cmdQueueMutex.unlock();
 
         int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
+        emit commandChanged(current_cmd);
         emit positionChanged(axis_changed);
     }
 }
@@ -86,86 +87,16 @@ int BackEnd::connectDevice()
     connect(m_motionControlThread, SIGNAL(finished()), worker, SLOT(stop()));
 
     connect(worker, SIGNAL(positionChanged(int)), this, SLOT(checkPositionInfo(int)));
+    connect(worker, SIGNAL(commandChanged(QString)), this, SLOT(receiveUpdate(QString)));
     m_motionControlThread->start();
 
     return status;
 }
 
-bool BackEnd::dismiss(){
+void BackEnd::dismiss(){
     if (m_ctrl != 0) m_ctrl->disconnect();
 
     m_motionControlThread->quit();
-
-    return true;
-}
-
-void BackEnd::setAbs_x(float x){
-    if(x != m_current_x && is_valid_x(x)){
-        m_abs_x = x;
-        m_ctrl->mv_abs(0, m_abs_x*unit);
-        this->get_pos_xy();
-        emit posXChanged();
-    }
-}
-
-void BackEnd::setAbs_y(float y){
-    if(y != m_current_y && is_valid_y(y)){
-        m_abs_y = y;
-        m_ctrl->mv_abs(1, m_abs_y*unit);
-        this->get_pos_xy();
-        emit posYChanged();
-    }
-}
-
-void BackEnd::setRel_x(float x){
-    if(is_valid_x(x+m_current_x)){
-        m_rel_x = x;
-        m_ctrl->mv_rel(0, m_rel_x*unit);
-        this->get_pos_xy();
-        emit posXChanged();
-    }
-}
-
-void BackEnd::setRel_y(float y){
-    if(is_valid_y(y+m_current_y)){
-        m_rel_y = y;
-        m_ctrl->mv_rel(1, m_rel_y*unit);
-        this->get_pos_xy();
-        emit posYChanged();
-    }
-}
-
-void BackEnd::setRel_z(float z){
-    // z is in unit of mm.
-    m_rel_z = z;
-    /**
-    float abs_z = z + m_current_z;
-    if(abs_z > Z_MAX){
-        printf("will only go to maximum\n");
-        m_ctrl->mv_abs(2, Z_MAX);
-    } else {
-        m_ctrl->mv_rel(2, m_rel_z);
-    }
-    **/
-    m_ctrl->mv_rel(2, m_rel_z);
-    m_ctrl->get_pos_z();
-    m_current_z = m_ctrl->m_position[2];
-    emit posZChanged();
-}
-
-bool BackEnd::runSH(){
-    m_ctrl->set_home();
-    // update current position
-    this->get_pos_xy();
-    emit posXYChanged();
-    return m_runSH;
-}
-
-bool BackEnd::runSM(){
-    m_ctrl->set_center();
-    this->get_pos_xy();
-    emit posXYChanged();
-    return m_runSM;
 }
 
 void BackEnd::get_pos_xy(){
@@ -192,30 +123,8 @@ void BackEnd::setSpeedZ(float speed_z){
     emit speedZSet();
 }
 
-bool BackEnd::zTop(){
-    m_ctrl->mv_abs(2, Z_MAX);
-    m_ctrl->get_pos_z();
-    m_current_z = m_ctrl->m_position[2];
-    return true;
-}
-
-bool BackEnd::zBottom(){
-    m_ctrl->mv_abs(2, 0.);
-    m_ctrl->get_pos_z();
-    m_current_z = m_ctrl->m_position[2];
-    return true;
-}
-
-bool BackEnd::zMid(){
-    m_ctrl->mv_abs(2, 7.0945);
-    m_ctrl->get_pos_z();
-    m_current_z = m_ctrl->m_position[2];
-    return true;
-}
-
 void BackEnd::scanX(int times){
     if(times < 0) { times = 1; }
-    m_scan_x = times;
 
     for(int i = 0; i < times; i++){
         m_ctrl->mv_abs(0, 0);
@@ -227,7 +136,6 @@ void BackEnd::scanX(int times){
 
 void BackEnd::scanY(int times){
     if(times < 0) { times = 1; }
-    m_scan_y = times;
 
     for(int i = 0; i < times; i++){
         m_ctrl->mv_abs(1, 0);

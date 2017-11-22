@@ -436,7 +436,7 @@ Item {
                             anchors.fill: parent
                             Button {
                                 id: btn_z_up
-                                text: "Go Up"
+                                text: "Closer"
                                 Layout.fillWidth: true
                                 //autoRepeat: true
                                 contentItem: Text {
@@ -451,7 +451,7 @@ Item {
                             }
                             Button {
                                 id: btn_z_down
-                                text: "Go Down"
+                                text: "Further"
                                 Layout.fillWidth: true
                                 //autoRepeat: true
                                 contentItem: Text {
@@ -462,7 +462,6 @@ Item {
                                 onClicked: {
                                     command = "MR Z " + (-1 * txt_speed_z.text).toString()
                                     backend.run_cmd(command)
-
                                 }
                             }
 

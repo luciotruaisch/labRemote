@@ -24,9 +24,9 @@ ApplicationWindow {
         id: backend
 
         onDeviceConnected: {
-            txt_pos_x.text = Number(backend.getPosX).toLocaleString()
-            txt_pos_y.text = Number(backend.getPosY).toLocaleString()
-            txt_pos_z.text = Number(backend.getPosZ).toLocaleString()
+            txt_pos_x.text = Number(backend.getPosX()).toLocaleString()
+            txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
+            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString()
         }
 
         onPositionChanged: {
@@ -41,6 +41,10 @@ ApplicationWindow {
 
         Component.onCompleted: {
             xyDeviceName = Settings.xy_device.toString()
+        }
+
+        onInfoUpdated: {
+            output.append(message)
         }
     }
 

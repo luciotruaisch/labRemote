@@ -35,8 +35,10 @@ public slots:
 
 private slots:
     void run();
+
 signals:
     void positionChanged(int axis);
+    void commandChanged(QString command);
 
 protected:
 
@@ -51,11 +53,6 @@ class BackEnd : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString xyDeviceName READ xyDeviceName WRITE setXyDeviceName NOTIFY xyDeviceNameChanged)
-
-    // retrieve positions
-    Q_PROPERTY(float getPosX READ getPosX NOTIFY posXGot)
-    Q_PROPERTY(float getPosY READ getPosY NOTIFY posYGot)
-    Q_PROPERTY(float getPosZ READ getPosZ NOTIFY posZGot)
 
     // set speed
     Q_PROPERTY(float speedX READ getSpeedX WRITE setSpeedX NOTIFY speedXSet)
@@ -86,7 +83,7 @@ public:
     Q_INVOKABLE void stop(){
         m_motionControlThread->exit();
         m_ctrl->stop();
-
+        QThread::sleep(2);
         m_motionControlThread->start();
     }
 
@@ -152,11 +149,16 @@ public slots:
         emit positionChanged(axis);
     }
 
+    void receiveUpdate(QString message) {
+        emit infoUpdated(message);
+    }
+
 signals:
     void xyDeviceNameChanged();
     void deviceConnected();
 
     void positionChanged(int axis);
+    void infoUpdated(QString message);
 
     void posXGot(); // X postion returned
     void posYGot(); // Y postion returned

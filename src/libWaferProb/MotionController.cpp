@@ -161,7 +161,11 @@ int MotionController::run_cmd(const string& cmd)
             return axis;
         }
         axis = WaferProb::axis_number(items[1]);
-        this->mv_rel(axis, unit_scale * atof(items[2].c_str()));
+        if (axis == 2) {
+            this->mv_rel(axis, atof(items[2].c_str()));
+        } else {
+            this->mv_rel(axis, unit_scale * atof(items[2].c_str()));
+        }
     } else if (action == "SH")
     {
         this->set_home();
