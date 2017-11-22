@@ -12,12 +12,14 @@ MotionWorker::MotionWorker(MotionController* ctrl)
 {
     cmd_queue = new QVector<QString>();
     this->backend = ctrl;
+
+    // time will send a signal of "timeout" in a constant time interval!
+    // so the run() will be processed every time a "timeout" is received.
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(run()));
 }
 
 void MotionWorker::start(){
-    qInfo() << "timer started";
     m_timer->start(2000);
 }
 
@@ -32,23 +34,24 @@ void MotionWorker::add_cmd(QString cmd)
     m_cmdQueueMutex.lock();
     cmd_queue->push_back(cmd);
     m_cmdQueueMutex.unlock();
-
-    qInfo() << "command size: " << cmd_queue->size();
 }
 
 void MotionWorker::run()
 {
-    qInfo() << "entered run()";
+
     if(!cmd_queue->empty()){
 
         m_cmdQueueMutex.lock();
-        qInfo() << "command size: " << cmd_queue->size();
+
         QString current_cmd = cmd_queue->first();
-        qInfo() << "start to run: " << current_cmd;
+
         cmd_queue->pop_front();
         m_cmdQueueMutex.unlock();
 
         int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
+
+        // signal the command that is processed for records
+        // and notify main program that a axis is changed.
         emit commandChanged(current_cmd);
         emit positionChanged(axis_changed);
     }
@@ -77,6 +80,7 @@ int BackEnd::connectDevice()
     if(status == 0){
         get_pos_xy();
     }
+
     emit deviceConnected();
 
     // thread to control motion...
@@ -154,6 +158,5 @@ void BackEnd::setTestXY(float axis){
 }
 
 void BackEnd::run_cmd(QString cmd) {
-    qInfo() << "added command: " << cmd;
     worker->add_cmd(cmd);
 }
