@@ -20,7 +20,7 @@ MotionWorker::MotionWorker(MotionController* ctrl)
 }
 
 void MotionWorker::start(){
-    m_timer->start(2000);
+    m_timer->start(1000);
 }
 
 void MotionWorker::stop() {
@@ -34,6 +34,7 @@ void MotionWorker::add_cmd(QString cmd)
     m_cmdQueueMutex.lock();
     cmd_queue->push_back(cmd);
     m_cmdQueueMutex.unlock();
+    // qInfo() <<" size of commands: " << cmd_queue->size();
 }
 
 void MotionWorker::run()
@@ -46,7 +47,9 @@ void MotionWorker::run()
         QString current_cmd = cmd_queue->first();
 
         cmd_queue->pop_front();
+        // qInfo() <<" size of commands after run: " << cmd_queue->size();
         m_cmdQueueMutex.unlock();
+
 
         int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
 

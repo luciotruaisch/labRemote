@@ -16,8 +16,8 @@ var image_height = 480
 var margin = 5
 
 // hard coded path that houses captured images
-var image_saved_path = "/Users/xju/Documents/2017/RD53/code/labRemote/gui/WaferProberGUI/captured_image/Test_"
-// var image_saved_path = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/TEST_"
+// var image_saved_path = "/Users/xju/Documents/2017/RD53/code/labRemote/gui/WaferProberGUI/captured_image/Test_"
+var image_saved_path = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/captured_image/TEST_"
 
 
 var add =  (

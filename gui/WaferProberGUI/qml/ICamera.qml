@@ -10,6 +10,7 @@ import CVCamera 1.0
 
 Item {
 
+    property date currentDate: new Date()
     width: Settings.image_width
     height: Settings.image_height
 
@@ -24,13 +25,14 @@ Item {
         focus: visible
     }
 
-//    Button {
-//        text: "Snapshot"
-//        onClicked: {
+    Button {
+        text: "Snapshot"
+        onClicked: {
 //            if(camera.imageCapture.ready) {
 //                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
 //            }
-//        }
-//    }
+             camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
+        }
+    }
 
 }

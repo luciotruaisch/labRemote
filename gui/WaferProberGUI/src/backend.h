@@ -77,10 +77,11 @@ public:
 
     // stop motions
     Q_INVOKABLE void stop(){
-        m_motionControlThread->exit();
+        worker->stop();
+        // m_motionControlThread->exit();
         m_ctrl->stop();
-        QThread::sleep(2);
-        m_motionControlThread->start();
+        // QThread::sleep(2);
+        // m_motionControlThread->start();
     }
 
     Q_INVOKABLE float getPosX(){ return m_current_x; emit posXGot(); }
