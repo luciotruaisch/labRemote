@@ -33,7 +33,7 @@ extern "C" {
 #define MALLOCBUF G_HUGE_BUFFER //!< Malloc used for large program and array uploads.
 #define MAXPROG MALLOCBUF //!< Maximum size for a program.
 #define MAXARRAY MALLOCBUF //!< Maximum size for an array table upload.
-#define POLLINGINTERVAL 100 //!< Interval, in miliseconds, for polling commands, e.g. GMotionComplete().
+#define POLLINGINTERVAL 1000 //!< Interval, in miliseconds, for polling commands, e.g. GMotionComplete().
 #define G_USE_GCAPS //!< Use the GCAPS server in GAddresses(), GAssign(), GIpRequests(), and GVersion(). To avoid GCAPS, comment out this line and recompile, http://galil.com/sw/pub/all/doc/gclib/html/gclibo.html
 
 	//! Uses GUtility() and @ref G_UTIL_SLEEP to provide a blocking sleep call which can be useful for timing-based chores.
