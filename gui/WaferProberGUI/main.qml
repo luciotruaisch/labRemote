@@ -23,21 +23,21 @@ ApplicationWindow {
         id: backend
 
         onDeviceConnected: {
-            txt_pos_x.text = Number(backend.getPosX()).toLocaleString()
-            txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
-            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString()
+            txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+            txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
         }
 
         onPositionChanged: {
             if(axis == 0) {
-                txt_pos_x.text = Number(backend.getPosX()).toLocaleString()
+                txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             } else if(axis == 1) {
-                txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
+                txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             } else if (axis == 2) {
-                txt_pos_z.text = Number(backend.getPosZ()).toLocaleString()
+                txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             } else if (axis == 3) {
-                txt_pos_x.text = Number(backend.getPosX()).toLocaleString()
-                txt_pos_y.text = Number(backend.getPosY()).toLocaleString()
+                txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+                txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             } else {
             }
         }

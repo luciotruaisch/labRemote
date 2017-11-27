@@ -121,7 +121,7 @@ int ControllerZaber::get_position()
         vector<string> raw_items;
         WaferProb::tokenizeString(data, ' ', raw_items);
         for(int i = 0; i < (int) raw_items.size(); i++){
-            m_position[i] = (int)(convert_turns_to_mm(atof(raw_items.at(i).c_str()))*100) / 100.;
+            m_position[i] = (int)(convert_turns_to_mm(atof(raw_items.at(i).c_str()))*1000) / 1000.;
         }
     }
     return 0;

@@ -784,6 +784,7 @@ int za_decode(struct za_reply *destination, char *reply)
 			PRINTF_ERROR("[ERROR] Reply could not be decoded: unexpected "
 					"message type. Valid types are '@' (reply), '!' (alert), "
 					"and '#' (info). Your type: '%c'. \n", message_type);
+            PRINTF_ERROR("Full message: %s\n", reply);
 			return Z_ERROR_COULD_NOT_DECODE;
 	}		
 }

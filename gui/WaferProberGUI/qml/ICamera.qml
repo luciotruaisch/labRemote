@@ -18,6 +18,7 @@ Item {
         id: camera
     }
 
+    ColumnLayout {
     VideoOutput {
         source: camera
         anchors.fill: parent
@@ -33,6 +34,7 @@ Item {
 //            }
              camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
         }
+    }
     }
 
 }

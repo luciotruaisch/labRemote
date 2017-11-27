@@ -65,7 +65,7 @@ private:
     }
     float convert_turns_to_mm(float turns){
         float res = 14.2*(turns - m_ymin)/(m_ymax - m_ymin);
-        res = (int)(res*100) / 100.;
+        res = (int)(res*1000) / 1000.;
         return res;
     }
     char axis_index_to_name(int axis){
