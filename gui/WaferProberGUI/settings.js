@@ -27,3 +27,14 @@ var add =  (
         return function() {return counter += 1;}
     }
 )();
+
+
+// return x,y axis for required chip_id
+var get_chip_axis = function(chip_id) {
+    var x_axis = 7.680;
+    var y_axis = 147.940;
+    return {
+        xAxis: x_axis,
+        yAxis: y_axis
+    };
+};

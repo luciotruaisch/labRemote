@@ -34,7 +34,6 @@ Item {
     }
 
 
-
     ColumnLayout {
         id: column
         anchors.fill: parent
@@ -237,6 +236,18 @@ Item {
                                 text: "Scan Wafer"
                             }
                             Button {
+                                text: "Go 2 Chip: "
+                                onClicked: {
+                                    var chip_axises = Settings.get_chip_axis(txt_chip_id.text)
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                }
+                            }
+                            Button {
+                                Layout.row: 0
+                                Layout.column: 5
                                 id: btn_xy_func
                                 text: "X-Y Functions"
                                 onClicked: menu_xy.open()
@@ -291,6 +302,15 @@ Item {
 //                                    }
                                 }
                             }
+
+                            TextField {
+                                id: txt_chip_id
+                                placeholderText: "chip ID"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+
                         }
                     }
 
