@@ -13,28 +13,34 @@ Item {
     property date currentDate: new Date()
     width: Settings.image_width
     height: Settings.image_height
+    // height: Settings.image_height + btn_snap.height*2
 
     CVCamera {
         id: camera
     }
 
     ColumnLayout {
-    VideoOutput {
-        source: camera
-        anchors.fill: parent
-        Layout.fillWidth: true
-        focus: visible
-    }
 
-    Button {
-        text: "Snapshot"
-        onClicked: {
-//            if(camera.imageCapture.ready) {
-//                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
-//            }
-             camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
+        Button {
+            id: btn_snap
+            text: "Snapshot"
+            onClicked: {
+                //            if(camera.imageCapture.ready) {
+                //                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
+                //            }
+                camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
+            }
         }
-    }
+
+        VideoOutput {
+            source: camera
+            anchors.fill: parent
+            Layout.fillWidth: true
+            focus: visible
+        }
+
+
+
     }
 
 }

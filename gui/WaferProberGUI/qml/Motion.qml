@@ -44,8 +44,6 @@ Item {
             RowLayout {
                 anchors.fill: parent
                 Button {
-                    // Layout.alignment: Qt.AlignHCenter
-                    // anchors.horizontalCenter: parent.horizontalCenter
                     text: "connect"
                     onClicked: {                        
                         connectResult = backend.connectDevice()
@@ -65,7 +63,6 @@ Item {
                             output.append("check if "+ Settings.xy_device +" is avaiable!")
                         } else {
                             output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
-                            // output.cursorPosition = output.lineCount
                         }
                     }
                 }
@@ -150,7 +147,12 @@ Item {
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: 180 }
                                 }
 
-                                autoRepeat: true
+                                ToolTip.text: qsTr("drag wafer to Left.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1500
+                                ToolTip.timeout: 4000
+                                autoRepeat: false
+
                                 onClicked: {
                                     if(isContact) go_separate()
                                     command = "MR X " + (txt_inc_x.text).toString()
@@ -168,7 +170,12 @@ Item {
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: -90 }
                                 }
 
-                                autoRepeat: true
+                                ToolTip.text: qsTr("drag wafer to Up.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1500
+                                ToolTip.timeout: 4000
+                                autoRepeat: false
+
                                 onClicked: {
                                     if(isContact) go_separate()                                   
                                     command = "MR Y " + (-1*txt_inc_y.text).toString()
@@ -187,7 +194,12 @@ Item {
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: 90 }
                                 }
 
-                                autoRepeat: true
+                                ToolTip.text: qsTr("drag wafer to Down.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1500
+                                ToolTip.timeout: 4000
+                                autoRepeat: false
+
                                 onClicked: {
                                     if(isContact) go_separate()
                                     command = "MR Y " + (txt_inc_y.text).toString()
@@ -207,7 +219,12 @@ Item {
                                     source: "qrc:images/arrow.png"
                                 }
 
-                                autoRepeat: true
+                                ToolTip.text: qsTr("drag wafer to Right.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1500
+                                ToolTip.timeout: 4000
+                                autoRepeat: false
+
                                 onClicked: {
                                     if(isContact) go_separate()
                                     command = "MR X " + (-1*txt_inc_x.text).toString()

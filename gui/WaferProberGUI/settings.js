@@ -6,9 +6,10 @@ var speed_x = 2
 var speed_y = 2
 var speed_z = 0.1
 
-// default increment
-var incre_x = 23.6
-var incre_y = 28.8534
+// default increment (stepping interval)
+var incre_x = 28.7998
+var incre_y = 23.6
+
 
 // size of images
 var image_width = 640

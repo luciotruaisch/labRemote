@@ -13,7 +13,7 @@ MotionWorker::MotionWorker(MotionController* ctrl)
     cmd_queue = new QVector<QString>();
     this->backend = ctrl;
 
-    // time will send a signal of "timeout" in a constant time interval!
+    // Timer will send a signal of "timeout" in a constant time interval!
     // so the run() will be processed every time a "timeout" is received.
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(run()));
@@ -56,9 +56,7 @@ void MotionWorker::run()
         // signal the command that is processed for records
         // and notify main program that a axis is changed.
         emit commandChanged(current_cmd);
-        // QThread::sleep(0.5);
         emit positionChanged(axis_changed);
-        // QThread::sleep(0.5);
     }
 }
 
@@ -109,7 +107,6 @@ void BackEnd::dismiss(){
 }
 
 void BackEnd::get_pos_xy(){
-    // m_ctrl->get_pos_xy();
     m_current_x = m_ctrl->m_position[0];
     m_current_y = m_ctrl->m_position[1];
 }
