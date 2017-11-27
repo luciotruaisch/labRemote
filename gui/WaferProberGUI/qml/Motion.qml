@@ -310,12 +310,14 @@ Item {
                             TextField {
                                 id: txt_abs_x
                                 text: "0."
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             TextField {
                                 id: txt_abs_y
                                 text: "0."
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
@@ -331,12 +333,14 @@ Item {
                             TextField {
                                 id: txt_rel_x
                                 text: "0."
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             TextField {
                                 id: txt_rel_y
                                 text: "0."
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
@@ -348,6 +352,7 @@ Item {
                             TextField {
                                 id: txt_speed_x
                                 text: Settings.speed_x
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 onEditingFinished: {
@@ -357,6 +362,7 @@ Item {
                             TextField {
                                 id: txt_speed_y
                                 text: Settings.speed_y
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 onEditingFinished: {
@@ -371,12 +377,14 @@ Item {
                             TextField {
                                 id: txt_inc_x
                                 text: Settings.incre_x
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
                             TextField {
                                 id: txt_inc_y
                                 text: Settings.incre_y
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
@@ -404,6 +412,7 @@ Item {
                             TextField{
                                 id: txt_speed_z
                                 text: "0.1"
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                                 onEditingFinished: {
@@ -422,6 +431,7 @@ Item {
                             TextField{
                                 id: txt_sep_z
                                 text: "0.700"
+                                selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
@@ -471,7 +481,7 @@ Item {
                                 text: "CalibrateZ"
                                 Layout.fillWidth: true
                                 onClicked: {
-                                    backend.calibrateZ()
+                                    warning_calibrateZ.open()
                                 }
                             }
 
@@ -541,6 +551,35 @@ Item {
         }
         onRejected: {
         }
+    }
+    Dialog {
+        id: warning_calibrateZ
+        modal: true
+        focus: true
+        title: "Confirmation"
+        ColumnLayout{
+            Label {
+                text: "Sure to calibrate Z?"
+            }
+            Label{
+                text: "It will move Z-axis to minimum and maximum location!"
+            }
+
+            Label {
+                text: "Make sure the plane is lifted."
+            }
+            Label {
+                text: "Click OK to proceed, otherwise Cancel."
+            }
+        }
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted: {
+            backend.calibrateZ()
+        }
+        onRejected: {
+
+        }
+
     }
 
 }
