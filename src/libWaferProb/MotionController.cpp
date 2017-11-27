@@ -33,6 +33,7 @@ int MotionController::connect() {
     if(z_ctrl->connect() != 0){
         return 2;
     }
+    this->get_position();
 
     return 0;
 }
@@ -215,5 +216,6 @@ int MotionController::run_cmd(const string& cmd)
         printf("%s not supported yet!\n", action.c_str());
         // print_cmd();
     }
+    this->get_position();
     return axis;
 }
