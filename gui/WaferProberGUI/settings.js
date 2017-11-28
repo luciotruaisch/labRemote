@@ -28,11 +28,13 @@ var add =  (
     }
 )();
 
-
 // return x,y axis for required chip_id
 var get_chip_axis = function(chip_id) {
     var x_axis = 7.680;
     var y_axis = 147.940;
+    if( typeof chip_id == "number") {
+        // valid input, do something.
+    }
     return {
         xAxis: x_axis,
         yAxis: y_axis
