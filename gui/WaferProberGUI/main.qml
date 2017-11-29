@@ -32,7 +32,10 @@ ApplicationWindow {
                                             Settings.chip_y_for_calibration
                                             )
             current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
-            console.log(Settings.true_chip_table["1"])
+
+            // load real chip table.
+            var file = new QFile("real_chip_table.txt")
+//            Settings.real_chip_table.read()
         }
 
         onPositionChanged: {
@@ -66,6 +69,7 @@ ApplicationWindow {
             backend.zContact = false
         }
         backend.dismiss()
+        Settings.real_chip_table.write()
     }
 
     ColumnLayout {

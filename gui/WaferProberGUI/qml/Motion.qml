@@ -303,20 +303,17 @@ Item {
                                             backend.run_cmd("SCAN X")
                                         }
                                     }
-//                                    MenuItem {
-//                                        text: "TEST X"
-//                                        onTriggered: {
-//                                            if(isContact) go_separate()
-//                                            backend.testXY = 0
-//                                        }
-//                                    }
-//                                    MenuItem {
-//                                        text: "TEST Y"
-//                                        onTriggered: {
-//                                            if(isContact) go_separate()
-//                                            backend.testXY = 1
-//                                        }
-//                                    }
+                                }
+                            }
+
+                            Button {
+                                text: "Calibrate"
+                                onClicked: {
+                                    var chip_id = Number(current_chip_id.text)
+                                    Settings.real_chip_table.update(chip_id,
+                                                                    Number(txt_pos_x.text),
+                                                                    Number(txt_pos_y.text)
+                                                                    )
                                 }
                             }
 
@@ -336,17 +333,35 @@ Item {
                         Layout.fillWidth: true
                         RowLayout {
                             anchors.fill: parent
-                            TextField {
-                                id: txt_chip_id_calibrate
-                                placeholderText: "chip ID"
-                                text: Settings.chip_id_for_calibration
-                                onTextChanged: {
-                                    Settings.chip_id_for_calibration = text
+                            Button{
+                                text: "1st Chip"
+                                onClicked: {
+        //                            Settings.update_true_chip_table(Number(txt_chip_id_calibrate.text),
+        //                                                            Number(txt_chip_x_calibrate.text),
+        //                                                            Number(txt_chip_y_calibrate.text)
+        //                                                            )
+                                    Settings.update_true_chip_table(1,
+                                                                    Number(txt_chip_x_calibrate.text),
+                                                                    Number(txt_chip_y_calibrate.text)
+                                                                    )
+                                    console.log(Settings.true_chip_table["1"])
                                 }
                             }
+//                            TextField {
+//                                id: txt_chip_id_calibrate
+//                                placeholderText: "chip ID"
+//                                text: Settings.chip_id_for_calibration
+//                                onTextChanged: {
+//                                    Settings.chip_id_for_calibration = text
+//                                }
+//                            }
                             TextField {
                                 id: txt_chip_x_calibrate
                                 placeholderText: "x axis"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+
                                 text: Settings.chip_x_for_calibration
                                 onTextChanged: {
                                     Settings.chip_x_for_calibration = text
@@ -355,6 +370,10 @@ Item {
                             TextField {
                                 id: txt_chip_y_calibrate
                                 placeholderText: "y axis"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+
                                 text: Settings.chip_y_for_calibration
                                 onTextChanged: {
                                     Settings.chip_y_for_calibration = text
@@ -362,16 +381,7 @@ Item {
                             }
                         }
                     }
-                    Button{
-                        text: "Calibrate"
-                        onClicked: {
-                            Settings.update_true_chip_table(Number(txt_chip_id_calibrate.text),
-                                                            Number(txt_chip_x_calibrate.text),
-                                                            Number(txt_chip_y_calibrate.text)
-                                                            )
-                            console.log(Settings.true_chip_table["1"])
-                        }
-                    }
+
 
                     // move x-y station
                     Pane {

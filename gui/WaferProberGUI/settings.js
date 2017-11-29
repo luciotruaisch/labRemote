@@ -31,6 +31,10 @@ var add =  (
     }
 )();
 
+// a table that stores a ideal locations for each chip,
+// based on the provided location of any chip.
+// The table will be generate dynamically
+// by the function "update_true_chip_table"
 var true_chip_table = {};
 
 
@@ -49,7 +53,7 @@ var chip_numbering = [
             [1,  7,  16, 26, 38, 50, 61, 72, 81, 87],
             [2,  8,  17, 27, 39, 51, 62, 73, 82, 88],
             [3,  9,  18, 28, 40, 52, 63, 74, 83, 89],
-            [-1, 10, 19, 29, 41, 53, 64, 75, 84, -1],
+            [-1, 10, 19, 29, 41, 53, 64, 75, 84, 90],
             [-1, 11, 20, 30, 42, 54, 65, 76, 85, -1],
             [-1, -1, 21, 31, 43, 55, 66, 77, -1, -1],
             [-1, -1, -1, 32, 44, 56, 67, -1, -1, -1]
@@ -101,6 +105,8 @@ var get_chip_axis = function(chip_id) {
     }
 }
 
+
+
 // find nearest chip ID given current location
 var find_chip_ID = function(x_, y_){
     var distance = 999999;
@@ -117,4 +123,39 @@ var find_chip_ID = function(x_, y_){
         }
     }
     return closet_chip;
+}
+
+// a table that stores a correct hand-selected locations
+// for each chip.
+// read from a text file: read_chip_table()
+// after finishing calibration, write the text file: write_chip_table()
+// update each chip with: update_chip_table()
+
+var real_chip_table = {
+    input_name: "real_chip_table.txt",
+    table: {},
+    read: function () {
+        console.log("Opening: ", this.input_name)
+        var file = new QFile(this.input_name)
+        // var file = new File(this.input_name);
+        file.open("r");
+        var str = "";
+        while (!file.eof) {
+            console.log(file.readln())
+        }
+        file.close()
+    },
+    write: function() {
+        var file = new File(this.input_name)
+        file.open('w')
+        for(var item in this.table) {
+            var locs = this.table[item]
+            file.writeln(item+" " + locs.xAxis + " " + locs.yAxis)
+        }
+        file.close()
+    },
+    update: function(id_, x_, y_){
+        this.table[id_.toString()].xAxis = x_
+        this.table[id_.toString()].yAxis = y_
+    }
 }
