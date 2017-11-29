@@ -238,13 +238,30 @@ Item {
                             Button {
                                 text: "Go 2 Chip: "
                                 onClicked: {
-                                    var chip_axises = Settings.get_chip_axis(txt_chip_id.text)
+                                    console.log(txt_chip_id.text)
+                                    var chip_axises = Settings.get_chip_axis(Number(txt_chip_id.text))
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    console.log(txt_chip_id.text, cmd_x, cmd_y)
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
                                 }
                             }
+                            Button {
+                                text: "Next chip"
+                                onClicked: {
+                                    var chip_id = 1 + Number(current_chip_id.text)
+                                    console.log("chip id: " + chip_id)
+                                    var chip_axises = Settings.get_chip_axis(chip_id)
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+//                                    backend.run_cmd(cmd_x)
+//                                    backend.run_cmd(cmd_y)
+                                    console.log(chip_axises)
+                                    console.log(chip_id + " " + cmd_x + " " + cmd_y)
+                                }
+                            }
+
                             Button {
                                 Layout.row: 0
                                 Layout.column: 5
@@ -311,6 +328,48 @@ Item {
                                 horizontalAlignment: Text.AlignHCenter
                             }
 
+                        }
+                    }
+
+                    // Calibrate the x-y station
+                    Pane {
+                        Layout.fillWidth: true
+                        RowLayout {
+                            anchors.fill: parent
+                            TextField {
+                                id: txt_chip_id_calibrate
+                                placeholderText: "chip ID"
+                                text: Settings.chip_id_for_calibration
+                                onTextChanged: {
+                                    Settings.chip_id_for_calibration = text
+                                }
+                            }
+                            TextField {
+                                id: txt_chip_x_calibrate
+                                placeholderText: "x axis"
+                                text: Settings.chip_x_for_calibration
+                                onTextChanged: {
+                                    Settings.chip_x_for_calibration = text
+                                }
+                            }
+                            TextField {
+                                id: txt_chip_y_calibrate
+                                placeholderText: "y axis"
+                                text: Settings.chip_y_for_calibration
+                                onTextChanged: {
+                                    Settings.chip_y_for_calibration = text
+                                }
+                            }
+                        }
+                    }
+                    Button{
+                        text: "Calibrate"
+                        onClicked: {
+                            Settings.update_true_chip_table(Number(txt_chip_id_calibrate.text),
+                                                            Number(txt_chip_x_calibrate.text),
+                                                            Number(txt_chip_y_calibrate.text)
+                                                            )
+                            console.log(Settings.true_chip_table["1"])
                         }
                     }
 

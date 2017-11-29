@@ -4,7 +4,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
 import "qml" // Housing customized Items
-import "settings.js" as Settings
+//import "settings.js" as Settings
+import "qrc:settings.js" as Settings
 
 import io.qt.examples.backend 1.0
 
@@ -18,7 +19,6 @@ ApplicationWindow {
 
     property var withCamera: false
 
-
     BackEnd {
         id: backend
 
@@ -26,6 +26,13 @@ ApplicationWindow {
             txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+            // calibrate using previous results.
+            Settings.update_true_chip_table(Settings.chip_id_for_calibration,
+                                            Settings.chip_x_for_calibration,
+                                            Settings.chip_y_for_calibration
+                                            )
+            current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
+            console.log(Settings.true_chip_table["1"])
         }
 
         onPositionChanged: {
@@ -39,6 +46,9 @@ ApplicationWindow {
                 txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
                 txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             } else {
+            }
+            if(axis != 2){
+                current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
             }
         }
 
@@ -101,6 +111,7 @@ ApplicationWindow {
 
                             Label { text: "Current chip:" }
                             Label {
+                                id: current_chip_id
                                 text: "1"
                             }
                         }
