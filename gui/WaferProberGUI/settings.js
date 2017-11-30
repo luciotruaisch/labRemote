@@ -21,7 +21,7 @@ var margin = 5
 
 // hard coded path that houses captured images
 // var image_saved_path = "/Users/xju/Documents/2017/RD53/code/labRemote/gui/WaferProberGUI/captured_image/Test_"
-var image_saved_path = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/captured_image/TEST_"
+var image_saved_path = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/captured_image/"
 
 
 var add =  (
@@ -31,12 +31,16 @@ var add =  (
     }
 )();
 
+// a table that stores a ideal locations for each chip,
+// based on the provided location of any chip.
+// The table will be generate dynamically
+// by the function "update_true_chip_table"
 var true_chip_table = {};
 
 
 var chip_id_for_calibration = 1
 var chip_x_for_calibration = 7.680
-var chip_y_for_calibration = 195.19
+var chip_y_for_calibration = 171.61
 
 // a 10 columns and 12 rows
 // x = 10, y = 12
@@ -49,7 +53,7 @@ var chip_numbering = [
             [1,  7,  16, 26, 38, 50, 61, 72, 81, 87],
             [2,  8,  17, 27, 39, 51, 62, 73, 82, 88],
             [3,  9,  18, 28, 40, 52, 63, 74, 83, 89],
-            [-1, 10, 19, 29, 41, 53, 64, 75, 84, -1],
+            [-1, 10, 19, 29, 41, 53, 64, 75, 84, 90],
             [-1, 11, 20, 30, 42, 54, 65, 76, 85, -1],
             [-1, -1, 21, 31, 43, 55, 66, 77, -1, -1],
             [-1, -1, -1, 32, 44, 56, 67, -1, -1, -1]
@@ -101,6 +105,8 @@ var get_chip_axis = function(chip_id) {
     }
 }
 
+
+
 // find nearest chip ID given current location
 var find_chip_ID = function(x_, y_){
     var distance = 999999;
@@ -117,4 +123,46 @@ var find_chip_ID = function(x_, y_){
         }
     }
     return closet_chip;
+}
+
+// a table that stores a correct hand-selected locations
+// for each chip.
+// read from a text file: read_chip_table()
+// after finishing calibration, write the text file: write_chip_table()
+// update each chip with: update_chip_table()
+
+var real_chip_table = {
+    input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/real_chip_table.txt",
+    table: {},
+    read: function (input_text) {
+        var lines = input_text.split('\n')
+        for(var line_nb in lines){
+            var items = lines[line_nb].split(' ');
+            this.updateWithArray(items)
+        }
+        console.log(this.input_name+" is loaded.")
+    },
+    output: function() {
+        var out = "";
+        for(var item in this.table) {
+            var locs = this.table[item]
+            out += item+" " + locs.xAxis + " " + locs.yAxis + "\n"
+        }
+        return out
+    },
+    update: function(id_, x_, y_){
+        if(this.table[id_.toString()] === undefined){
+            this.table[id_.toString()] = {
+                xAxis: x_,
+                yAxis: y_
+            }
+        } else {
+            this.table[id_.toString()].xAxis = x_
+            this.table[id_.toString()].yAxis = y_
+        }
+    },
+    updateWithArray: function(items) {
+        if (items.length < 3) return;
+        this.update(Number(items[0]), Number(items[1]), Number(items[2]))
+    }
 }

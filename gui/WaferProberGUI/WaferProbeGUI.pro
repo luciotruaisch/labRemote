@@ -4,10 +4,12 @@ CONFIG += c++11
 
 # PKGCONFIG += opencv
 HEADERS += \
-    src/backend.h
+    src/backend.h \
+    src/FileIO.h
 
 SOURCES += src/main.cpp \
-    src/backend.cpp
+    src/backend.cpp \
+    src/FileIO.cpp
 
 RESOURCES += qml.qrc
 

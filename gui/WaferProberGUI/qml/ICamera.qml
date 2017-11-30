@@ -26,8 +26,18 @@ Item {
             //                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
             //            }
             camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
+		}
+	}
+
+
+
+        VideoOutput {
+            source: camera
+            anchors.fill: parent
+            Layout.fillWidth: true
+            focus: visible
+
         }
-    }
 
     VideoOutput {
         source: camera
