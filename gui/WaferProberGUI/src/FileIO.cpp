@@ -1,4 +1,7 @@
 #include "FileIO.h"
+
+#include <iostream>
+
 #include <QFile>
 #include <QTextStream>
 
@@ -39,7 +42,7 @@ bool FileIO::write(const QString &data) {
     }
 
     QFile file(m_source);
-    if( !file.open(QFile::WriteOnly | QFile::Truncate) ) {
+    if( !file.open(QIODevice::WriteOnly | QFile::Truncate) ) {
         return false;
     }
 

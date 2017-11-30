@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>settings.js</file>
-        <file>real_chip_table.txt</file>
         <file>qtquickcontrols2.conf</file>
         <file>qml/Motion.qml</file>
         <file>qml/Measurement.qml</file>

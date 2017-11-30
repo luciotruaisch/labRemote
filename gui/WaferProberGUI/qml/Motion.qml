@@ -242,7 +242,7 @@ Item {
                                     var chip_axises = Settings.get_chip_axis(Number(txt_chip_id.text))
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    console.log(txt_chip_id.text, cmd_x, cmd_y)
+                                    // console.log(txt_chip_id.text, cmd_x, cmd_y)
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
                                 }
@@ -251,7 +251,7 @@ Item {
                                 text: "Next chip"
                                 onClicked: {
                                     var chip_id = 1 + Number(current_chip_id.text)
-                                    console.log("chip id: " + chip_id)
+                                    // console.log("chip id: " + chip_id)
                                     var chip_axises = Settings.get_chip_axis(chip_id)
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()

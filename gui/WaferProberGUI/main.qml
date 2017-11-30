@@ -22,7 +22,7 @@ ApplicationWindow {
 
     FileIO {
         id: real_chip_input
-        source: ":/real_chip_table.txt"
+        source: Settings.real_chip_table.input_name
         onError: console.log(msg)
     }
 
@@ -77,10 +77,12 @@ ApplicationWindow {
             backend.zContact = false
         }
         backend.dismiss()
-        // console.log(Settings.real_chip_table.output())
+        console.log(Settings.real_chip_table.output())
         var result = real_chip_input.write(Settings.real_chip_table.output())
         if(result){
-            output.append("Real Chip Table is written.")
+            console.log("Real Chip Table is written.")
+        } else {
+            console.log("Cannot write to File.")
         }
     }
 

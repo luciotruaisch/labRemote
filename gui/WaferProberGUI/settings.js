@@ -21,7 +21,7 @@ var margin = 5
 
 // hard coded path that houses captured images
 // var image_saved_path = "/Users/xju/Documents/2017/RD53/code/labRemote/gui/WaferProberGUI/captured_image/Test_"
-var image_saved_path = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/captured_image/TEST_"
+var image_saved_path = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/captured_image/"
 
 
 var add =  (
@@ -40,7 +40,7 @@ var true_chip_table = {};
 
 var chip_id_for_calibration = 1
 var chip_x_for_calibration = 7.680
-var chip_y_for_calibration = 195.19
+var chip_y_for_calibration = 171.61
 
 // a 10 columns and 12 rows
 // x = 10, y = 12
@@ -132,7 +132,7 @@ var find_chip_ID = function(x_, y_){
 // update each chip with: update_chip_table()
 
 var real_chip_table = {
-    input_name: "real_chip_table.txt",
+    input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/real_chip_table.txt",
     table: {},
     read: function (input_text) {
         var lines = input_text.split('\n')
