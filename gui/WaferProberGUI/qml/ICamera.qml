@@ -18,29 +18,21 @@ Item {
     CVCamera {
         id: camera
     }
-
-    ColumnLayout {
-
-        Button {
-            id: btn_snap
-            text: "Snapshot"
-            onClicked: {
-                //            if(camera.imageCapture.ready) {
-                //                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
-                //            }
-                camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
-            }
+    Button {
+        id: btn_snap
+        text: "Snapshot"
+        onClicked: {
+            //            if(camera.imageCapture.ready) {
+            //                camera.imageCapture.captureToLocation(Settings.image_saved_path + Settings.add()+".png")
+            //            }
+            camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
         }
-
-        VideoOutput {
-            source: camera
-            anchors.fill: parent
-            Layout.fillWidth: true
-            focus: visible
-        }
-
-
-
     }
 
+    VideoOutput {
+        source: camera
+        anchors.fill: parent
+        Layout.fillWidth: true
+        focus: visible
+    }
 }
