@@ -5,11 +5,11 @@ CONFIG += c++11
 # PKGCONFIG += opencv
 HEADERS += \
     src/backend.h \
-    src/RealChipTable.h
+    src/FileIO.h
 
 SOURCES += src/main.cpp \
     src/backend.cpp \
-    src/RealChipTable.cpp
+    src/FileIO.cpp
 
 RESOURCES += qml.qrc
 

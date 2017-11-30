@@ -134,28 +134,35 @@ var find_chip_ID = function(x_, y_){
 var real_chip_table = {
     input_name: "real_chip_table.txt",
     table: {},
-    read: function () {
-        console.log("Opening: ", this.input_name)
-        var file = new QFile(this.input_name)
-        // var file = new File(this.input_name);
-        file.open("r");
-        var str = "";
-        while (!file.eof) {
-            console.log(file.readln())
+    read: function (input_text) {
+        var lines = input_text.split('\n')
+        for(var line_nb in lines){
+            var items = lines[line_nb].split(' ');
+            this.updateWithArray(items)
         }
-        file.close()
+        console.log(this.input_name+" is loaded.")
     },
-    write: function() {
-        var file = new File(this.input_name)
-        file.open('w')
+    output: function() {
+        var out = "";
         for(var item in this.table) {
             var locs = this.table[item]
-            file.writeln(item+" " + locs.xAxis + " " + locs.yAxis)
+            out += item+" " + locs.xAxis + " " + locs.yAxis + "\n"
         }
-        file.close()
+        return out
     },
     update: function(id_, x_, y_){
-        this.table[id_.toString()].xAxis = x_
-        this.table[id_.toString()].yAxis = y_
+        if(this.table[id_.toString()] === undefined){
+            this.table[id_.toString()] = {
+                xAxis: x_,
+                yAxis: y_
+            }
+        } else {
+            this.table[id_.toString()].xAxis = x_
+            this.table[id_.toString()].yAxis = y_
+        }
+    },
+    updateWithArray: function(items) {
+        if (items.length < 3) return;
+        this.update(Number(items[0]), Number(items[1]), Number(items[2]))
     }
 }

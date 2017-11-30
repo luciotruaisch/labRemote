@@ -255,10 +255,10 @@ Item {
                                     var chip_axises = Settings.get_chip_axis(chip_id)
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-//                                    backend.run_cmd(cmd_x)
-//                                    backend.run_cmd(cmd_y)
-                                    console.log(chip_axises)
-                                    console.log(chip_id + " " + cmd_x + " " + cmd_y)
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+//                                    console.log(chip_axises)
+//                                    console.log(chip_id + " " + cmd_x + " " + cmd_y)
                                 }
                             }
 
@@ -306,6 +306,14 @@ Item {
                                 }
                             }
 
+                            TextField {
+                                id: txt_chip_id
+                                placeholderText: "chip ID"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+
                             Button {
                                 text: "Calibrate"
                                 onClicked: {
@@ -314,15 +322,8 @@ Item {
                                                                     Number(txt_pos_x.text),
                                                                     Number(txt_pos_y.text)
                                                                     )
+                                    console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
                                 }
-                            }
-
-                            TextField {
-                                id: txt_chip_id
-                                placeholderText: "chip ID"
-                                selectByMouse: true
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
                             }
 
                         }

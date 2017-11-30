@@ -7,7 +7,8 @@ import "qml" // Housing customized Items
 //import "settings.js" as Settings
 import "qrc:settings.js" as Settings
 
-import io.qt.examples.backend 1.0
+import qt.wafer.backend 1.0
+import qt.wafer.FileIO 1.0
 
 ApplicationWindow {
     id: window
@@ -18,6 +19,12 @@ ApplicationWindow {
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
+
+    FileIO {
+        id: real_chip_input
+        source: ":/real_chip_table.txt"
+        onError: console.log(msg)
+    }
 
     BackEnd {
         id: backend
@@ -33,9 +40,8 @@ ApplicationWindow {
                                             )
             current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
 
-            // load real chip table.
-            var file = new QFile("real_chip_table.txt")
-//            Settings.real_chip_table.read()
+            // load real chip table
+            Settings.real_chip_table.read(real_chip_input.read())
         }
 
         onPositionChanged: {
@@ -64,12 +70,18 @@ ApplicationWindow {
         }
     }
 
+
+
     onClosing: {
         if(motion_content.isContact) {
             backend.zContact = false
         }
         backend.dismiss()
-        Settings.real_chip_table.write()
+        // console.log(Settings.real_chip_table.output())
+        var result = real_chip_input.write(Settings.real_chip_table.output())
+        if(result){
+            output.append("Real Chip Table is written.")
+        }
     }
 
     ColumnLayout {
