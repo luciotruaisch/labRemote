@@ -32,7 +32,7 @@ add_compile_options(-std=c++11)
 # add_compile_options(-Wc++11-extensions)
 
 # add libraries
-list(APPEND libs Galil Zaber WaferProb GPIB)
+list(APPEND libs Galil Zaber WaferProb GPIB ImageRec)
 foreach(lib ${libs})
 include_directories(lib${lib}/include)
 file(GLOB SrcFiles lib${lib}/*.c*)
