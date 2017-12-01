@@ -7,6 +7,7 @@
 #include "opencv2/xfeatures2d.hpp"
 
 #include "opencv2/calib3d/calib3d.hpp" // for findHomography
+#include "opencv2/xfeatures2d/nonfree.hpp"
 
 #include <vector>
 #include <iostream>
@@ -21,20 +22,24 @@ void OpenCVHelper::SIFT_obj_identify(
 		const Mat& img2, 
 		vector<Point2f>& matchedCorners)
 {
-	Ptr<SIFT> sift = SIFT::create();
+	bool debug = false;
+	Ptr<SIFT> detector = SIFT::create();
+//	const int minHessian = 400;
+//	Ptr<SURF> detector = SURF::create(minHessian);
+	// Ptr<ORB> detector = ORB::create();
 	
 	vector<KeyPoint> kp1, kp2;
 	Mat des1, des2;
-	sift->detectAndCompute(img1, noArray(), kp1, des1);
-	sift->detectAndCompute(img2, noArray(), kp2, des2);
-	cout <<"computed features" << endl;
+	detector->detectAndCompute(img1, noArray(), kp1, des1);
+	detector->detectAndCompute(img2, noArray(), kp2, des2);
+	if(debug) cout <<"computed features" << endl;
 
 	const int checks = 50;
-	flann::SearchParams searchParams(checks);
-	flann::KDTreeIndexParams indexParams(5);
+	Ptr<flann::SearchParams> searchParams = new flann::SearchParams(checks);
+	Ptr<flann::KDTreeIndexParams> indexParams = new flann::KDTreeIndexParams(5);
 	
-	auto flann = FlannBasedMatcher(&indexParams, &searchParams);
-	cout <<"created FLANN Matcher" << endl;
+	auto flann = FlannBasedMatcher(indexParams, searchParams);
+	if(debug) cout <<"created FLANN Matcher" << endl;
 
 	vector<vector<DMatch> > matches;	
 	flann.knnMatch(des1, des2, matches, 2); 
@@ -52,7 +57,7 @@ void OpenCVHelper::SIFT_obj_identify(
 		}
 	}
 
-	cout <<"found good matches" << endl;
+	if(debug) cout <<"found good matches" << endl;
 
 	const int min_match_count = 10;
 	if(good_matches.size() > min_match_count) {
@@ -63,7 +68,7 @@ void OpenCVHelper::SIFT_obj_identify(
 			src_pts.push_back( kp1[ good_matches[i].queryIdx ].pt );
 			dst_pts.push_back( kp2[ good_matches[i].trainIdx ].pt );
 		}
-		cout <<"created source and destination points" << endl;
+		if(debug) cout <<"created source and destination points" << endl;
 
 		Mat H = findHomography(src_pts, dst_pts, cv::RANSAC, 5.0);
 
@@ -74,7 +79,7 @@ void OpenCVHelper::SIFT_obj_identify(
 		obj_corners[2] = cvPoint(img1.cols, img1.rows);
 		obj_corners[3] = cvPoint(0, img1.rows);
 		// vector<Point2f> scene_corners(4);
-		cout << "before the transformation" << endl;
+		if(debug) cout << "before the transformation" << endl;
 		/**
 		if(matchedCorners.size() != 4) {
 			matchedCorners.reserve(4);
@@ -82,8 +87,8 @@ void OpenCVHelper::SIFT_obj_identify(
 		**/
 		perspectiveTransform(obj_corners, matchedCorners, H);
 	} else {
-		cout <<"Found less than " << min_match_count << endl;
+		if(debug) cout <<"Found less than " << min_match_count << endl;
 	}
-	cout << "Finished" <<endl;
+	if(debug) cout << "Finished" <<endl;
 	return;
 }

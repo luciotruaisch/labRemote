@@ -47,7 +47,8 @@ unix:!macx{
 
 macx: {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
-    LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
+    # LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
+    LIBS += -L../../src/build/Debug/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
 
 #INCLUDEPATH += /usr/local/include

@@ -21,11 +21,11 @@ int main(int argc, char* argv[])
 	vector<Point2f> matchedCorners(4);
 	OpenCVHelper::SIFT_obj_identify(img_object, img_scene, matchedCorners);
 	cout <<" Printing matched corner's locations " << endl;
-	/**
+
 	for(auto& corner : matchedCorners) {
 		cout << corner.x << " " << corner.y << endl; 
 	}
-	**/
+
 	cout << "END" <<endl;
 
     return 0;
