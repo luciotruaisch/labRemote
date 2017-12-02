@@ -9,6 +9,9 @@ import "qrc:settings.js" as Settings
 
 import qt.wafer.backend 1.0
 import qt.wafer.FileIO 1.0
+import qt.wafer.objectdetection 1.0
+
+import CVCamera 1.0
 
 ApplicationWindow {
     id: window
@@ -19,12 +22,25 @@ ApplicationWindow {
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
+    property var isConnected: false
+
+    CVCamera {
+        id: camera
+    }
 
     FileIO {
         id: real_chip_input
         source: Settings.real_chip_table.input_name
         onError: console.log(msg)
     }
+
+    ObjectDetection {
+        id: object_detection
+        onCorrectionGenerated: {
+            console.log(dx, dy)
+        }
+    }
+
 
     BackEnd {
         id: backend
@@ -42,6 +58,7 @@ ApplicationWindow {
 
             // load real chip table
             Settings.real_chip_table.read(real_chip_input.read())
+            isConnected = true
         }
 
         onPositionChanged: {
@@ -73,10 +90,10 @@ ApplicationWindow {
 
 
     onClosing: {
-        if(motion_content.isContact) {
+        if(isConnected && motion_content.isContact) {
             backend.zContact = false
         }
-        backend.dismiss()
+        if(isConnected) backend.dismiss()
         console.log(Settings.real_chip_table.output())
         var result = real_chip_input.write(Settings.real_chip_table.output())
         if(result){
@@ -101,6 +118,25 @@ ApplicationWindow {
                     anchors.fill: parent
 
                     ICamera {  }
+
+                    RowLayout{
+
+                        Button {
+                            id: btn_set_source
+                            text: "set source"
+                            onClicked: {
+                                object_detection.setSourceImage(camera.cvImage)
+                            }
+                        }
+
+                        Button {
+                            id: btn_set_dst
+                            text: "set destination"
+                            onClicked: {
+                                object_detection.dstImage(camera.cvImage)
+                            }
+                        }
+                    }
 
                     GroupBox {
                         title: "status report"

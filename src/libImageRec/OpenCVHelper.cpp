@@ -87,7 +87,7 @@ void OpenCVHelper::SIFT_obj_identify(
 		**/
 		perspectiveTransform(obj_corners, matchedCorners, H);
 	} else {
-		if(debug) cout <<"Found less than " << min_match_count << endl;
+		cout <<"Found less than " << min_match_count << " matches" << endl;
 	}
 	if(debug) cout << "Finished" <<endl;
 	return;

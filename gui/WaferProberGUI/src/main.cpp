@@ -3,6 +3,7 @@
 
 #include "backend.h"
 #include "FileIO.h"
+#include "objectdetection.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<BackEnd>("qt.wafer.backend", 1, 0, "BackEnd");
     qmlRegisterType<FileIO, 1>("qt.wafer.FileIO", 1, 0, "FileIO");
+    qmlRegisterType<ObjectDetection, 1>("qt.wafer.objectdetection", 1, 0, "ObjectDetection");
 
     QQmlApplicationEngine engine;
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));

@@ -1,3 +1,5 @@
+QT_CONFIG -= no-pkg-config
+
 QT += qml quick multimedia
 
 CONFIG += c++11
@@ -5,13 +7,25 @@ CONFIG += c++11
 # PKGCONFIG += opencv
 HEADERS += \
     src/backend.h \
-    src/FileIO.h
+    src/FileIO.h \
+    src/objectdetection.h
 
 SOURCES += src/main.cpp \
     src/backend.cpp \
-    src/FileIO.cpp
+    src/FileIO.cpp \
+    src/objectdetection.cpp
 
 RESOURCES += qml.qrc
+
+#unix: {
+#    CONFIG += link_pkgconfig
+#    PKGCONFIG += opencv
+#}
+#mac {
+#    PKG_CONFIG = /usr/local/bin/pkg-config
+#}
+unix: INCLUDEPATH += /usr/local/include
+unix: LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs -lopencv_features2d -lopencv_xfeatures2d -lopencv_video -lopencv_calib3d -lopencv_flann
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -40,16 +54,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
+INCLUDEPATH += ../../src/libImageRec/include
 
 unix:!macx{
     LIBS += -L../../build/lib -lWaferProb -lgclibo -lgclib
 }
 
 macx: {
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
     # LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
     LIBS += -L../../src/build/Debug/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
-
-#INCLUDEPATH += /usr/local/include
-#LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio
