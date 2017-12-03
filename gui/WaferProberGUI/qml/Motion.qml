@@ -12,7 +12,8 @@ Item {
     property var connectResult: -999
     property var isContact: false
     property var checkedSeparation: false
-    property string command: " "
+
+    signal readyForChipCorrection()
 
     function go_separate() {
         if(isContact)   {
@@ -31,6 +32,11 @@ Item {
         if(!btn_is_contact.checked){
             btn_is_contact.checked = true
         }
+    }
+
+    function corret_xy(dx, dy) {
+        backend.run_cmd("MV X "+dx)
+        backend.run_cmd("MV Y "+dy)
     }
 
 
@@ -154,7 +160,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    command = "MR X " + (txt_inc_x.text).toString()
+                                    var command = "MR X " + (txt_inc_x.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -177,7 +183,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()                                   
-                                    command = "MR Y " + (-1*txt_inc_y.text).toString()
+                                    var command = "MR Y " + (-1*txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -201,7 +207,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    command = "MR Y " + (txt_inc_y.text).toString()
+                                    var command = "MR Y " + (txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -226,7 +232,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    command = "MR X " + (-1*txt_inc_x.text).toString()
+                                    var command = "MR X " + (-1*txt_inc_x.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -245,6 +251,7 @@ Item {
                                     // console.log(txt_chip_id.text, cmd_x, cmd_y)
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
+                                    root.readyForChipCorrection()
                                 }
                             }
                             Button {
@@ -257,8 +264,7 @@ Item {
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
-//                                    console.log(chip_axises)
-//                                    console.log(chip_id + " " + cmd_x + " " + cmd_y)
+                                    root.readyForChipCorrection()
                                 }
                             }
 
@@ -324,6 +330,10 @@ Item {
                                                                     )
                                     console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
                                 }
+                                ToolTip.text: qsTr("Save current position as the true position for current chip.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
                             }
 
                         }
@@ -578,7 +588,7 @@ Item {
                                     color: "green"
                                 }
                                 onClicked: {
-                                    command = "MR Z " + (-1 * txt_speed_z.text).toString()
+                                    var command = "MR Z " + (-1 * txt_speed_z.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }

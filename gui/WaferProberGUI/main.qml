@@ -16,13 +16,12 @@ import CVCamera 1.0
 ApplicationWindow {
     id: window
     visible: true
-    width: Settings.image_width + 500
-    height: Settings.image_height+ 500
+    width: Settings.image_width + 600
+    height: Settings.image_height+ 600
 
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
-    property var isConnected: false
 
     CVCamera {
         id: camera
@@ -37,7 +36,11 @@ ApplicationWindow {
     ObjectDetection {
         id: object_detection
         onCorrectionGenerated: {
-            console.log(dx, dy)
+            console.log("I will correct for", dx, dy)
+            // change pixel to mm.
+            dx *= 0.002
+            dy *= 0.002
+            motion_content.corret_xy(dx, dy)
         }
     }
 
@@ -90,10 +93,10 @@ ApplicationWindow {
 
 
     onClosing: {
-        if(isConnected && motion_content.isContact) {
+        if(motion_content.connectResult == 0 && motion_content.isContact) {
             backend.zContact = false
         }
-        if(isConnected) backend.dismiss()
+        if(motion_content.connectResult == 0) backend.dismiss()
         console.log(Settings.real_chip_table.output())
         var result = real_chip_input.write(Settings.real_chip_table.output())
         if(result){
@@ -206,6 +209,9 @@ ApplicationWindow {
 
                         Motion {
                             id: motion_content
+                            onReadyForChipCorrection: {
+                                object_detection.setSourceImage(camera.cvImage)
+                            }
                         }
 
                         Measurement {}
