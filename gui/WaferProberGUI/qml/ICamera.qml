@@ -12,7 +12,7 @@ Item {
 
     property date currentDate: new Date()
     width: Settings.image_width
-    height: Settings.image_height
+    height: Settings.image_height + 100
 
     Button {
         id: btn_snap

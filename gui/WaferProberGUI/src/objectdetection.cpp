@@ -7,8 +7,8 @@
 
 ObjectDetection::ObjectDetection(QObject *parent) : QObject(parent)
 {
-    const char* input_template = "/Users/xju/Documents/2017/RD53/code/labRemote/image_process/jupyter/selfied_template.png";
-    // const char* input_template = "/Users/xju/Documents/2017/RD53/code/labRemote/gui/WaferProberGUI/images/RD53A_template.png";
+    // const char* input_template = "/Users/xju/Documents/2017/RD53/code/labRemote/image_process/jupyter/selfied_template.png";
+    const char* input_template = "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/images/RD53A_template_less.png";
     m_object = cv::imread( input_template,
                            cv::IMREAD_GRAYSCALE);
     m_sourceLocation.reserve(4);

@@ -40,7 +40,7 @@ ApplicationWindow {
             // change pixel to mm.
             dx *= 0.002
             dy *= 0.002
-            motion_content.corret_xy(dx, dy)
+            motion_content.corret_xy(dx, -1*dy)
         }
     }
 
@@ -61,7 +61,6 @@ ApplicationWindow {
 
             // load real chip table
             Settings.real_chip_table.read(real_chip_input.read())
-            isConnected = true
         }
 
         onPositionChanged: {
@@ -129,6 +128,7 @@ ApplicationWindow {
                             text: "set source"
                             onClicked: {
                                 object_detection.setSourceImage(camera.cvImage)
+                                console.log("source image is set.")
                             }
                         }
 
@@ -137,6 +137,7 @@ ApplicationWindow {
                             text: "set destination"
                             onClicked: {
                                 object_detection.dstImage(camera.cvImage)
+                                console.log("destination image is set.")
                             }
                         }
                     }
@@ -210,7 +211,7 @@ ApplicationWindow {
                         Motion {
                             id: motion_content
                             onReadyForChipCorrection: {
-                                object_detection.setSourceImage(camera.cvImage)
+                                object_detection.dstImage(camera.cvImage)
                             }
                         }
 

@@ -35,8 +35,9 @@ Item {
     }
 
     function corret_xy(dx, dy) {
-        backend.run_cmd("MV X "+dx)
-        backend.run_cmd("MV Y "+dy)
+        console.log("I will correct that, but not now.")
+//        backend.run_cmd("MV X "+dx)
+//        backend.run_cmd("MV Y "+dy)
     }
 
 
