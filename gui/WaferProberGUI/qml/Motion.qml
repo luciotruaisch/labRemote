@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtQuick.Extras 1.4
 
 import "qrc:settings.js" as Settings
 
@@ -12,6 +13,9 @@ Item {
     property var connectResult: -999
     property var isContact: false
     property var checkedSeparation: false
+
+    property var txt_rel_x: txt_rel_x
+    property var txt_rel_y: txt_rel_y
 
     signal readyForChipCorrection()
 
@@ -33,6 +37,7 @@ Item {
             btn_is_contact.checked = true
         }
     }
+
 
 //    function corret_xy(dx, dy) {
 //        console.log("I will correct that, but not now.")
@@ -139,6 +144,7 @@ Item {
                         title: "Control NEEDLE"
                         Layout.fillWidth: true
                         GridLayout{
+                            id: ctr_grid
                             anchors.fill: parent
                             rows: 3
                             flow: GridLayout.TopToBottom
@@ -237,40 +243,8 @@ Item {
                                     backend.run_cmd(command)
                                 }
                             }
-                            Button {
-                                Layout.row: 0
-                                Layout.column: 4
-                                text: "Scan Wafer"
-                            }
-                            Button {
-                                text: "Go 2 Chip: "
-                                onClicked: {
-                                    // console.log(txt_chip_id.text)
-                                    var chip_axises = Settings.get_chip_axis(
-                                                Settings.find_chip_number(txt_chip_id.text)
-                                                )
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    // console.log(txt_chip_id.text, cmd_x, cmd_y)
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
-                                }
-                            }
-                            Button {
-                                text: "Next chip"
-                                onClicked: {
-                                    var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
-                                    // console.log("chip id: " + chip_id)
-                                    var chip_axises = Settings.get_chip_axis(chip_id)
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
-                                }
-                            }
 
+                            // XY pre-defined functions.
                             Button {
                                 Layout.row: 0
                                 Layout.column: 5
@@ -328,15 +302,24 @@ Item {
                                 }
                             }
 
-                            TextField {
-                                id: txt_chip_id
-                                placeholderText: "chip ID"
-                                selectByMouse: true
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                            }
                             Button {
-                                text: "Previous chip"
+                                text: "Go 2 Chip: "
+                                onClicked: {
+                                    // console.log(txt_chip_id.text)
+                                    var chip_axises = Settings.get_chip_axis(
+                                                Settings.find_chip_number(txt_chip_id.text)
+                                                )
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    // console.log(txt_chip_id.text, cmd_x, cmd_y)
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                    backend.run_cmd("ENDCHIP")
+                                }
+                            }
+
+                            Button {
+                                text: "Prev chip"
                                 onClicked: {
                                     var chip_id = Settings.find_chip_number(current_chip_id.text) - 1
                                     // console.log("chip id: " + chip_id)
@@ -347,8 +330,54 @@ Item {
                                     backend.run_cmd(cmd_y)
                                     backend.run_cmd("ENDCHIP")
                                 }
+
+                                ToolTip.text: qsTr("go to previous chip in numbering")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
                             }
 
+                            Button{
+                                id: tog_with_cal
+                                checkable: true
+                                checked: true
+                                text: "auto calibrate"
+                                onClicked: {
+                                    with_correction = tog_with_cal.checked
+                                    console.log("with calibration: ",with_correction)
+                                }
+                                ToolTip.text: qsTr("In red (checked), apply auto-mated calibration, otherwise not")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
+                            }
+
+                            TextField {
+                                id: txt_chip_id
+                                placeholderText: "chip ID"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+
+                            Button {
+                                text: "Next chip"
+                                onClicked: {
+                                    var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
+                                    // console.log("chip id: " + chip_id)
+                                    var chip_axises = Settings.get_chip_axis(chip_id)
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                    backend.run_cmd("ENDCHIP")
+                                }
+
+                                ToolTip.text: qsTr("go to next chip in numbering")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
+                            }
                         }
                     }
 
