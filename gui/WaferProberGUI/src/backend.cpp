@@ -50,13 +50,16 @@ void MotionWorker::run()
         // qInfo() <<" size of commands after run: " << cmd_queue->size();
         m_cmdQueueMutex.unlock();
 
+        if(!current_cmd.contains("ENDCHIP")) {
+            int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
 
-        int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
-
-        // signal the command that is processed for records
-        // and notify main program that a axis is changed.
+            // signal the command that is processed for records
+            // and notify main program that a axis is changed.
+            emit positionChanged(axis_changed);
+        } else {
+            QThread::sleep(2.);
+        }
         emit commandChanged(current_cmd);
-        emit positionChanged(axis_changed);
     }
 }
 

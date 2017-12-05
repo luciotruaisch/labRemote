@@ -34,11 +34,11 @@ Item {
         }
     }
 
-    function corret_xy(dx, dy) {
-        console.log("I will correct that, but not now.")
-//        backend.run_cmd("MV X "+dx)
-//        backend.run_cmd("MV Y "+dy)
-    }
+//    function corret_xy(dx, dy) {
+//        console.log("I will correct that, but not now.")
+////        backend.run_cmd("MV X "+dx)
+////        backend.run_cmd("MV Y "+dy)
+//    }
 
 
     ColumnLayout {
@@ -245,14 +245,14 @@ Item {
                             Button {
                                 text: "Go 2 Chip: "
                                 onClicked: {
-                                    console.log(txt_chip_id.text)
+                                    // console.log(txt_chip_id.text)
                                     var chip_axises = Settings.get_chip_axis(Number(txt_chip_id.text))
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
                                     // console.log(txt_chip_id.text, cmd_x, cmd_y)
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
-                                    root.readyForChipCorrection()
+                                    backend.run_cmd("ENDCHIP")
                                 }
                             }
                             Button {
@@ -265,7 +265,7 @@ Item {
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
-                                    root.readyForChipCorrection()
+                                    backend.run_cmd("ENDCHIP")
                                 }
                             }
 
@@ -320,22 +320,35 @@ Item {
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
-
                             Button {
-                                text: "Calibrate"
+                                text: "Previous chip"
                                 onClicked: {
-                                    var chip_id = Number(current_chip_id.text)
-                                    Settings.real_chip_table.update(chip_id,
-                                                                    Number(txt_pos_x.text),
-                                                                    Number(txt_pos_y.text)
-                                                                    )
-                                    console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
+                                    var chip_id = Number(current_chip_id.text) - 1
+                                    // console.log("chip id: " + chip_id)
+                                    var chip_axises = Settings.get_chip_axis(chip_id)
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                    backend.run_cmd("ENDCHIP")
                                 }
-                                ToolTip.text: qsTr("Save current position as the true position for current chip.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1000
-                                ToolTip.timeout: 4000
                             }
+
+//                            Button {
+//                                text: "Calibrate"
+//                                onClicked: {
+//                                    var chip_id = Number(current_chip_id.text)
+//                                    Settings.real_chip_table.update(chip_id,
+//                                                                    Number(txt_pos_x.text),
+//                                                                    Number(txt_pos_y.text)
+//                                                                    )
+//                                    console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
+//                                }
+//                                ToolTip.text: qsTr("Save current position as the true position for current chip.")
+//                                ToolTip.visible: hovered
+//                                ToolTip.delay: 1000
+//                                ToolTip.timeout: 4000
+//                            }
 
                         }
                     }
@@ -574,7 +587,7 @@ Item {
                                     color: "red"
                                 }
                                 onClicked: {
-                                    command = "MR Z " + txt_speed_z.text.toString()
+                                    var command = "MR Z " + txt_speed_z.text.toString()
                                     backend.run_cmd(command)
                                 }
                             }

@@ -143,7 +143,11 @@ public slots:
     }
 
     void receiveUpdate(QString message) {
-        emit infoUpdated(message);
+        if(message.contains("ENDCHIP")){
+            emit chipArrived();
+        } else {
+            emit infoUpdated(message);
+        }
     }
 
 signals:
@@ -152,6 +156,8 @@ signals:
 
     void positionChanged(int axis);
     void infoUpdated(QString message);
+
+    void chipArrived();
 
     void posXGot(); // X postion returned
     void posYGot(); // Y postion returned
