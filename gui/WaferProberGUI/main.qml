@@ -54,9 +54,6 @@ ApplicationWindow {
             // change pixel to mm.
             dx *= 0.002
             dy *= -0.002
-            // manually correction
-//            dx -= 0.01
-//            dy += 0.01
             console.log("I will correct for", dx, dy)
             backend.run_cmd("MR X "+ dx.toString())
             backend.run_cmd("MR Y "+ dy.toString())

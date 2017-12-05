@@ -60,6 +60,7 @@ var chip_numbering = [
 
         ];
 
+
 var find_location = function(id_){
     for(var i = 0; i < 12; i++){
         for(var j = 0; j < 10; j++){
@@ -71,11 +72,16 @@ var find_location = function(id_){
     return {x_loc: 0, y_loc: 0};
 }
 
+var find_chip_number = function(id_) {
+    var items = id_.split("-");
+    var x = Number(items[0]) - 1;
+    var y = Number(items[1]) - 1;
+    // console.log("location from chipID:", id_, x, y, chip_numbering[y][x])
+    return chip_numbering[y][x];
+}
 
 var update_true_chip_table = function(id_, x_, y_) {
     var input_loc = find_location(id_);
-    // console.log("Find location of calibrated ID: ", id_, " ", x_, y_)
-    // console.log("Find location of calibrated ID: ", input_loc.x_loc, input_loc.y_loc)
 
     var x_zero = x_ - incre_x * input_loc.x_loc;
     var y_zero = y_ - incre_y * (11 - input_loc.y_loc);
@@ -89,7 +95,6 @@ var update_true_chip_table = function(id_, x_, y_) {
                 yAxis: (y_zero + (11 - i) * incre_y) * 1000/ 1000
             }
             n_properties += 1
-            // console.log(chip_id, i, j,  x_zero+i*incre_x, y_zero+(11-j)*incre_y);
         }
     }
     console.log(n_properties," properties are updated for true chip Table!")
@@ -104,8 +109,6 @@ var get_chip_axis = function(chip_id) {
         return true_chip_table["0"];
     }
 }
-
-
 
 // find nearest chip ID given current location
 var find_chip_ID = function(x_, y_){
@@ -122,7 +125,9 @@ var find_chip_ID = function(x_, y_){
             }
         }
     }
-    return closet_chip;
+    var input_loc = find_location(Number(closet_chip));
+    var res = (input_loc.x_loc+1)+"-"+(input_loc.y_loc+1)
+    return res;
 }
 
 // a table that stores a correct hand-selected locations
