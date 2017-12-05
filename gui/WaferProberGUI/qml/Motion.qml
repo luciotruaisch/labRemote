@@ -14,6 +14,8 @@ Item {
     property var isContact: false
     property var checkedSeparation: false
 
+    property var isCalibrated: false
+
     property var txt_rel_x: txt_rel_x
     property var txt_rel_y: txt_rel_y
 
@@ -303,6 +305,7 @@ Item {
                             }
 
                             Button {
+                                enabled: isCalibrated
                                 text: "Go 2 Chip: "
                                 onClicked: {
                                     // console.log(txt_chip_id.text)
@@ -319,6 +322,7 @@ Item {
                             }
 
                             Button {
+                                enabled: isCalibrated
                                 text: "Prev chip"
                                 onClicked: {
                                     var chip_id = Settings.find_chip_number(current_chip_id.text) - 1
@@ -361,6 +365,7 @@ Item {
                             }
 
                             Button {
+                                enabled: isCalibrated
                                 text: "Next chip"
                                 onClicked: {
                                     var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
@@ -383,6 +388,7 @@ Item {
 
                     // Calibrate the x-y station
                     Pane {
+                        enabled: connectResult==0
                         Layout.fillWidth: true
                         RowLayout {
                             anchors.fill: parent
@@ -394,7 +400,15 @@ Item {
                                                                     Number(txt_chip_y_calibrate.text)
                                                                     )
                                     console.log(Settings.true_chip_table["1"])
+
+                                    object_detection.setSourceImage(camera.cvImage)
+                                    console.log("source image is set.")
+                                    isCalibrated = true
                                 }
+                                ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 5000
                             }
                             TextField {
                                 id: txt_chip_x_calibrate
