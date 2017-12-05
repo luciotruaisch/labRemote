@@ -3,6 +3,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
 
+import QtQuick.Extras 1.4
+
 import "qml" // Housing customized Items
 //import "settings.js" as Settings
 import "qrc:settings.js" as Settings
@@ -22,10 +24,23 @@ ApplicationWindow {
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
+    property var with_correction: btn_with_cal.checked
+
+    Timer {
+        id: timer
+    }
+
+    function delay(delayTime, cb) {
+        timer.interval = delayTime;
+        timer.repeat = false;
+        timer.triggered.connect(cb);
+        timer.start();
+    }
 
     CVCamera {
         id: camera
     }
+
 
     FileIO {
         id: real_chip_input
@@ -35,12 +50,13 @@ ApplicationWindow {
 
     ObjectDetection {
         id: object_detection
-        onCorrectionGenerated: {
-            console.log("I will correct for", dx, dy)
+        onCorrectionGenerated: {            
             // change pixel to mm.
             dx *= 0.002
-            dy *= 0.002
-            motion_content.corret_xy(dx, dy)
+            dy *= -0.002
+            console.log("I will correct for", dx, dy)
+            backend.run_cmd("MR X "+ dx.toString())
+            backend.run_cmd("MR Y "+ dy.toString())
         }
     }
 
@@ -61,7 +77,6 @@ ApplicationWindow {
 
             // load real chip table
             Settings.real_chip_table.read(real_chip_input.read())
-            isConnected = true
         }
 
         onPositionChanged: {
@@ -87,6 +102,16 @@ ApplicationWindow {
 
         onInfoUpdated: {
             output.append(message)
+        }
+
+        onChipArrived: {
+
+            if(with_correction) {
+                //delay(1000, function() {
+                    object_detection.dstImage(camera.cvImage)
+                    console.log("destination image is set.")
+                //})
+            }
         }
     }
 
@@ -129,6 +154,7 @@ ApplicationWindow {
                             text: "set source"
                             onClicked: {
                                 object_detection.setSourceImage(camera.cvImage)
+                                console.log("source image is set.")
                             }
                         }
 
@@ -137,6 +163,15 @@ ApplicationWindow {
                             text: "set destination"
                             onClicked: {
                                 object_detection.dstImage(camera.cvImage)
+                                console.log("destination image is set.")
+                            }
+                        }
+                        ToggleButton{
+                            id: btn_with_cal
+                            text: "with calibration"
+                            checked: true
+                            onClicked: {
+                                console.log("with calibration: ",with_correction)
                             }
                         }
                     }
@@ -209,9 +244,9 @@ ApplicationWindow {
 
                         Motion {
                             id: motion_content
-                            onReadyForChipCorrection: {
-                                object_detection.setSourceImage(camera.cvImage)
-                            }
+//                            onReadyForChipCorrection: {
+//                                object_detection.dstImage(camera.cvImage)
+//                            }
                         }
 
                         Measurement {}

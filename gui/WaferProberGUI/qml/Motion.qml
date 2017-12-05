@@ -34,10 +34,11 @@ Item {
         }
     }
 
-    function corret_xy(dx, dy) {
-        backend.run_cmd("MV X "+dx)
-        backend.run_cmd("MV Y "+dy)
-    }
+//    function corret_xy(dx, dy) {
+//        console.log("I will correct that, but not now.")
+////        backend.run_cmd("MV X "+dx)
+////        backend.run_cmd("MV Y "+dy)
+//    }
 
 
     ColumnLayout {
@@ -244,27 +245,29 @@ Item {
                             Button {
                                 text: "Go 2 Chip: "
                                 onClicked: {
-                                    console.log(txt_chip_id.text)
-                                    var chip_axises = Settings.get_chip_axis(Number(txt_chip_id.text))
+                                    // console.log(txt_chip_id.text)
+                                    var chip_axises = Settings.get_chip_axis(
+                                                Settings.find_chip_number(txt_chip_id.text)
+                                                )
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
                                     // console.log(txt_chip_id.text, cmd_x, cmd_y)
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
-                                    root.readyForChipCorrection()
+                                    backend.run_cmd("ENDCHIP")
                                 }
                             }
                             Button {
                                 text: "Next chip"
                                 onClicked: {
-                                    var chip_id = 1 + Number(current_chip_id.text)
+                                    var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
                                     // console.log("chip id: " + chip_id)
                                     var chip_axises = Settings.get_chip_axis(chip_id)
                                     var cmd_x = "MA X " + chip_axises.xAxis.toString()
                                     var cmd_y = "MA Y " + chip_axises.yAxis.toString()
                                     backend.run_cmd(cmd_x)
                                     backend.run_cmd(cmd_y)
-                                    root.readyForChipCorrection()
+                                    backend.run_cmd("ENDCHIP")
                                 }
                             }
 
@@ -298,8 +301,6 @@ Item {
                                             backend.run_cmd("MA Y 305")
                                         }
                                     }
-
-
                                     MenuItem {
                                         text: "SCAN X"
                                         onTriggered: {
@@ -308,6 +309,21 @@ Item {
                                             backend.speedX = txt_speed_x.text.toString()
                                             backend.run_cmd("SCAN X")
                                         }
+                                    }
+                                    MenuItem {
+                                        text: "Calibrate"
+                                        onTriggered: {
+                                            var chip_id = Number(current_chip_id.text)
+                                            Settings.real_chip_table.update(chip_id,
+                                                                            Number(txt_pos_x.text),
+                                                                            Number(txt_pos_y.text)
+                                                                            )
+                                            console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
+                                        }
+                                        ToolTip.text: qsTr("Save current position as the true position for current chip.")
+                                        ToolTip.visible: hovered
+                                        ToolTip.delay: 1000
+                                        ToolTip.timeout: 4000
                                     }
                                 }
                             }
@@ -319,21 +335,18 @@ Item {
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
                             }
-
                             Button {
-                                text: "Calibrate"
+                                text: "Previous chip"
                                 onClicked: {
-                                    var chip_id = Number(current_chip_id.text)
-                                    Settings.real_chip_table.update(chip_id,
-                                                                    Number(txt_pos_x.text),
-                                                                    Number(txt_pos_y.text)
-                                                                    )
-                                    console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
+                                    var chip_id = Settings.find_chip_number(current_chip_id.text) - 1
+                                    // console.log("chip id: " + chip_id)
+                                    var chip_axises = Settings.get_chip_axis(chip_id)
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                    backend.run_cmd("ENDCHIP")
                                 }
-                                ToolTip.text: qsTr("Save current position as the true position for current chip.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1000
-                                ToolTip.timeout: 4000
                             }
 
                         }
@@ -347,10 +360,6 @@ Item {
                             Button{
                                 text: "1st Chip"
                                 onClicked: {
-        //                            Settings.update_true_chip_table(Number(txt_chip_id_calibrate.text),
-        //                                                            Number(txt_chip_x_calibrate.text),
-        //                                                            Number(txt_chip_y_calibrate.text)
-        //                                                            )
                                     Settings.update_true_chip_table(1,
                                                                     Number(txt_chip_x_calibrate.text),
                                                                     Number(txt_chip_y_calibrate.text)
@@ -358,14 +367,6 @@ Item {
                                     console.log(Settings.true_chip_table["1"])
                                 }
                             }
-//                            TextField {
-//                                id: txt_chip_id_calibrate
-//                                placeholderText: "chip ID"
-//                                text: Settings.chip_id_for_calibration
-//                                onTextChanged: {
-//                                    Settings.chip_id_for_calibration = text
-//                                }
-//                            }
                             TextField {
                                 id: txt_chip_x_calibrate
                                 placeholderText: "x axis"
@@ -573,7 +574,7 @@ Item {
                                     color: "red"
                                 }
                                 onClicked: {
-                                    command = "MR Z " + txt_speed_z.text.toString()
+                                    var command = "MR Z " + txt_speed_z.text.toString()
                                     backend.run_cmd(command)
                                 }
                             }

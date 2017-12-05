@@ -1,4 +1,4 @@
-QT_CONFIG -= no-pkg-config
+#QT_CONFIG -= no-pkg-config
 
 QT += qml quick multimedia
 
@@ -26,8 +26,6 @@ RESOURCES += qml.qrc
 #mac {
 #    PKG_CONFIG = /usr/local/bin/pkg-config
 #}
-unix: INCLUDEPATH += /usr/local/include
-unix: LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs -lopencv_features2d -lopencv_xfeatures2d -lopencv_video -lopencv_calib3d -lopencv_flann
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -51,15 +49,13 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-
-
 INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
 INCLUDEPATH += ../../src/libImageRec/include
 
 unix:!macx{
-    LIBS += -L../../build/lib -lWaferProb -lgclibo -lgclib
+    LIBS += -L../../src/build/lib -lWaferProb -lgclibo -lgclib
 }
 
 macx: {
@@ -67,3 +63,7 @@ macx: {
     # LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
     LIBS += -L../../src/build/Debug/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
+
+unix: INCLUDEPATH += /usr/local/include
+unix: LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs -lopencv_features2d -lopencv_xfeatures2d -lopencv_video -lopencv_calib3d -lopencv_flann
+

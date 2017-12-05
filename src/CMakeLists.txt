@@ -38,14 +38,19 @@ add_compile_options(-Wno-deprecated)
 add_compile_options(-std=c++11)
 # add_compile_options(-Wc++11-extensions)
 
+
 # add libraries
 list(APPEND libs Galil Zaber WaferProb GPIB ImageRec)
+
 foreach(lib ${libs})
 include_directories(lib${lib}/include)
 file(GLOB SrcFiles lib${lib}/*.c*)
 list(APPEND LibSrcFiles ${SrcFiles})
 endforeach()
-add_library(WaferProb STATIC ${LibSrcFiles})
+
+add_library(WaferProb STATIC ${LibSrcFiles}) 
+
+find_package( OpenCV REQUIRED )
 
 # add executables
 file(GLOB tools tools/*.c*)
@@ -56,7 +61,6 @@ add_executable(${execname} tools/${srcfile})
 add_dependencies(${execname} WaferProb)
 set_target_properties(${execname} PROPERTIES LINKER_LANGUAGE CXX)
 
-find_package( OpenCV REQUIRED )
 
 if(APPLE)
 	set(MACOSX_DEPLOYMENT_TARGET 10.10)
