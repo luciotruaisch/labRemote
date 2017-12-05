@@ -345,7 +345,7 @@ Item {
                                 id: tog_with_cal
                                 checkable: true
                                 checked: true
-                                text: "auto calibrate"
+                                text: "auto correction"
                                 onClicked: {
                                     with_correction = tog_with_cal.checked
                                     console.log("with calibration: ",with_correction)
@@ -393,13 +393,13 @@ Item {
                         RowLayout {
                             anchors.fill: parent
                             Button{
-                                text: "1st Chip"
+                                text: "calibrate"
                                 onClicked: {
-                                    Settings.update_true_chip_table(1,
+                                    Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
                                                                     Number(txt_chip_x_calibrate.text),
                                                                     Number(txt_chip_y_calibrate.text)
                                                                     )
-                                    console.log(Settings.true_chip_table["1"])
+//                                    console.log(Settings.true_chip_table["1"])
 
                                     object_detection.setSourceImage(camera.cvImage)
                                     console.log("source image is set.")
@@ -410,6 +410,20 @@ Item {
                                 ToolTip.delay: 1000
                                 ToolTip.timeout: 5000
                             }
+
+                            TextField {
+                                id: txt_chip_id_calibrate
+                                placeholderText: "chip id"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+
+                                text: Settings.chip_id_for_calibration
+                                onTextChanged: {
+                                    Settings.chip_id_for_calibration = txt_chip_id_calibrate.text
+                                }
+                            }
+
                             TextField {
                                 id: txt_chip_x_calibrate
                                 placeholderText: "x axis"
@@ -610,7 +624,6 @@ Item {
                                 id: btn_z_up
                                 text: "Closer"
                                 Layout.fillWidth: true
-                                //autoRepeat: true
                                 contentItem: Text {
                                     text: btn_z_up.text
                                     font: btn_z_up.font
@@ -625,7 +638,6 @@ Item {
                                 id: btn_z_down
                                 text: "Further"
                                 Layout.fillWidth: true
-                                //autoRepeat: true
                                 contentItem: Text {
                                     text: btn_z_down.text
                                     font: btn_z_down.font

@@ -54,13 +54,16 @@ ApplicationWindow {
             // change pixel to mm.
             dx *= 0.002
             dy *= -0.002
+            var dx_str = dx.toLocaleString(Qt.locale("en_US"), 'f', 3)
+            var dy_str = dy.toLocaleString(Qt.locale("en_US"), 'f', 3)
             if(with_correction) {
-                backend.run_cmd("MR X "+ dx.toString())
-                backend.run_cmd("MR Y "+ dy.toString())
+                backend.run_cmd("MR X "+ dx_str)
+                backend.run_cmd("MR Y "+ dy_str)
             } else {
-                motion_content.txt_rel_x.text = dx
-                motion_content.txt_rel_y.text = dy
+                motion_content.txt_rel_x.text = dx_str
+                motion_content.txt_rel_y.text = dy_str
             }
+            console.log("automated correction is:",dx_str, dy_str)
         }
     }
 
@@ -144,27 +147,6 @@ ApplicationWindow {
                     anchors.fill: parent
 
                     ICamera {  }
-
-//                    RowLayout{
-
-//                        Button {
-//                            id: btn_set_source
-//                            text: "set source"
-//                            onClicked: {
-//                                object_detection.setSourceImage(camera.cvImage)
-//                                console.log("source image is set.")
-//                            }
-//                        }
-
-//                        Button {
-//                            id: btn_set_dst
-//                            text: "set destination"
-//                            onClicked: {
-//                                object_detection.dstImage(camera.cvImage)
-//                                console.log("destination image is set.")
-//                            }
-//                        }
-//                    }
 
                     GroupBox {
                         title: "status report"
