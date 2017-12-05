@@ -6,6 +6,7 @@ import QtMultimedia 5.8
 
 import "qrc:settings.js" as Settings
 
+import qt.wafer.chipfilter 1.0
 
 
 Item {
@@ -22,11 +23,20 @@ Item {
 		}
 	} 
 
+    ChipFilter {
+        id: chip_filter
+        onFinished: {
+            console.log("chip is detected: " + result)
+        }
+    }
+
     VideoOutput {
         source: camera
         anchors.fill: parent
         Layout.fillWidth: true
         focus: visible
+
+        filters: [chip_filter]
 
     }
 
