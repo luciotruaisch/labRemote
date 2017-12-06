@@ -21,6 +21,9 @@ public:
     // provide a new destination image; it will emit a "correctionGenerated" signal
     Q_INVOKABLE void dstImage(QVariant dstImage);
 
+    // provide an image for focus studies
+    Q_INVOKABLE void focusImage(QVariant image);
+
 signals:
     void correctionGenerated(float dx, float dy);
 

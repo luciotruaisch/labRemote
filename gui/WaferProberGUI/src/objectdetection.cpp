@@ -35,3 +35,15 @@ void ObjectDetection::dstImage(QVariant dstImage) {
         qInfo()<< "input is not a Mat";
     }
 }
+
+double ObjectDetection::getMean(QVariant image)
+{
+    double res = -1;
+    if(dstImage.canConvert<cv::Mat>()){
+        cv::Scalar mean_value = cv::mean(image.value<cv::Mat>());
+        res = mean_value[0];
+    } else {
+        qInfo()<< "input is not a Mat";
+    }
+    return res;
+}
