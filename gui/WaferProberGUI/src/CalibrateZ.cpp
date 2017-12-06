@@ -1,4 +1,4 @@
-#include "calibratez.h"
+#include "CalibrateZ.h"
 
 CalibrateZ::CalibrateZ()
 {

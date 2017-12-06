@@ -60,7 +60,7 @@ CVCamera::~CVCamera()
     //Camera release is automatic when cv::VideoCapture is destroyed
 }
 
-void CVCamera::changeParent(QQuickItem* parent)
+void CVCamera::changeParent(QQuickItem* parent=nullptr)
 {
     //FIXME: we probably need to disconnect the previous parent
     //TODO: probably a good idea to stop the camera (and restart it if we are auto-starting in this context)

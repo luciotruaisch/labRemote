@@ -1,4 +1,4 @@
-#include "objectdetection.h"
+#include "ObjectDetection.h"
 #include "OpenCVHelper.h"
 
 #include <vector>

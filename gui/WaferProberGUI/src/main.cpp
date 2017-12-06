@@ -3,7 +3,7 @@
 
 #include "backend.h"
 #include "FileIO.h"
-#include "objectdetection.h"
+#include "ObjectDetection.h"
 #include "CVCamera.h"
 
 

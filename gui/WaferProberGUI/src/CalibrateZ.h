@@ -4,7 +4,7 @@
 #include <QObject>
 
 #include "backend.h"
-#include "objectdetection.h"
+#include "ObjectDetection.h"
 
 // Q_DECLARE_METATYPE(CVCamera)
 
