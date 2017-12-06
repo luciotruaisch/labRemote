@@ -18,8 +18,8 @@ using namespace cv::xfeatures2d;
 using namespace std;
 
 void OpenCVHelper::SIFT_obj_identify(
-		const Mat& img1, 
-		const Mat& img2, 
+		const Mat& img1,
+		const Mat& img2,
 		vector<Point2f>& matchedCorners)
 {
 	bool debug = false;
@@ -27,7 +27,7 @@ void OpenCVHelper::SIFT_obj_identify(
 //	const int minHessian = 400;
 //	Ptr<SURF> detector = SURF::create(minHessian);
 	// Ptr<ORB> detector = ORB::create();
-	
+
 	vector<KeyPoint> kp1, kp2;
 	Mat des1, des2;
 	detector->detectAndCompute(img1, noArray(), kp1, des1);
@@ -37,12 +37,12 @@ void OpenCVHelper::SIFT_obj_identify(
 	const int checks = 50;
 	Ptr<flann::SearchParams> searchParams = new flann::SearchParams(checks);
 	Ptr<flann::KDTreeIndexParams> indexParams = new flann::KDTreeIndexParams(5);
-	
+
 	auto flann = FlannBasedMatcher(indexParams, searchParams);
 	if(debug) cout <<"created FLANN Matcher" << endl;
 
-	vector<vector<DMatch> > matches;	
-	flann.knnMatch(des1, des2, matches, 2); 
+	vector<vector<DMatch> > matches;
+	flann.knnMatch(des1, des2, matches, 2);
 
 	vector<DMatch> good_matches;
 	// perform a ratio test.
