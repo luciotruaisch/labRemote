@@ -38,9 +38,9 @@ var add =  (
 var true_chip_table = {};
 
 
-var chip_id_for_calibration = 1
-var chip_x_for_calibration = 7.680
-var chip_y_for_calibration = 171.76
+var chip_id_for_calibration = "1-6"
+var chip_x_for_calibration = 19.896
+var chip_y_for_calibration = 172.28
 
 // a 10 columns and 12 rows
 // x = 10, y = 12

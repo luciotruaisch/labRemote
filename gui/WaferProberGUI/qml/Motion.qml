@@ -308,6 +308,7 @@ Item {
                                 enabled: isCalibrated
                                 text: "Go 2 Chip: "
                                 onClicked: {
+                                    if(isContact) go_separate()
                                     // console.log(txt_chip_id.text)
                                     var chip_axises = Settings.get_chip_axis(
                                                 Settings.find_chip_number(txt_chip_id.text)
@@ -325,6 +326,8 @@ Item {
                                 enabled: isCalibrated
                                 text: "Prev chip"
                                 onClicked: {
+                                    if(isContact) go_separate()
+
                                     var chip_id = Settings.find_chip_number(current_chip_id.text) - 1
                                     // console.log("chip id: " + chip_id)
                                     var chip_axises = Settings.get_chip_axis(chip_id)
@@ -368,6 +371,8 @@ Item {
                                 enabled: isCalibrated
                                 text: "Next chip"
                                 onClicked: {
+                                    if(isContact) go_separate()
+
                                     var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
                                     // console.log("chip id: " + chip_id)
                                     var chip_axises = Settings.get_chip_axis(chip_id)
@@ -597,11 +602,8 @@ Item {
                             Label {
                                 text: "mm/s"
                             }
-                            Button{
+                            Label {
                                 text: "Z separation"
-                                onClicked: {
-                                    backend.zSep = txt_sep_z.text.toString()
-                                }
                             }
                             TextField{
                                 id: txt_sep_z
@@ -609,6 +611,9 @@ Item {
                                 selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
+                                onEditingFinished: {
+                                    backend.zSep = txt_sep_z.text.toString()
+                                }
                             }
                             Label {
                                 text: "mm"
@@ -704,7 +709,8 @@ Item {
             btn_is_contact.checked = true
             checkedSeparation = true
             backend.IsAtContact = true
-            txt_speed_z.text = 0.7
+            txt_speed_z.text = txt_sep_z.text
+            backend.speedZ = txt_sep_z.text
         }
         onRejected: {
 

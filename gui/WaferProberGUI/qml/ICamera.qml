@@ -18,7 +18,7 @@ Item {
         id: btn_snap
         text: "Snapshot"
         onClicked: {
-            camera.saveImage(Settings.image_saved_path + Settings.add()+"_"+currentDate.toLocaleString()+".png")
+            camera.saveImage(Settings.image_saved_path + currentDate.toLocaleString()+"_"+Settings.add()+".png")
 		}
 	} 
 
