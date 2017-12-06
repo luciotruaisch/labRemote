@@ -145,6 +145,8 @@ public slots:
     void receiveUpdate(QString message) {
         if(message.contains("ENDCHIP")){
             emit chipArrived();
+        } else if(message.contains("ENDCALIBRATE")){
+            emit srcImageArrived();
         } else {
             emit infoUpdated(message);
         }
@@ -158,6 +160,7 @@ signals:
     void infoUpdated(QString message);
 
     void chipArrived();
+    void srcImageArrived();
 
     void posXGot(); // X postion returned
     void posYGot(); // Y postion returned

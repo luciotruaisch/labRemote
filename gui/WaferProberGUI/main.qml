@@ -24,7 +24,8 @@ ApplicationWindow {
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
-    property var with_correction: btn_with_cal.checked
+    property var with_correction: true
+    property var yOffSet: 0.3
 
     Timer {
         id: timer
@@ -50,13 +51,21 @@ ApplicationWindow {
 
     ObjectDetection {
         id: object_detection
-        onCorrectionGenerated: {            
+        onCorrectionGenerated: {
             // change pixel to mm.
             dx *= 0.002
             dy *= -0.002
-            console.log("I will correct for", dx, dy)
-            backend.run_cmd("MR X "+ dx.toString())
-            backend.run_cmd("MR Y "+ dy.toString())
+            dy -= yOffSet
+            var dx_str = dx.toLocaleString(Qt.locale("en_US"), 'f', 3)
+            var dy_str = dy.toLocaleString(Qt.locale("en_US"), 'f', 3)
+            if(with_correction) {
+                backend.run_cmd("MR X "+ dx_str)
+                backend.run_cmd("MR Y "+ dy_str)
+            } else {
+                motion_content.txt_rel_x.text = dx_str
+                motion_content.txt_rel_y.text = dy_str
+            }
+            console.log("automated correction is:",dx_str, dy_str)
         }
     }
 
@@ -105,13 +114,11 @@ ApplicationWindow {
         }
 
         onChipArrived: {
+            object_detection.dstImage(camera.cvImage)
+        }
 
-            if(with_correction) {
-                //delay(1000, function() {
-                    object_detection.dstImage(camera.cvImage)
-                    console.log("destination image is set.")
-                //})
-            }
+        onSrcImageArrived: {
+            object_detection.setSourceImage(camera.cvImage)
         }
     }
 
@@ -146,35 +153,6 @@ ApplicationWindow {
                     anchors.fill: parent
 
                     ICamera {  }
-
-                    RowLayout{
-
-                        Button {
-                            id: btn_set_source
-                            text: "set source"
-                            onClicked: {
-                                object_detection.setSourceImage(camera.cvImage)
-                                console.log("source image is set.")
-                            }
-                        }
-
-                        Button {
-                            id: btn_set_dst
-                            text: "set destination"
-                            onClicked: {
-                                object_detection.dstImage(camera.cvImage)
-                                console.log("destination image is set.")
-                            }
-                        }
-                        ToggleButton{
-                            id: btn_with_cal
-                            text: "with calibration"
-                            checked: true
-                            onClicked: {
-                                console.log("with calibration: ",with_correction)
-                            }
-                        }
-                    }
 
                     GroupBox {
                         title: "status report"

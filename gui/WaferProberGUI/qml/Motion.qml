@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
+import QtQuick.Extras 1.4
 
 import "qrc:settings.js" as Settings
 
@@ -12,6 +13,11 @@ Item {
     property var connectResult: -999
     property var isContact: false
     property var checkedSeparation: false
+
+    property var isCalibrated: false
+
+    property var txt_rel_x: txt_rel_x
+    property var txt_rel_y: txt_rel_y
 
     signal readyForChipCorrection()
 
@@ -33,6 +39,7 @@ Item {
             btn_is_contact.checked = true
         }
     }
+
 
 //    function corret_xy(dx, dy) {
 //        console.log("I will correct that, but not now.")
@@ -139,6 +146,7 @@ Item {
                         title: "Control NEEDLE"
                         Layout.fillWidth: true
                         GridLayout{
+                            id: ctr_grid
                             anchors.fill: parent
                             rows: 3
                             flow: GridLayout.TopToBottom
@@ -237,40 +245,8 @@ Item {
                                     backend.run_cmd(command)
                                 }
                             }
-                            Button {
-                                Layout.row: 0
-                                Layout.column: 4
-                                text: "Scan Wafer"
-                            }
-                            Button {
-                                text: "Go 2 Chip: "
-                                onClicked: {
-                                    // console.log(txt_chip_id.text)
-                                    var chip_axises = Settings.get_chip_axis(
-                                                Settings.find_chip_number(txt_chip_id.text)
-                                                )
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    // console.log(txt_chip_id.text, cmd_x, cmd_y)
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
-                                }
-                            }
-                            Button {
-                                text: "Next chip"
-                                onClicked: {
-                                    var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
-                                    // console.log("chip id: " + chip_id)
-                                    var chip_axises = Settings.get_chip_axis(chip_id)
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
-                                }
-                            }
 
+                            // XY pre-defined functions.
                             Button {
                                 Layout.row: 0
                                 Layout.column: 5
@@ -328,16 +304,30 @@ Item {
                                 }
                             }
 
-                            TextField {
-                                id: txt_chip_id
-                                placeholderText: "chip ID"
-                                selectByMouse: true
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                            }
                             Button {
-                                text: "Previous chip"
+                                enabled: isCalibrated
+                                text: "Go 2 Chip: "
                                 onClicked: {
+                                    if(isContact) go_separate()
+                                    // console.log(txt_chip_id.text)
+                                    var chip_axises = Settings.get_chip_axis(
+                                                Settings.find_chip_number(txt_chip_id.text)
+                                                )
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    // console.log(txt_chip_id.text, cmd_x, cmd_y)
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                    backend.run_cmd("ENDCHIP")
+                                }
+                            }
+
+                            Button {
+                                enabled: isCalibrated
+                                text: "Prev chip"
+                                onClicked: {
+                                    if(isContact) go_separate()
+
                                     var chip_id = Settings.find_chip_number(current_chip_id.text) - 1
                                     // console.log("chip id: " + chip_id)
                                     var chip_axises = Settings.get_chip_axis(chip_id)
@@ -347,26 +337,98 @@ Item {
                                     backend.run_cmd(cmd_y)
                                     backend.run_cmd("ENDCHIP")
                                 }
+
+                                ToolTip.text: qsTr("go to previous chip in numbering")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
                             }
 
+                            Button{
+                                id: tog_with_cal
+                                checkable: true
+                                checked: true
+                                text: "auto correction"
+                                onClicked: {
+                                    with_correction = tog_with_cal.checked
+                                    console.log("with calibration: ",with_correction)
+                                }
+                                ToolTip.text: qsTr("In red (checked), apply auto-mated calibration, otherwise not")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
+                            }
+
+                            TextField {
+                                id: txt_chip_id
+                                placeholderText: "chip ID"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+
+                            Button {
+                                enabled: isCalibrated
+                                text: "Next chip"
+                                onClicked: {
+                                    if(isContact) go_separate()
+
+                                    var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
+                                    // console.log("chip id: " + chip_id)
+                                    var chip_axises = Settings.get_chip_axis(chip_id)
+                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
+                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+                                    backend.run_cmd(cmd_x)
+                                    backend.run_cmd(cmd_y)
+                                    backend.run_cmd("ENDCHIP")
+                                }
+
+                                ToolTip.text: qsTr("go to next chip in numbering")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
+                            }
                         }
                     }
 
                     // Calibrate the x-y station
                     Pane {
+                        enabled: connectResult==0
                         Layout.fillWidth: true
                         RowLayout {
                             anchors.fill: parent
                             Button{
-                                text: "1st Chip"
+                                text: "calibrate"
                                 onClicked: {
-                                    Settings.update_true_chip_table(1,
+                                    if(isContact) go_separate()
+                                    backend.run_cmd("MR Y " + yOffSet.toString())
+                                    backend.run_cmd("ENDCALIBRATE")
+                                    Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
                                                                     Number(txt_chip_x_calibrate.text),
-                                                                    Number(txt_chip_y_calibrate.text)
+                                                                    Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
-                                    console.log(Settings.true_chip_table["1"])
+                                    isCalibrated = true
+                                    backend.run_cmd("MR Y -" + yOffSet.toString())
+                                }
+                                ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 5000
+                            }
+
+                            TextField {
+                                id: txt_chip_id_calibrate
+                                placeholderText: "chip id"
+                                selectByMouse: true
+                                verticalAlignment: Text.AlignVCenter
+                                horizontalAlignment: Text.AlignHCenter
+
+                                text: Settings.chip_id_for_calibration
+                                onTextChanged: {
+                                    Settings.chip_id_for_calibration = txt_chip_id_calibrate.text
                                 }
                             }
+
                             TextField {
                                 id: txt_chip_x_calibrate
                                 placeholderText: "x axis"
@@ -540,11 +602,8 @@ Item {
                             Label {
                                 text: "mm/s"
                             }
-                            Button{
+                            Label {
                                 text: "Z separation"
-                                onClicked: {
-                                    backend.zSep = txt_sep_z.text.toString()
-                                }
                             }
                             TextField{
                                 id: txt_sep_z
@@ -552,6 +611,9 @@ Item {
                                 selectByMouse: true
                                 verticalAlignment: Text.AlignVCenter
                                 horizontalAlignment: Text.AlignHCenter
+                                onEditingFinished: {
+                                    backend.zSep = txt_sep_z.text.toString()
+                                }
                             }
                             Label {
                                 text: "mm"
@@ -567,7 +629,6 @@ Item {
                                 id: btn_z_up
                                 text: "Closer"
                                 Layout.fillWidth: true
-                                //autoRepeat: true
                                 contentItem: Text {
                                     text: btn_z_up.text
                                     font: btn_z_up.font
@@ -582,7 +643,6 @@ Item {
                                 id: btn_z_down
                                 text: "Further"
                                 Layout.fillWidth: true
-                                //autoRepeat: true
                                 contentItem: Text {
                                     text: btn_z_down.text
                                     font: btn_z_down.font
@@ -649,7 +709,8 @@ Item {
             btn_is_contact.checked = true
             checkedSeparation = true
             backend.IsAtContact = true
-            txt_speed_z.text = 0.7
+            txt_speed_z.text = txt_sep_z.text
+            backend.speedZ = txt_sep_z.text
         }
         onRejected: {
 
