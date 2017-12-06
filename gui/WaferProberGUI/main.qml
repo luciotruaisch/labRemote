@@ -25,6 +25,7 @@ ApplicationWindow {
 
     property var withCamera: false
     property var with_correction: true
+    property var yOffSet: 0.3
 
     Timer {
         id: timer
@@ -54,6 +55,7 @@ ApplicationWindow {
             // change pixel to mm.
             dx *= 0.002
             dy *= -0.002
+            dy -= yOffSet
             var dx_str = dx.toLocaleString(Qt.locale("en_US"), 'f', 3)
             var dy_str = dy.toLocaleString(Qt.locale("en_US"), 'f', 3)
             if(with_correction) {
@@ -113,6 +115,10 @@ ApplicationWindow {
 
         onChipArrived: {
             object_detection.dstImage(camera.cvImage)
+        }
+
+        onSrcImageArrived: {
+            object_detection.setSourceImage(camera.cvImage)
         }
     }
 

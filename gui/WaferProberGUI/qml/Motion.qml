@@ -400,15 +400,14 @@ Item {
                             Button{
                                 text: "calibrate"
                                 onClicked: {
+                                    backend.run_cmd("MR Y " + yOffSet.toString())
+                                    backend.run_cmd("ENDCALIBRATE")
                                     Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
                                                                     Number(txt_chip_x_calibrate.text),
-                                                                    Number(txt_chip_y_calibrate.text)
+                                                                    Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
-//                                    console.log(Settings.true_chip_table["1"])
-
-                                    object_detection.setSourceImage(camera.cvImage)
-                                    console.log("source image is set.")
                                     isCalibrated = true
+                                    backend.run_cmd("MR Y -" + yOffSet.toString())
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered
