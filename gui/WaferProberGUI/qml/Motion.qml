@@ -400,6 +400,7 @@ Item {
                             Button{
                                 text: "calibrate"
                                 onClicked: {
+                                    if(isContact) go_separate()
                                     backend.run_cmd("MR Y " + yOffSet.toString())
                                     backend.run_cmd("ENDCALIBRATE")
                                     Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
