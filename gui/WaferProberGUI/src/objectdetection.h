@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QVariant>
 
-Q_DECLARE_METATYPE(cv::Mat)
+
 class ObjectDetection : public QObject
 {
     Q_OBJECT

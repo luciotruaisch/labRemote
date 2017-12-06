@@ -12,8 +12,7 @@ import "qrc:settings.js" as Settings
 import qt.wafer.backend 1.0
 import qt.wafer.FileIO 1.0
 import qt.wafer.objectdetection 1.0
-
-import CVCamera 1.0
+import qt.wafer.CVCamera 1.0
 
 ApplicationWindow {
     id: window

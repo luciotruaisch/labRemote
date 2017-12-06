@@ -9,6 +9,9 @@ HEADERS += \
     src/backend.h \
     src/FileIO.h \
     src/objectdetection.h \
+    src/CVCamera.h \
+    src/BetterVideoCapture.h \
+    src/CameraThread.h \
     #src/chipvideofilter.h
     #src/calibratez.h
 
@@ -16,6 +19,9 @@ SOURCES += src/main.cpp \
     src/backend.cpp \
     src/FileIO.cpp \
     src/objectdetection.cpp \
+    src/CVCamera.cpp \
+    src/CameraThread.cpp \
+    src/BetterVideoCapture.cpp
     #src/chipvideofilter.cpp
     #src/calibratez.cpp
 

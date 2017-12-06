@@ -5,6 +5,7 @@
 
 #include <QDebug>
 
+Q_DECLARE_METATYPE(cv::Mat)
 ObjectDetection::ObjectDetection(QObject *parent) : QObject(parent)
 {
     // const char* input_template = "/Users/xju/Documents/2017/RD53/code/labRemote/image_process/jupyter/selfied_template.png";
