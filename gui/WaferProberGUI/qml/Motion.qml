@@ -169,7 +169,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    var command = "MR X " + (txt_inc_x.text).toString()
+                                    var command = "MR X -" + (txt_inc_x.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -192,7 +192,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()                                   
-                                    var command = "MR Y " + (-1*txt_inc_y.text).toString()
+                                    var command = "MR Y " + (txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -216,7 +216,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    var command = "MR Y " + (txt_inc_y.text).toString()
+                                    var command = "MR Y -" + (txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -241,7 +241,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    var command = "MR X " + (-1*txt_inc_x.text).toString()
+                                    var command = "MR X " + (txt_inc_x.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }

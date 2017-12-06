@@ -9,13 +9,15 @@ HEADERS += \
     src/backend.h \
     src/FileIO.h \
     src/objectdetection.h \
-    src/chipvideofilter.h
+    #src/chipvideofilter.h
+    #src/calibratez.h
 
 SOURCES += src/main.cpp \
     src/backend.cpp \
     src/FileIO.cpp \
     src/objectdetection.cpp \
-    src/chipvideofilter.cpp
+    #src/chipvideofilter.cpp
+    #src/calibratez.cpp
 
 RESOURCES += qml.qrc
 

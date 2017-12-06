@@ -40,7 +40,7 @@ void ObjectDetection::dstImage(QVariant dstImage) {
 double ObjectDetection::getMean(QVariant image)
 {
     double res = -1;
-    if(dstImage.canConvert<cv::Mat>()){
+    if(image.canConvert<cv::Mat>()){
         cv::Scalar mean_value = cv::mean(image.value<cv::Mat>());
         res = mean_value[0];
     } else {

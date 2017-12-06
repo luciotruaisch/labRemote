@@ -154,6 +154,15 @@ ApplicationWindow {
 
                     ICamera {  }
 
+                    RowLayout{
+                        Button {
+                            text: "Get Mean"
+                            onClicked:  {
+                                console.log("mean value: ", object_detection.getMean(camera.cvImage))
+                            }
+                        }
+                    }
+
                     GroupBox {
                         title: "status report"
                         Layout.fillWidth: true
