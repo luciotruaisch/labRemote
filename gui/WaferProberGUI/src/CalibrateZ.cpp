@@ -31,48 +31,64 @@ void CalibrateWorker::run()
     }
     if(m_running && m_refMean > 0){
         // start to move chunk up and down to compare to mean value.
-        m_ctrl->set_speed(2, 0.050);
-        double step = 0.001;
+        m_ctrl->set_speed(2, 0.020);
+
+        const double MAX_DISTANCE = 0.200;
+        const int Max_TRIES = 10;
+
+        bool foundFocus = true;
+        double step = 0.02;
         double direction = 1; // 1 for increase; -1 for decrease
-        double max_distance = 0.300;
-        const double threshold = 0.001;
+
         double offset = 0.;
 
         double currentMean = CalibrateZ::calMean(m_camera->getCvImage());
         double previousMean = currentMean;
         double accumulateMovement = 0;
-        bool foundFocus = true;
-        const int max_tries = 20;
         int ntry = 1;
         int nFlip = 0;
-        while(fabs(currentMean - m_refMean) > threshold && ntry < max_tries) {
-            double moveZ = step*direction+offset;
+        m_ctrl->get_pos_z();
+        double absZ = m_ctrl->m_position[2];
+        double minAbsZ = absZ;
+        double minMean = currentMean;
+        qInfo()<<"Starting point: " << minAbsZ << " " << minMean;
+        while(m_running && ntry < Max_TRIES) {
+            double moveZ = (step+offset)*direction;
             accumulateMovement += moveZ;
-            if(accumulateMovement > max_distance) {
+            if(accumulateMovement > MAX_DISTANCE) {
                 qInfo()<<"moved more than 300 um!";
                 foundFocus = false;
                 break;
             }
-            m_ctrl->mv_rel(2, moveZ);
-            qInfo() <<"move Z: " << moveZ;
+            absZ += moveZ;
+            m_ctrl->mv_abs(2, absZ);
             currentMean = CalibrateZ::calMean(m_camera->getCvImage());
-            double diff = fabs(currentMean-m_refMean);
-            qInfo() << "new mean: " << currentMean << "with diff: " << diff;
-            if(diff > fabs(previousMean-m_refMean) && nFlip == 0)
+            if(currentMean < 100) break;
+            m_ctrl->get_pos_z();
+            qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentMean;
+            if(currentMean < minMean) {
+                minMean = currentMean;
+                minAbsZ = absZ;
+            }
+            if(currentMean > previousMean)
             {
-                qInfo()<<"change direction with smaller step";
+                // qInfo()<<"change direction with smaller step";
                 direction *= -1; // change direction
                 offset = step;
-                if(step > 0.001) step /= 2;
                 nFlip += 1;
-            } else if(diff > fabs(previousMean-m_refMean)){
-                break;
+                step *= 0.5;
+                if(nFlip > 1) break;
             } else {
                 offset = 0;
             }
             previousMean = currentMean;
             ntry ++;
         }
+        m_ctrl->mv_abs(2, minAbsZ);
+        qInfo()<<"Ending point: " << minAbsZ << " " << minMean;
+
+        m_ctrl->get_pos_z();
+        qInfo()<<"New Position: " << m_ctrl->m_position[2];
         if(foundFocus) emit focusPointFound();
         m_running = false;
     }
@@ -137,7 +153,9 @@ void CalibrateZ::setRefImage()
 
 double CalibrateZ::calMean(cv::Mat image)
 {
-    return cv::mean(image)[0];
+    cv::Mat gray;
+    cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+    return cv::mean(gray)[0];
 }
 
 double CalibrateZ::calMean(QVariant input) {

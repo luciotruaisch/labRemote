@@ -69,14 +69,20 @@ ApplicationWindow {
         }
     }
 
+    function update_position(){
+        txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+        txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+        txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+    }
 
     BackEnd {
         id: backend
 
         onDeviceConnected: {
-            txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+//            txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+//            txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+//            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+            update_position()
             // calibrate using previous results.
             Settings.update_true_chip_table(Settings.find_chip_number(Settings.chip_id_for_calibration),
                                             Settings.chip_x_for_calibration,
@@ -177,6 +183,13 @@ ApplicationWindow {
                                 autoZcal.start()
                             }
                         }
+                        Button {
+                            text: "STOP"
+                            onClicked: {
+                                autoZcal.stop()
+                            }
+                        }
+
                     }
 
                     GroupBox {

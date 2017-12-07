@@ -40,14 +40,6 @@ Item {
         }
     }
 
-
-//    function corret_xy(dx, dy) {
-//        console.log("I will correct that, but not now.")
-////        backend.run_cmd("MV X "+dx)
-////        backend.run_cmd("MV Y "+dy)
-//    }
-
-
     ColumnLayout {
         id: column
         anchors.fill: parent
@@ -77,6 +69,13 @@ Item {
                         } else {
                             output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
                         }
+                    }
+                }
+
+                Button {
+                    text: "UpdatePos"
+                    onClicked: {
+                        update_position()
                     }
                 }
 
