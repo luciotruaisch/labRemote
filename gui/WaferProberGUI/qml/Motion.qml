@@ -401,14 +401,17 @@ Item {
                                 text: "calibrate"
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.run_cmd("MR Y " + yOffSet.toString())
-                                    backend.run_cmd("ENDCALIBRATE")
+                                    if(with_correction) {
+                                        backend.run_cmd("MR Y " + yOffSet.toString())
+                                        backend.run_cmd("ENDCALIBRATE")
+                                        backend.run_cmd("MR Y -" + yOffSet.toString())
+                                    }
                                     Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
                                                                     Number(txt_chip_x_calibrate.text),
                                                                     Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
                                     isCalibrated = true
-                                    backend.run_cmd("MR Y -" + yOffSet.toString())
+
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered

@@ -13,6 +13,7 @@ import qt.wafer.backend 1.0
 import qt.wafer.FileIO 1.0
 import qt.wafer.objectdetection 1.0
 import qt.wafer.CVCamera 1.0
+import qt.wafer.CalibrateZ 1.0
 
 ApplicationWindow {
     id: window
@@ -77,7 +78,7 @@ ApplicationWindow {
             txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             // calibrate using previous results.
-            Settings.update_true_chip_table(Settings.chip_id_for_calibration,
+            Settings.update_true_chip_table(Settings.find_chip_number(Settings.chip_id_for_calibration),
                                             Settings.chip_x_for_calibration,
                                             Settings.chip_y_for_calibration
                                             )
@@ -121,6 +122,14 @@ ApplicationWindow {
         }
     }
 
+    CalibrateZ {
+        id: autoZcal
+        motionHandle: backend
+        camera: camera
+        onFocusPointFound: {
+            console.log("it should be at focus now!")
+        }
+    }
 
 
     onClosing: {
@@ -135,6 +144,8 @@ ApplicationWindow {
         } else {
             console.log("Cannot write to File.")
         }
+
+        autoZcal.dismiss()
     }
 
     ColumnLayout {
@@ -155,9 +166,15 @@ ApplicationWindow {
 
                     RowLayout{
                         Button {
-                            text: "Get Mean"
+                            text: "Set Ref"
                             onClicked:  {
-                                console.log("mean value: ", object_detection.getMean(camera.cvImage))
+                                autoZcal.setRefImage()
+                            }
+                        }
+                        Button {
+                            text: "Start Calib"
+                            onClicked:  {
+                                autoZcal.start()
                             }
                         }
                     }

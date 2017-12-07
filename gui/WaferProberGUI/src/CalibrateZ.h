@@ -60,6 +60,7 @@ public:
     }
 
     static double calMean(cv::Mat image);
+    static double calMean(QVariant input);
 public:
     BackEnd* motionHandle();
     void setMotionHandle(BackEnd* backend);

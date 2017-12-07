@@ -20,7 +20,7 @@ MotionWorker::MotionWorker(MotionController* ctrl)
 }
 
 void MotionWorker::start(){
-    m_timer->start(1000);
+    m_timer->start(1500);
 }
 
 void MotionWorker::stop() {
