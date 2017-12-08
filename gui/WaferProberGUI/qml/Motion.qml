@@ -329,7 +329,7 @@ Item {
                             Button{
                                 id: tog_with_cal
                                 checkable: true
-                                checked: true
+                                checked: false
                                 text: "auto correction"
                                 onClicked: {
                                     with_correction = tog_with_cal.checked
@@ -452,7 +452,7 @@ Item {
                             Button{
                                 id: calib_all_chips
                                 checkable: true
-                                checked: true
+                                checked: false
                                 text: "Calib All Z"
                                 onClicked: {
                                     calibrateAllChips = calib_all_chips.checked

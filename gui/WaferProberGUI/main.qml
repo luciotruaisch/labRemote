@@ -24,8 +24,8 @@ ApplicationWindow {
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
-    property var with_correction: true
-    property var calibrateAllChips: true
+    property var with_correction: false
+    property var calibrateAllChips: false
     property var yOffSet: 0.3
 
     // handy functions
@@ -103,24 +103,10 @@ ApplicationWindow {
                                             Settings.chip_y_for_calibration
                                             )
             current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
-
-//            // load real chip table
-//            Settings.real_chip_table.read(real_chip_input.read())
             Settings.height_table.read(height_input.read())
         }
 
         onPositionChanged: {
-//            if(axis == 0) {
-//                txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//            } else if(axis == 1) {
-//                txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//            } else if (axis == 2) {
-//                txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//            } else if (axis == 3) {
-//                txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//                txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//            } else {
-//            }
             update_position()
             if(axis != 2){
                 current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
