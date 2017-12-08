@@ -31,7 +31,7 @@ void CalibrateWorker::run()
         m_ctrl->set_speed(2, 0.020);
 
         const double MAX_DISTANCE = 0.300;
-        const int Max_TRIES = 20;
+        const int Max_TRIES = 30;
 
         bool foundFocus = true;
         double step = 0.02;
@@ -51,8 +51,6 @@ void CalibrateWorker::run()
         double maxAbsZ = absZ;
         double maxFeature = currentFeature;
 
-        // qInfo()<<"Starting point: " << maxAbsZ << " " << maxFeature;
-
         while(m_running && ntry < Max_TRIES) {
             // move to a new position and calculate the feature
             // record the position that yields maximum value of feature.
@@ -68,8 +66,8 @@ void CalibrateWorker::run()
             m_ctrl->mv_abs(2, absZ);
             currentFeature = CalibrateZ::calFeature(m_camera->getCvImage());
 
-            // m_ctrl->get_pos_z();
-            // qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentFeature;
+             m_ctrl->get_pos_z();
+             qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentFeature;
             if(currentFeature > maxFeature) {
                 maxFeature = currentFeature;
                 maxAbsZ = absZ;
@@ -83,7 +81,7 @@ void CalibrateWorker::run()
                 step *= 0.5;
                 // flip-and-turn for 4 times..
                 // increase the number to get more presion.
-                if(nFlip > 4) break;
+                if(nFlip > 5) break;
             } else {
                 offset = 0;
             }
@@ -91,12 +89,12 @@ void CalibrateWorker::run()
             ntry ++;
         }
 //        // m_ctrl->mv_abs(2, minAbsZ);
-//        qInfo()<<"Ending point: " << maxAbsZ << " " << maxFeature;
+        qInfo()<<"Ending point: " << maxAbsZ << " " << maxFeature;
 //        m_ctrl->get_pos_z();
 //        qInfo()<<"New Position: " << m_ctrl->m_position[2];
-//        m_ctrl->mv_abs(2, maxAbsZ);
-//        m_ctrl->get_pos_z();
-//        qInfo()<<"New Position: " << m_ctrl->m_position[2];
+        m_ctrl->mv_abs(2, maxAbsZ);
+        m_ctrl->get_pos_z();
+        qInfo()<<"New Position: " << m_ctrl->m_position[2];
         if(foundFocus) emit focusPointFound(maxAbsZ);
         m_running = false;
     }
@@ -111,6 +109,37 @@ CalibrateZ::CalibrateZ(QObject* parent):
     m_backend = nullptr;
     m_camera = nullptr;
 }
+
+void CalibrateZ::start() {
+    // since this function is called only once,
+    // I delayed the creation of thread and worker until now.
+    if(m_backend == nullptr || m_camera == nullptr) {
+        qInfo() << "no backend or no camera" << endl;
+        return;
+    }
+    if(m_calibThread == nullptr) {
+        // delay the inialization until now.
+        m_calibThread = new QThread(this);
+        m_worker = new CalibrateWorker(m_backend->getMotionController(), m_camera);
+        m_worker->moveToThread(m_calibThread);
+
+        connect(m_calibThread, SIGNAL(started()), m_worker, SLOT(start()));
+        connect(m_calibThread, SIGNAL(finished()), m_worker, SLOT(stop()));
+
+//        connect(m_worker, SIGNAL(focusPointFound(double)), this, SLOT(receiveFoundedFocus(double)));
+        connect(m_worker, SIGNAL(focusPointFound(double)), this, SIGNAL(focusFound()));
+        m_calibThread->start();
+    }
+
+    if(m_worker) {
+        m_worker->startRun();
+    }
+}
+
+//void CalibrateZ::receiveFoundedFocus(double maxAbsZ){
+//    // qInfo() << "received maximu position: " << maxAbsZ;
+//    // m_backend->run_cmd("MA Z "+ QString::number(maxAbsZ));
+//}
 
 BackEnd* CalibrateZ::motionHandle(){
     return m_backend;
@@ -128,35 +157,6 @@ CVCamera* CalibrateZ::camera(){
 void CalibrateZ::setCamera(CVCamera *camera)
 {
     m_camera = camera;
-}
-
-void CalibrateZ::setRefImage()
-{
-    // since this function is called only once,
-    // I delayed the creation of thread and worker until now.
-    if(m_backend == nullptr || m_camera == nullptr) return;
-    if(m_calibThread == nullptr) {
-        // delay the inialization until now.
-        m_calibThread = new QThread(this);
-        m_worker = new CalibrateWorker(m_backend->getMotionController(), m_camera);
-        m_worker->moveToThread(m_calibThread);
-
-        connect(m_calibThread, SIGNAL(started()), m_worker, SLOT(start()));
-        connect(m_calibThread, SIGNAL(finished()), m_worker, SLOT(stop()));
-
-        connect(m_worker, SIGNAL(focusPointFound()), this, SIGNAL(focusPointFound()));
-
-        m_calibThread->start();
-    }
-
-     m_worker->setMean(55.566);
-    // get reference image from camera and calculate the mean;
-//    QVariant image = m_camera->getCvImage();
-//    if(image.canConvert<cv::Mat>()) {
-//        double mean = this->calMean(image.value<cv::Mat>());
-//        m_worker->setMean(mean);
-//        qInfo() << "mean value of referece image: " << mean;
-//    }
 }
 
 double CalibrateZ::calFeature(cv::Mat image)

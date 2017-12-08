@@ -45,7 +45,7 @@ public:
     Q_INVOKABLE void startLoop();
 
     // start calibration at current location.
-    Q_INVOKABLE void start() { m_worker->startRun(); }
+    Q_INVOKABLE void start();
     Q_INVOKABLE void stop(){
         m_worker->stop();
     }
@@ -62,13 +62,14 @@ public:
     CVCamera* camera();
     void setCamera(CVCamera* camera);
 
-public slots:
-    void receiveFoundedFocus(double maxAbsZ);
+//public slots:
+//    void receiveFoundedFocus(double maxAbsZ);
 
 
 signals:
     void motionHandleChanged();
     void cameraChanged();
+    void focusFound();
 
 
 private:
