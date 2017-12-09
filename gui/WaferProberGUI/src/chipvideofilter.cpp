@@ -16,5 +16,5 @@ QVideoFrame ChipVideoFilterRunnable::run(QVideoFrame *input, const QVideoSurface
 {
     Q_UNUSED(surfaceFormat)
     Q_UNUSED(flags)
-
+    return *input;
 }

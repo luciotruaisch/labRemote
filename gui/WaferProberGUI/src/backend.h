@@ -89,6 +89,10 @@ public:
         emit posZGot();
     }
 
+    MotionController* getMotionController() {
+        return m_ctrl;
+    }
+
 public:
     explicit BackEnd(QObject *parent = nullptr);
 

@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QVariant>
 
-Q_DECLARE_METATYPE(cv::Mat)
+
 class ObjectDetection : public QObject
 {
     Q_OBJECT
@@ -20,9 +20,6 @@ public:
 
     // provide a new destination image; it will emit a "correctionGenerated" signal
     Q_INVOKABLE void dstImage(QVariant dstImage);
-
-    // obtain the mean value of an image
-    Q_INVOKABLE double getMean(QVariant image);
 
 signals:
     void correctionGenerated(float dx, float dy);

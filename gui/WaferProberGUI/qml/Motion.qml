@@ -40,14 +40,6 @@ Item {
         }
     }
 
-
-//    function corret_xy(dx, dy) {
-//        console.log("I will correct that, but not now.")
-////        backend.run_cmd("MV X "+dx)
-////        backend.run_cmd("MV Y "+dy)
-//    }
-
-
     ColumnLayout {
         id: column
         anchors.fill: parent
@@ -77,6 +69,13 @@ Item {
                         } else {
                             output.append("Z station not connected. Check Ethernet. " + output.cursorPosition)
                         }
+                    }
+                }
+
+                Button {
+                    text: "UpdatePos"
+                    onClicked: {
+                        update_position()
                     }
                 }
 
@@ -169,7 +168,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    var command = "MR X " + (txt_inc_x.text).toString()
+                                    var command = "MR X -" + (txt_inc_x.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -192,7 +191,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()                                   
-                                    var command = "MR Y " + (-1*txt_inc_y.text).toString()
+                                    var command = "MR Y " + (txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -216,7 +215,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    var command = "MR Y " + (txt_inc_y.text).toString()
+                                    var command = "MR Y -" + (txt_inc_y.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -241,7 +240,7 @@ Item {
 
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    var command = "MR X " + (-1*txt_inc_x.text).toString()
+                                    var command = "MR X " + (txt_inc_x.text).toString()
                                     backend.run_cmd(command)
                                 }
                             }
@@ -401,14 +400,17 @@ Item {
                                 text: "calibrate"
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    backend.run_cmd("MR Y " + yOffSet.toString())
-                                    backend.run_cmd("ENDCALIBRATE")
+                                    if(with_correction) {
+                                        backend.run_cmd("MR Y " + yOffSet.toString())
+                                        backend.run_cmd("ENDCALIBRATE")
+                                        backend.run_cmd("MR Y -" + yOffSet.toString())
+                                    }
                                     Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
                                                                     Number(txt_chip_x_calibrate.text),
                                                                     Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
                                     isCalibrated = true
-                                    backend.run_cmd("MR Y -" + yOffSet.toString())
+
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered

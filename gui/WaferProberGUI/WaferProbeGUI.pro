@@ -8,14 +8,22 @@ CONFIG += c++11
 HEADERS += \
     src/backend.h \
     src/FileIO.h \
-    src/objectdetection.h \
-    src/chipvideofilter.h
+    src/CVCamera.h \
+    src/BetterVideoCapture.h \
+    src/CameraThread.h \
+    src/CalibrateZ.h \
+    src/ObjectDetection.h
+    #src/chipvideofilter.h
 
 SOURCES += src/main.cpp \
     src/backend.cpp \
     src/FileIO.cpp \
-    src/objectdetection.cpp \
-    src/chipvideofilter.cpp
+    src/CVCamera.cpp \
+    src/CameraThread.cpp \
+    src/BetterVideoCapture.cpp \
+    src/CalibrateZ.cpp \
+    src/ObjectDetection.cpp
+    #src/chipvideofilter.cpp
 
 RESOURCES += qml.qrc
 

@@ -12,8 +12,8 @@ import "qrc:settings.js" as Settings
 import qt.wafer.backend 1.0
 import qt.wafer.FileIO 1.0
 import qt.wafer.objectdetection 1.0
-
-import CVCamera 1.0
+import qt.wafer.CVCamera 1.0
+import qt.wafer.CalibrateZ 1.0
 
 ApplicationWindow {
     id: window
@@ -69,16 +69,22 @@ ApplicationWindow {
         }
     }
 
+    function update_position(){
+        txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+        txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+        txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+    }
 
     BackEnd {
         id: backend
 
         onDeviceConnected: {
-            txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+//            txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+//            txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+//            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+            update_position()
             // calibrate using previous results.
-            Settings.update_true_chip_table(Settings.chip_id_for_calibration,
+            Settings.update_true_chip_table(Settings.find_chip_number(Settings.chip_id_for_calibration),
                                             Settings.chip_x_for_calibration,
                                             Settings.chip_y_for_calibration
                                             )
@@ -122,6 +128,14 @@ ApplicationWindow {
         }
     }
 
+    CalibrateZ {
+        id: autoZcal
+        motionHandle: backend
+        camera: camera
+        onFocusPointFound: {
+            console.log("it should be at focus now!")
+        }
+    }
 
 
     onClosing: {
@@ -136,6 +150,8 @@ ApplicationWindow {
         } else {
             console.log("Cannot write to File.")
         }
+
+        autoZcal.dismiss()
     }
 
     ColumnLayout {
@@ -153,6 +169,28 @@ ApplicationWindow {
                     anchors.fill: parent
 
                     ICamera {  }
+
+                    RowLayout{
+                        Button {
+                            text: "Set Ref"
+                            onClicked:  {
+                                autoZcal.setRefImage()
+                            }
+                        }
+                        Button {
+                            text: "Start Calib"
+                            onClicked:  {
+                                autoZcal.start()
+                            }
+                        }
+                        Button {
+                            text: "STOP"
+                            onClicked: {
+                                autoZcal.stop()
+                            }
+                        }
+
+                    }
 
                     GroupBox {
                         title: "status report"

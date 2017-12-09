@@ -1,10 +1,11 @@
-#include "objectdetection.h"
+#include "ObjectDetection.h"
 #include "OpenCVHelper.h"
 
 #include <vector>
 
 #include <QDebug>
 
+Q_DECLARE_METATYPE(cv::Mat)
 ObjectDetection::ObjectDetection(QObject *parent) : QObject(parent)
 {
     // const char* input_template = "/Users/xju/Documents/2017/RD53/code/labRemote/image_process/jupyter/selfied_template.png";
@@ -40,7 +41,7 @@ void ObjectDetection::dstImage(QVariant dstImage) {
 double ObjectDetection::getMean(QVariant image)
 {
     double res = -1;
-    if(dstImage.canConvert<cv::Mat>()){
+    if(image.canConvert<cv::Mat>()){
         cv::Scalar mean_value = cv::mean(image.value<cv::Mat>());
         res = mean_value[0];
     } else {
