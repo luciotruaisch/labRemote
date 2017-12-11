@@ -73,6 +73,7 @@ var find_location = function(id_){
 }
 
 var find_chip_number = function(id_) {
+    console.log("HELLO: ", id_)
     var items = id_.split("-");
     var x = Number(items[0]) - 1;
     var y = Number(items[1]) - 1;
@@ -169,5 +170,46 @@ var real_chip_table = {
     updateWithArray: function(items) {
         if (items.length < 3) return;
         this.update(Number(items[0]), Number(items[1]), Number(items[2]))
+    }
+}
+
+// a table that stores a height different between the first chip(1-6) and other chips.
+var height_table = {
+    input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/height_table.txt",
+    table: {},
+    read: function (input_text) {
+        var lines = input_text.split('\n')
+        for(var line_nb in lines){
+            var items = lines[line_nb].split(' ');
+            this.updateWithArray(items)
+        }
+        console.log(this.input_name+" is loaded with "+lines.length+" lines")
+    },
+    output: function() {
+        var out = "";
+        for(var item in this.table) {
+            var locs = this.table[item]
+            var input_loc = find_location(Number(item));
+            var res = (input_loc.x_loc+1)+"-"+(input_loc.y_loc+1)
+            out += res + " " + locs.deltaZ + "\n"
+        }
+        return out
+    },
+    update: function(id_input, z_){
+        // id_: 1-6
+        // z_: 0.1
+        var id_ = find_chip_number(id_input)
+        if(this.table[id_.toString()] === undefined){
+            this.table[id_.toString()] = {
+                deltaZ: z_
+            }
+        } else {
+            this.table[id_.toString()].deltaZ = z_
+        }
+        console.log("Height table is updated: ", id_input, z_)
+    },
+    updateWithArray: function(items) {
+        if (items.length < 2) return;
+        this.update(Number(items[0]), Number(items[1]))
     }
 }

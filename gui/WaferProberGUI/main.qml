@@ -24,18 +24,35 @@ ApplicationWindow {
     title: qsTr("Wafter Probing console table. " + width + " x " + height)
 
     property var withCamera: false
-    property var with_correction: true
-    property var yOffSet: 0.3
+    property var with_correction: false
+    property var calibrateAllChips: false
+    property var yOffSet: 0
+
+    // handy functions
+    function go2chip(chip_id){
+        var chip_axises = Settings.get_chip_axis(chip_id)
+        var cmd_x = "MA X " + chip_axises.xAxis.toString()
+        var cmd_y = "MA Y " + chip_axises.yAxis.toString()
+        backend.run_cmd(cmd_x)
+        backend.run_cmd(cmd_y)
+        backend.run_cmd("ENDCHIP")
+    }
+    function goNextChip(){
+        go2chip(1+Settings.find_chip_number(current_chip_id.text))
+    }
+    function goPrevChip(){
+        go2chip(Settings.find_chip_number(current_chip_id.text) - 1 )
+    }
+
+    function update_position(){
+        txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+        txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+        txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
+    }
 
     Timer {
         id: timer
-    }
 
-    function delay(delayTime, cb) {
-        timer.interval = delayTime;
-        timer.repeat = false;
-        timer.triggered.connect(cb);
-        timer.start();
     }
 
     CVCamera {
@@ -43,9 +60,14 @@ ApplicationWindow {
     }
 
 
+//    FileIO {
+//        id: real_chip_input
+//        source: Settings.real_chip_table.input_name
+//        onError: console.log(msg)
+//    }
     FileIO {
-        id: real_chip_input
-        source: Settings.real_chip_table.input_name
+        id: height_input
+        source: Settings.height_table.input_name
         onError: console.log(msg)
     }
 
@@ -69,19 +91,11 @@ ApplicationWindow {
         }
     }
 
-    function update_position(){
-        txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-        txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-        txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-    }
 
     BackEnd {
         id: backend
 
         onDeviceConnected: {
-//            txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//            txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-//            txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
             update_position()
             // calibrate using previous results.
             Settings.update_true_chip_table(Settings.find_chip_number(Settings.chip_id_for_calibration),
@@ -89,23 +103,11 @@ ApplicationWindow {
                                             Settings.chip_y_for_calibration
                                             )
             current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
-
-            // load real chip table
-            Settings.real_chip_table.read(real_chip_input.read())
+            Settings.height_table.read(height_input.read())
         }
 
         onPositionChanged: {
-            if(axis == 0) {
-                txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            } else if(axis == 1) {
-                txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            } else if (axis == 2) {
-                txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            } else if (axis == 3) {
-                txt_pos_x.text = Number(backend.getPosX()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-                txt_pos_y.text = Number(backend.getPosY()).toLocaleString(Qt.locale("en_US"), 'f', 3)
-            } else {
-            }
+            update_position()
             if(axis != 2){
                 current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
             }
@@ -126,14 +128,23 @@ ApplicationWindow {
         onSrcImageArrived: {
             object_detection.setSourceImage(camera.cvImage)
         }
+
+        onChipArrivedForCalibrateZ: {
+            autoZcal.start()
+        }
     }
 
     CalibrateZ {
         id: autoZcal
         motionHandle: backend
         camera: camera
-        onFocusPointFound: {
-            console.log("it should be at focus now!")
+        onFocusFound: {
+            update_position()
+            Settings.height_table.update(current_chip_id.text, txt_pos_z.text)
+            if(calibrateAllChips){
+                goNextChip()
+                backend.run_cmd("ENDFORCALIBRATEZ")
+            }
         }
     }
 
@@ -143,15 +154,23 @@ ApplicationWindow {
             backend.zContact = false
         }
         if(motion_content.connectResult == 0) backend.dismiss()
-        console.log(Settings.real_chip_table.output())
-        var result = real_chip_input.write(Settings.real_chip_table.output())
+
+        //console.log(Settings.real_chip_table.output())
+//        var result = real_chip_input.write(Settings.real_chip_table.output())
+//        if(result){
+//            console.log("Real Chip Table is written.")
+//        } else {
+//            console.log("Cannot write to File.")
+//        }
+        autoZcal.dismiss()
+
+        // console.log(Settings.height_table.output())
+        var result = height_input.write(Settings.height_table.output())
         if(result){
-            console.log("Real Chip Table is written.")
+            console.log("Height Table is written.")
         } else {
             console.log("Cannot write to File.")
         }
-
-        autoZcal.dismiss()
     }
 
     ColumnLayout {
@@ -169,28 +188,6 @@ ApplicationWindow {
                     anchors.fill: parent
 
                     ICamera {  }
-
-                    RowLayout{
-                        Button {
-                            text: "Set Ref"
-                            onClicked:  {
-                                autoZcal.setRefImage()
-                            }
-                        }
-                        Button {
-                            text: "Start Calib"
-                            onClicked:  {
-                                autoZcal.start()
-                            }
-                        }
-                        Button {
-                            text: "STOP"
-                            onClicked: {
-                                autoZcal.stop()
-                            }
-                        }
-
-                    }
 
                     GroupBox {
                         title: "status report"

@@ -73,7 +73,7 @@ Item {
                 }
 
                 Button {
-                    text: "UpdatePos"
+                    text: "Update Position"
                     onClicked: {
                         update_position()
                     }
@@ -141,8 +141,8 @@ Item {
                     anchors.fill:parent
 
                     // general x-y controller, with graphics.
-                    GroupBox {
-                        title: "Control NEEDLE"
+                    Pane {
+                        //title: "Control NEEDLE"
                         Layout.fillWidth: true
                         GridLayout{
                             id: ctr_grid
@@ -159,13 +159,7 @@ Item {
                                     source: "qrc:images/arrow.png"
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: 180 }
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Left.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
-
                                 onClicked: {
                                     if(isContact) go_separate()
                                     var command = "MR X -" + (txt_inc_x.text).toString()
@@ -182,11 +176,6 @@ Item {
                                     source: "qrc:images/arrow.png"
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: -90 }
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Up.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
 
                                 onClicked: {
@@ -206,11 +195,6 @@ Item {
                                     source: "qrc:images/arrow.png"
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: 90 }
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Down.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
 
                                 onClicked: {
@@ -231,11 +215,6 @@ Item {
                                     verticalAlignment: Image.AlignVCenter
                                     source: "qrc:images/arrow.png"
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Right.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
 
                                 onClicked: {
@@ -285,21 +264,21 @@ Item {
                                             backend.run_cmd("SCAN X")
                                         }
                                     }
-                                    MenuItem {
-                                        text: "Calibrate"
-                                        onTriggered: {
-                                            var chip_id = Number(current_chip_id.text)
-                                            Settings.real_chip_table.update(chip_id,
-                                                                            Number(txt_pos_x.text),
-                                                                            Number(txt_pos_y.text)
-                                                                            )
-                                            console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
-                                        }
-                                        ToolTip.text: qsTr("Save current position as the true position for current chip.")
-                                        ToolTip.visible: hovered
-                                        ToolTip.delay: 1000
-                                        ToolTip.timeout: 4000
-                                    }
+//                                    MenuItem {
+//                                        text: "Calibrate"
+//                                        onTriggered: {
+//                                            var chip_id = Number(current_chip_id.text)
+//                                            Settings.real_chip_table.update(chip_id,
+//                                                                            Number(txt_pos_x.text),
+//                                                                            Number(txt_pos_y.text)
+//                                                                            )
+//                                            console.log(chip_id, "is corrected to:", txt_pos_x.text, txt_pos_y.text)
+//                                        }
+//                                        ToolTip.text: qsTr("Save current position as the true position for current chip.")
+//                                        ToolTip.visible: hovered
+//                                        ToolTip.delay: 1000
+//                                        ToolTip.timeout: 4000
+//                                    }
                                 }
                             }
 
@@ -308,16 +287,7 @@ Item {
                                 text: "Go 2 Chip: "
                                 onClicked: {
                                     if(isContact) go_separate()
-                                    // console.log(txt_chip_id.text)
-                                    var chip_axises = Settings.get_chip_axis(
-                                                Settings.find_chip_number(txt_chip_id.text)
-                                                )
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    // console.log(txt_chip_id.text, cmd_x, cmd_y)
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
+                                    go2chip(Settings.find_chip_number(txt_chip_id.text))
                                 }
                             }
 
@@ -326,15 +296,7 @@ Item {
                                 text: "Prev chip"
                                 onClicked: {
                                     if(isContact) go_separate()
-
-                                    var chip_id = Settings.find_chip_number(current_chip_id.text) - 1
-                                    // console.log("chip id: " + chip_id)
-                                    var chip_axises = Settings.get_chip_axis(chip_id)
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
+                                    goPrevChip()
                                 }
 
                                 ToolTip.text: qsTr("go to previous chip in numbering")
@@ -346,7 +308,7 @@ Item {
                             Button{
                                 id: tog_with_cal
                                 checkable: true
-                                checked: true
+                                checked: false
                                 text: "auto correction"
                                 onClicked: {
                                     with_correction = tog_with_cal.checked
@@ -371,15 +333,7 @@ Item {
                                 text: "Next chip"
                                 onClicked: {
                                     if(isContact) go_separate()
-
-                                    var chip_id = 1 + Settings.find_chip_number(current_chip_id.text)
-                                    // console.log("chip id: " + chip_id)
-                                    var chip_axises = Settings.get_chip_axis(chip_id)
-                                    var cmd_x = "MA X " + chip_axises.xAxis.toString()
-                                    var cmd_y = "MA Y " + chip_axises.yAxis.toString()
-                                    backend.run_cmd(cmd_x)
-                                    backend.run_cmd(cmd_y)
-                                    backend.run_cmd("ENDCHIP")
+                                    goNextChip()
                                 }
 
                                 ToolTip.text: qsTr("go to next chip in numbering")
@@ -394,10 +348,12 @@ Item {
                     Pane {
                         enabled: connectResult==0
                         Layout.fillWidth: true
-                        RowLayout {
+                        // calibrate x-y position.
+                        GridLayout {
                             anchors.fill: parent
+                            rows: 4
                             Button{
-                                text: "calibrate"
+                                text: "calibrate XY"
                                 onClicked: {
                                     if(isContact) go_separate()
                                     if(with_correction) {
@@ -410,7 +366,6 @@ Item {
                                                                     Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
                                     isCalibrated = true
-
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered
@@ -455,7 +410,39 @@ Item {
                                     Settings.chip_y_for_calibration = text
                                 }
                             }
+                            Button {
+                                Layout.row: 1
+                                Layout.column: 0
+                                id: btn_start_Z_calib
+                                enabled: !isContact
+                                text: "Calibrate Z"
+                                onClicked:  {
+                                    autoZcal.start()
+                                }
+                            }
+                            Button {
+                                enabled: !isContact
+                                id: btn_stop_Z_calib
+                                text: "STOP"
+                                onClicked: {
+                                    autoZcal.stop()
+                                }
+                            }
+                            Button{
+                                id: calib_all_chips
+                                checkable: true
+                                checked: false
+                                text: "Calib All Z"
+                                onClicked: {
+                                    calibrateAllChips = calib_all_chips.checked
+                                }
+                                ToolTip.text: qsTr("In red (checked), calibrate-z will run over all chips, otherwise not")
+                                ToolTip.visible: hovered
+                                ToolTip.delay: 1000
+                                ToolTip.timeout: 4000
+                            }
                         }
+
                     }
 
 
@@ -656,14 +643,14 @@ Item {
                                 }
                             }
 
-                            Button {
-                                id: btx_z_calibrate
-                                text: "CalibrateZ"
-                                Layout.fillWidth: true
-                                onClicked: {
-                                    warning_calibrateZ.open()
-                                }
-                            }
+//                            Button {
+//                                id: btx_z_calibrate
+//                                text: "CalibrateZ"
+//                                Layout.fillWidth: true
+//                                onClicked: {
+//                                    warning_calibrateZ.open()
+//                                }
+//                            }
 
                         }
                     }

@@ -151,6 +151,8 @@ public slots:
             emit chipArrived();
         } else if(message.contains("ENDCALIBRATE")){
             emit srcImageArrived();
+        } else if(message.contains("ENDFORCALIBRATEZ")) {
+            emit chipArrivedForCalibrateZ();
         } else {
             emit infoUpdated(message);
         }
@@ -165,6 +167,7 @@ signals:
 
     void chipArrived();
     void srcImageArrived();
+    void chipArrivedForCalibrateZ();
 
     void posXGot(); // X postion returned
     void posYGot(); // Y postion returned
