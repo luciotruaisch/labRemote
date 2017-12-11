@@ -1,15 +1,15 @@
 # Small library to control and read out lab equipment.
 Forked from [braramsel](https://github.com/baramsel/labRemote).
-GUI is built on Qt 5.9.2
+Requirements:
+  * Qt 5.9.2 [link](https://www.qt.io/download-qt-for-application-development)
+  * OpenCV 3.3.1 [Install in Linux](https://docs.opencv.org/3.3.1/d7/d9f/tutorial_linux_install.html)
+  * gclib [link](http://galilmc.com/sw/pub/all/doc/gclib/html/osx.html)
 
 To start with:
 ```shell
 git clone --recursive https://github.com/xju2/labRemote
-mkdir build
-cd build
-cmake ../src
-make
+cd src; mkdir build; cd build
+cmake ..
+make -j4
 ```
-You need to install OpenCV and CVCamera. Instructions for CVCamera can be found at 
-[link](https://github.com/xju2/qml-cvcamera).
-Then open **Qt Creator** to import the project: _gui/WaferProberGUI/WaferProbeGUI.pro_
+Open **Qt Creator** to import the project: _gui/WaferProberGUI/WaferProbeGUI.pro_
