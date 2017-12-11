@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QMutex>
 
-#include "MotionController.h" // from libWaferProb
+#include "ControllerBase.h" // from libWaferProb
 
 #include <string>
 #include <vector>
@@ -25,7 +25,7 @@ class MotionWorker : public QObject {
     Q_OBJECT
 
 public:
-    explicit MotionWorker(MotionController* backend);
+    explicit MotionWorker(ControllerBase* ctrl);
 
     void add_cmd(QString cmd);
 
@@ -43,7 +43,7 @@ signals:
 protected:
 
    QVector<QString>* cmd_queue;
-   MotionController* backend;
+   ControllerBase* m_ctrl;
    QMutex m_cmdQueueMutex;
    QTimer* m_timer;
 };
@@ -71,9 +71,9 @@ public:
 
     Q_INVOKABLE void run_cmd(QString cmd);
 
-    Q_INVOKABLE void calibrateZ(){
-        m_ctrl->calibrate_Z();
-    }
+//    Q_INVOKABLE void calibrateZ(){
+//        m_ctrl->calibrate_Z();
+//    }
 
     // stop motions
     Q_INVOKABLE void stop(){
@@ -89,7 +89,7 @@ public:
         emit posZGot();
     }
 
-    MotionController* getMotionController() {
+    ControllerBase* getMotionController() {
         return m_ctrl;
     }
 
@@ -176,7 +176,7 @@ signals:
 
 private:
     QString m_xyDeviceName;
-    MotionController* m_ctrl;
+    ControllerBase* m_ctrl;
 
     float m_current_x;
     float m_current_y;

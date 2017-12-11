@@ -40,6 +40,7 @@ ControllerZaber::~ControllerZaber(){
 
 int ControllerZaber::disconnect(){
     if (port > 0){
+    	park();
         za_disconnect(port);
         port = -1;
     }
@@ -161,9 +162,10 @@ int ControllerZaber::stop(){
 
 
 int ControllerZaber::convert_mm_to_turns(float value){
+	// value should be in millimeter.
     // turns: 1952000 turns
-    // length: 305000 micro-meter 
-    return value / 0.15625; 
+    // length: 305 millimeter
+    return value * 6400;
 }
 
 float ControllerZaber::convert_turns_to_mm(float turns){

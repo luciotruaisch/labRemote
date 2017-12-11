@@ -1,5 +1,6 @@
 #include "backend.h"
 #include "Helper.h" // from libWaferProb
+#include "MotionController.h"
 
 #include <QDebug>
 #include <QThread> // for sleep function.
@@ -8,10 +9,10 @@
 #include <string>
 
 using namespace std;
-MotionWorker::MotionWorker(MotionController* ctrl)
+MotionWorker::MotionWorker(ControllerBase* ctrl)
 {
     cmd_queue = new QVector<QString>();
-    this->backend = ctrl;
+    this->m_ctrl = ctrl;
 
     // Timer will send a signal of "timeout" in a constant time interval!
     // so the run() will be processed every time a "timeout" is received.
@@ -52,7 +53,7 @@ void MotionWorker::run()
 
         if(!current_cmd.contains("END")) {
             //every command that has "END" is to emit a signal.
-            int axis_changed = backend->run_cmd(current_cmd.toLatin1().data());
+            int axis_changed = m_ctrl->run_cmd(current_cmd.toLatin1().data());
 
             // signal the command that is processed for records
             // and notify main program that a axis is changed.
@@ -80,8 +81,9 @@ int BackEnd::connectDevice()
 {
     if(m_ctrl == 0) {
         const char* deviceName = m_xyDeviceName.toLatin1().data();
+        // One can changes to any other motion controller that
+        // is derived from ControllerBase.
         m_ctrl = new MotionController(deviceName);
-
     }
     int status = m_ctrl->connect();
     if(status == 0){

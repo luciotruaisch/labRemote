@@ -87,7 +87,6 @@ int ControllerGalil::mv_rel(int axis, float value){
     string cmd = generate_cmd("PR", axis, steps);
     printf("%s\n", cmd.c_str());
     write(cmd);
-
     make_a_move(axis);
     return 0;
 }
