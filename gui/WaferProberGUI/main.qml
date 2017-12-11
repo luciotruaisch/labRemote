@@ -26,7 +26,7 @@ ApplicationWindow {
     property var withCamera: false
     property var with_correction: false
     property var calibrateAllChips: false
-    property var yOffSet: 0.3
+    property var yOffSet: 0
 
     // handy functions
     function go2chip(chip_id){

@@ -141,8 +141,8 @@ Item {
                     anchors.fill:parent
 
                     // general x-y controller, with graphics.
-                    GroupBox {
-                        title: "Control NEEDLE"
+                    Pane {
+                        //title: "Control NEEDLE"
                         Layout.fillWidth: true
                         GridLayout{
                             id: ctr_grid
@@ -159,13 +159,7 @@ Item {
                                     source: "qrc:images/arrow.png"
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: 180 }
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Left.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
-
                                 onClicked: {
                                     if(isContact) go_separate()
                                     var command = "MR X -" + (txt_inc_x.text).toString()
@@ -182,11 +176,6 @@ Item {
                                     source: "qrc:images/arrow.png"
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: -90 }
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Up.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
 
                                 onClicked: {
@@ -206,11 +195,6 @@ Item {
                                     source: "qrc:images/arrow.png"
                                     transform: Rotation { origin.x: 20; origin.y: 20;  angle: 90 }
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Down.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
 
                                 onClicked: {
@@ -231,11 +215,6 @@ Item {
                                     verticalAlignment: Image.AlignVCenter
                                     source: "qrc:images/arrow.png"
                                 }
-
-                                ToolTip.text: qsTr("drag wafer to Right.")
-                                ToolTip.visible: hovered
-                                ToolTip.delay: 1500
-                                ToolTip.timeout: 4000
                                 autoRepeat: false
 
                                 onClicked: {
