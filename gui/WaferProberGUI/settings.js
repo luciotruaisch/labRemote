@@ -175,6 +175,7 @@ var real_chip_table = {
 
 // a table that stores a height different between the first chip(1-6) and other chips.
 var height_table = {
+    // input_name: "",
     input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/height_table.txt",
     table: {},
     read: function (input_text) {

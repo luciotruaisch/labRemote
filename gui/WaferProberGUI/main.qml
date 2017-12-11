@@ -2,6 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.0
 
 import QtQuick.Extras 1.4
 
@@ -65,6 +66,7 @@ ApplicationWindow {
 //        source: Settings.real_chip_table.input_name
 //        onError: console.log(msg)
 //    }
+
     FileIO {
         id: height_input
         source: Settings.height_table.input_name
@@ -104,7 +106,6 @@ ApplicationWindow {
                                             Settings.chip_y_for_calibration
                                             )
             current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
-            Settings.height_table.read(height_input.read())
         }
 
         onPositionChanged: {
@@ -170,7 +171,7 @@ ApplicationWindow {
         if(result){
             console.log("Height Table is written.")
         } else {
-            console.log("Cannot write to File.")
+            console.log("Cannot write to File: ", Settings.height_table.input_name)
         }
     }
 

@@ -105,6 +105,20 @@ Item {
                         idx_frame = 1
                     }
                 }
+                Button {
+                    text: "Set Files"
+                    onClicked: menu_files.open()
+                    Menu {
+                        id: menu_files
+                        MenuItem {
+                            text: "Height Calibration Files"
+                            onTriggered: {
+                                height_file_dialog.open()
+                            }
+                        }
+                    }
+                }
+
                 Switch {
                     id: btn_is_contact
                     enabled: false
