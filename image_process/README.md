@@ -1,22 +1,21 @@
-== Instructions
-Requirements:
+##Requirements:
    * python 3.5.4
    * jupyter 1.0.0
    * matplotlib 2.0.2
    * numpy 1.12.1
 
-=== Use pixel desktop.
+## Use pixel desktop.
 ```shell
 source /home/pixel/miniconda3/bin/activate
 source activate py3.5
 jupyter notebook
 ```
 
-=== Install from scratch
+## Install from scratch
 I suggest to use a conda environment, but it requires additional work.
 First download and install a [Miniconda](https://conda.io/miniconda.html).
 Then create a environment by running:
-```
+```unix
 conda env create -f environment.yml
 ```
 
@@ -33,6 +32,6 @@ sudo make install
 To unstall it: `sudo make uninstall`
 
 then you can invoke jupyter
-```
+```unix
 jupyter notebook
 ```
