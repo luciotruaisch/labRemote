@@ -1,5 +1,6 @@
 #ifndef CALIBRATEZ_H
 #define CALIBRATEZ_H
+// This class uses the variation of an image to determine if the image is in focus.
 
 #include <QObject>
 
@@ -11,7 +12,7 @@ class CalibrateWorker : public QObject {
     // the worker that does the work.
     Q_OBJECT
 public:
-    explicit CalibrateWorker(MotionController* mc, CVCamera* camera);
+    explicit CalibrateWorker(ControllerBase* mc, CVCamera* camera);
 
 public slots:
     void start(); // start timer
@@ -25,7 +26,7 @@ signals:
     void focusPointFound(double maxAbsZ);
 
 protected:
-    MotionController* m_ctrl;
+    ControllerBase* m_ctrl;
     CVCamera* m_camera;
     QTimer* m_timer;
     bool m_running;
@@ -41,16 +42,13 @@ class CalibrateZ : public QObject
 public:
     explicit CalibrateZ(QObject* parent = nullptr);
 
-    // loop over whole wafer
-    Q_INVOKABLE void startLoop();
-
     // start calibration at current location.
     Q_INVOKABLE void start();
     Q_INVOKABLE void stop(){
         m_worker->stop();
     }
     Q_INVOKABLE void dismiss(){
-        m_calibThread->quit();
+        if(m_calibThread) m_calibThread->quit();
     }
 
     static double calFeature(cv::Mat image);

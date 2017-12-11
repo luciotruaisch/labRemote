@@ -59,7 +59,7 @@ void MotionWorker::run()
             // and notify main program that a axis is changed.
             emit positionChanged(axis_changed);
         } else {
-            QThread::sleep(1.5);
+            QThread::sleep(1);
         }
         emit commandChanged(current_cmd);
     }

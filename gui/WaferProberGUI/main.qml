@@ -73,6 +73,7 @@ ApplicationWindow {
 
     ObjectDetection {
         id: object_detection
+        objectName: "qrc:images/RD53A_template_less.png"
         onCorrectionGenerated: {
             // change pixel to mm.
             dx *= 0.002
@@ -156,12 +157,12 @@ ApplicationWindow {
         if(motion_content.connectResult == 0) backend.dismiss()
 
         //console.log(Settings.real_chip_table.output())
-//        var result = real_chip_input.write(Settings.real_chip_table.output())
-//        if(result){
-//            console.log("Real Chip Table is written.")
-//        } else {
-//            console.log("Cannot write to File.")
-//        }
+        //        var result = real_chip_input.write(Settings.real_chip_table.output())
+        //        if(result){
+        //            console.log("Real Chip Table is written.")
+        //        } else {
+        //            console.log("Cannot write to File.")
+        //        }
         autoZcal.dismiss()
 
         // console.log(Settings.height_table.output())

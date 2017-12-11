@@ -6,7 +6,7 @@
 
 Q_DECLARE_METATYPE(cv::Mat)
 
-CalibrateWorker::CalibrateWorker(MotionController *mc, CVCamera *camera):
+CalibrateWorker::CalibrateWorker(ControllerBase *mc, CVCamera *camera):
     m_ctrl(mc),
     m_camera(camera)
 {
@@ -46,7 +46,7 @@ void CalibrateWorker::run()
         int nFlip = 0;
 
         // get current absolute position in Z.
-        m_ctrl->get_pos_z();
+        m_ctrl->get_position();
         double absZ = m_ctrl->m_position[2];
         double maxAbsZ = absZ;
         double maxFeature = currentFeature;
@@ -66,8 +66,8 @@ void CalibrateWorker::run()
             m_ctrl->mv_abs(2, absZ);
             currentFeature = CalibrateZ::calFeature(m_camera->getCvImage());
 
-             m_ctrl->get_pos_z();
-             qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentFeature;
+//             m_ctrl->get_position();
+//             qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentFeature;
             if(currentFeature > maxFeature) {
                 maxFeature = currentFeature;
                 maxAbsZ = absZ;
@@ -93,7 +93,7 @@ void CalibrateWorker::run()
 //        m_ctrl->get_pos_z();
 //        qInfo()<<"New Position: " << m_ctrl->m_position[2];
         m_ctrl->mv_abs(2, maxAbsZ);
-        m_ctrl->get_pos_z();
+        m_ctrl->get_position();
         qInfo()<<"New Position: " << m_ctrl->m_position[2];
         if(foundFocus) emit focusPointFound(maxAbsZ);
         m_running = false;
@@ -165,7 +165,6 @@ double CalibrateZ::calFeature(cv::Mat image)
     cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
     cv::Scalar mean, stdv;
     cv::meanStdDev(gray, mean, stdv);
-//    return cv::mean(gray)[0];
     return stdv[0];
 }
 
@@ -175,8 +174,4 @@ double CalibrateZ::calFeature(QVariant input) {
     } else {
         return 9999;
     }
-}
-
-void CalibrateZ::startLoop(){
-    return;
 }

@@ -118,7 +118,7 @@ void CameraTask::doWork()
         millisElapsed += millis;
         fps = CAM_FPS_RATE*fps + (1.0f - CAM_FPS_RATE)*(1000.0f/millis);
         if(millisElapsed >= CAM_FPS_PRINT_PERIOD){
-            qDebug("Camera is running at %f FPS",fps);
+            // qDebug("Camera is running at %f FPS",fps);
             millisElapsed = 0;
         }
 #endif
