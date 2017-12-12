@@ -105,19 +105,19 @@ Item {
                         idx_frame = 1
                     }
                 }
-                Button {
-                    text: "Set Files"
-                    onClicked: menu_files.open()
-                    Menu {
-                        id: menu_files
-                        MenuItem {
-                            text: "Height Calibration Files"
-                            onTriggered: {
-                                height_file_dialog.open()
-                            }
-                        }
-                    }
-                }
+//                Button {
+//                    text: "Set Files"
+//                    onClicked: menu_files.open()
+//                    Menu {
+//                        id: menu_files
+//                        MenuItem {
+//                            text: "Height Calibration Files"
+//                            onTriggered: {
+//                                height_file_dialog.open()
+//                            }
+//                        }
+//                    }
+//                }
 
                 Switch {
                     id: btn_is_contact
@@ -373,7 +373,7 @@ Item {
                                     if(with_correction) {
                                         backend.run_cmd("MR Y " + yOffSet.toString())
                                         backend.run_cmd("ENDCALIBRATE")
-                                        backend.run_cmd("MR Y -" + yOffSet.toString())
+                                        backend.run_cmd("MR Y " + (-1*yOffSet).toString())
                                     }
                                     Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
                                                                     Number(txt_chip_x_calibrate.text),

@@ -39,8 +39,8 @@ var true_chip_table = {};
 
 
 var chip_id_for_calibration = "1-6"
-var chip_x_for_calibration = 19.872
-var chip_y_for_calibration = 172.257
+var chip_x_for_calibration = 288.329
+var chip_y_for_calibration = 151.19
 
 // a 10 columns and 12 rows
 // x = 10, y = 12
@@ -84,16 +84,16 @@ var find_chip_number = function(id_) {
 var update_true_chip_table = function(id_, x_, y_) {
     var input_loc = find_location(id_);
 
-    var x_zero = x_ - incre_x * input_loc.x_loc;
-    var y_zero = y_ - incre_y * (11 - input_loc.y_loc);
+    var x_zero = x_ + incre_x * input_loc.x_loc;
+    var y_zero = y_ - incre_y * input_loc.y_loc;
     var n_properties = 0
     for(var j = 0; j < 10; j ++) {
         for(var i = 0; i < 12; i++){
             var chip_id = chip_numbering[i][j];
             if(chip_id < 0) continue;
             true_chip_table[chip_id.toString()] = {
-                xAxis: (x_zero + j * incre_x) * 1000 / 1000,
-                yAxis: (y_zero + (11 - i) * incre_y) * 1000/ 1000
+                xAxis: (x_zero - j * incre_x) * 1000 / 1000,
+                yAxis: (y_zero + i * incre_y) * 1000/ 1000
             }
             n_properties += 1
         }
