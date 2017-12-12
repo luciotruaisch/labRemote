@@ -27,6 +27,7 @@ int ControllerZaber::connect(){
         printf("%s connected\n", dn.c_str());
         status = 0;
         m_is_connected = true;
+        this->unpark();
     } else {
         printf("%s not connected\n", dn.c_str());
         status = 1;
@@ -150,6 +151,8 @@ int ControllerZaber::unpark()
     int status = write("/tools parking unpark\n");
     if(status == 0){
         printf("%s is unparked\n", dn.c_str());
+    } else {
+        printf("%s cannot unparked\n", dn.c_str());
     }
     return status;
 }

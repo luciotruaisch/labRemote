@@ -89,6 +89,7 @@ int MotionController::get_pos_xy(){
     xy_ctrl->get_position();
     m_position[0] = xy_ctrl->m_position[0];
     m_position[1] = xy_ctrl->m_position[1];
+    printf("xy position: %.2f, %.2f\n", m_position[0], m_position[1]);
     return 0;
 }
 

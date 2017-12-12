@@ -657,15 +657,6 @@ Item {
                                 }
                             }
 
-//                            Button {
-//                                id: btx_z_calibrate
-//                                text: "CalibrateZ"
-//                                Layout.fillWidth: true
-//                                onClicked: {
-//                                    warning_calibrateZ.open()
-//                                }
-//                            }
-
                         }
                     }
                     RowLayout {

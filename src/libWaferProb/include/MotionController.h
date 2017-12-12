@@ -18,9 +18,6 @@ private:
     ControllerGalil* z_ctrl;    // z-axis controled by a machine from Garlil
 
 public:
-    float m_position[3];
-
-public:
     MotionController(const char* dn_1);
     ~MotionController();
 

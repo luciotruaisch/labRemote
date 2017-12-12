@@ -71,10 +71,6 @@ public:
 
     Q_INVOKABLE void run_cmd(QString cmd);
 
-//    Q_INVOKABLE void calibrateZ(){
-//        m_ctrl->calibrate_Z();
-//    }
-
     // stop motions
     Q_INVOKABLE void stop(){
         worker->stop();
@@ -192,7 +188,6 @@ private:
     float m_speed_y;
     float m_speed_z;
 
-    int unit;
 private: // private functions
     bool is_valid_x(float x){
         return x >= X_MIN && x <= X_MAX;

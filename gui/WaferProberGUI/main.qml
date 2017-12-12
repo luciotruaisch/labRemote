@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Extras 1.4
 
 import "qml" // Housing customized Items
+
 //import "settings.js" as Settings
 import "qrc:settings.js" as Settings
 
@@ -51,21 +52,9 @@ ApplicationWindow {
         txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
     }
 
-    Timer {
-        id: timer
-
-    }
-
     CVCamera {
         id: camera
     }
-
-
-//    FileIO {
-//        id: real_chip_input
-//        source: Settings.real_chip_table.input_name
-//        onError: console.log(msg)
-//    }
 
     FileIO {
         id: height_input
@@ -136,6 +125,7 @@ ApplicationWindow {
         }
     }
 
+    // calibration for focus. measurement of height.
     CalibrateZ {
         id: autoZcal
         motionHandle: backend

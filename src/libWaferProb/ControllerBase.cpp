@@ -24,6 +24,7 @@ void ControllerBase::print_cmd(){
 }
 
 int ControllerBase::run_cmd(const string& cmd) {
+    printf("HELLO??? %s\n", cmd.c_str());
     int axis = -1;
 
     if(cmd.empty()){
