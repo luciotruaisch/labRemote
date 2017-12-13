@@ -40,6 +40,8 @@ ApplicationWindow {
         if(with_correction) {
             backend.run_cmd("ENDCHIP")
         }
+        console.log(Settings.convert_ID_to_name(chip_id))
+        console.log("Z corrections are: ", Settings.height_table.get(Settings.convert_ID_to_name(chip_id)))
     }
     function goNextChip(){
         go2chip(1+Settings.find_chip_number(current_chip_id.text))
@@ -82,7 +84,6 @@ ApplicationWindow {
                 motion_content.txt_rel_y.text = dy_str
             }
             console.log("automated correction is:",dx_str, dy_str)
-            console.log("Z corrections are: ", Settings.height_table.get(current_chip_id.text))
         }
     }
 
@@ -97,7 +98,7 @@ ApplicationWindow {
                                             Settings.chip_x_for_calibration,
                                             Settings.chip_y_for_calibration
                                             )
-            current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
+            current_chip_id.text = Settings.find_chip_name(Number(txt_pos_x.text), Number(txt_pos_y.text))
 
             Settings.height_table.read(height_input.read())
         }
@@ -105,7 +106,7 @@ ApplicationWindow {
         onPositionChanged: {
             update_position()
             if(axis != 2){
-                current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
+                current_chip_id.text = Settings.find_chip_name(Number(txt_pos_x.text), Number(txt_pos_y.text))
             }
         }
 
@@ -137,7 +138,7 @@ ApplicationWindow {
         camera: camera
         onFocusFound: {
             update_position()
-            Settings.height_table.update(current_chip_id.text, txt_pos_z.text)
+            Settings.height_table.update(current_chip_id.text, Number(txt_pos_z.text))
             if(calibrateAllChips){
                 goNextChip()
                 backend.run_cmd("ENDFORCALIBRATEZ")

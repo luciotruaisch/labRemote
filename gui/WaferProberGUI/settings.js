@@ -44,6 +44,7 @@ var chip_y_for_calibration = 151.19
 
 // a 10 columns and 12 rows
 // x = 10, y = 12
+// these numbers are chip_ID
 var chip_numbering = [
             [-1, -1, -1, -1, 33, 45, -1, -1, -1, -1],
             [-1, -1, 12, 22, 34, 46, 57, 68, -1, -1],
@@ -72,9 +73,9 @@ var find_location = function(id_){
     return {x_loc: 0, y_loc: 0};
 }
 
-var find_chip_number = function(id_) {
+var find_chip_number = function(chip_name) {
     // console.log("HELLO: ", id_)
-    var items = id_.split("-");
+    var items = chip_name.split("-");
     var x = Number(items[0]) - 1;
     var y = Number(items[1]) - 1;
     // console.log("location from chipID:", id_, x, y, chip_numbering[y][x])
@@ -111,8 +112,14 @@ var get_chip_axis = function(chip_id) {
     }
 }
 
-// find nearest chip ID given current location
-var find_chip_ID = function(x_, y_){
+var convert_ID_to_name = function(chip_id) {
+    var input_loc = find_location(chip_id);
+    var res = (input_loc.x_loc+1)+"-"+(input_loc.y_loc+1)
+    return res;
+}
+
+// find nearest chip name given current location
+var find_chip_name = function(x_, y_){
     var distance = 999999;
     var closet_chip = -1;
     for(var item in true_chip_table){
@@ -126,9 +133,7 @@ var find_chip_ID = function(x_, y_){
             }
         }
     }
-    var input_loc = find_location(Number(closet_chip));
-    var res = (input_loc.x_loc+1)+"-"+(input_loc.y_loc+1)
-    return res;
+    return convert_ID_to_name(Number(closet_chip));
 }
 
 // a table that stores a correct hand-selected locations
@@ -178,12 +183,12 @@ var height_table = {
     // input_name: "",
     input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/height_table.txt",
     table: {},
-    refID: 1,
+    refID: "1-6",
     read: function (input_text) {
         var lines = input_text.split('\n')
         for(var line_nb in lines){
             var items = lines[line_nb].split(' ');
-            this.updateWithArray(items)
+            this.update(items[0], items[1])
         }
         console.log(this.input_name+" is loaded with "+lines.length+" lines")
     },
@@ -210,10 +215,6 @@ var height_table = {
         }
         console.log("Height table is updated: ", id_input, z_)
     },
-    updateWithArray: function(items) {
-        if (items.length < 2) return;
-        this.update(items[0], Number(items[1]))
-    },
     get_origin_height: function(id_input) {
         var id_ = find_chip_number(id_input)
         var z_height = this.table[id_.toString()]
@@ -224,8 +225,9 @@ var height_table = {
         }
     },
     get: function(id_input) {
-        var cur_height = this.get_origin_height(id_input)
-        var ref_height = this.get_origin_height(this.refID)
-        return cur_height - ref_height
+        var cur_height = this.get_origin_height(id_input).deltaZ
+        var ref_height = this.get_origin_height(this.refID).deltaZ
+        var diff = (cur_height - ref_height)
+        return diff
     }
 }

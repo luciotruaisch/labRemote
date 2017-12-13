@@ -31,11 +31,12 @@ void CalibrateWorker::run()
         m_ctrl->set_speed(2, 0.040);
 
         const double MAX_DISTANCE = 0.300;
-        const int Max_TRIES = 50;
+        const int Max_TRIES = 150;
         const int MAX_FLIPS = 10;
+        double step = 0.02;
 
         bool foundFocus = true;
-        double step = 0.08;
+
         double direction = 1; // 1 for increase; -1 for decrease
 
         double offset = 0.;
@@ -81,7 +82,7 @@ void CalibrateWorker::run()
                 nFlip += 1;
                 step *= 0.5;
                 // increase the number to get more presion.
-                if(nFlip > MAX_FLIPS) break;
+                if(nFlip > MAX_FLIPS || step < 0.001) break;
             } else {
                 offset = 0;
             }

@@ -381,7 +381,7 @@ Item {
                                                                     Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
                                     isCalibrated = true
-                                    Settings.height_table.refID = chip_num
+                                    Settings.height_table.refID = txt_chip_id_calibrate.text
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered
