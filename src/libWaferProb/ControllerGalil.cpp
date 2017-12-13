@@ -53,7 +53,7 @@ int ControllerGalil::write(const string& cmd){
     char* trimmed;
     if( ! check(GCmdT(port, cmd.c_str(), buf, sizeof(buf), &trimmed)) )
     {
-        printf("%s is not recognised\n", cmd.c_str());
+        printf("%s is not recognized\n", cmd.c_str());
         return -2;
     }
     printf("Galil: %s --> %s\n", cmd.c_str(), buf);
@@ -139,6 +139,8 @@ void ControllerGalil::make_a_move(int axis){
     write(mv);
     // block until motion is complete.
     GMotionComplete(port, string(1, axis_name).c_str());
+
+    get_position();
 }
 
 void ControllerGalil::find_max_min()

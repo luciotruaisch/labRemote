@@ -27,6 +27,7 @@ int ControllerZaber::connect(){
         printf("%s connected\n", dn.c_str());
         status = 0;
         m_is_connected = true;
+        unpark();
     } else {
         printf("%s not connected\n", dn.c_str());
         status = 1;
