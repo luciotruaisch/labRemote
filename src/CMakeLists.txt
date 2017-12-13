@@ -24,28 +24,12 @@ add_compile_options(-std=c++11)
 #
 # Add libraries
 add_subdirectory(libGPIB)
+add_subdirectory(libGalil)
+add_subdirectory(libImageRec)
+add_subdirectory(libWaferProb)
+add_subdirectory(libZaber)
 
 #
 # Add binaries
 add_subdirectory(pbv2)
-
-# # add executables
-# file(GLOB tools tools/*.c*)
-# foreach(target ${tools})
-# get_filename_component(execname ${target} NAME_WE)
-# get_filename_component(srcfile ${target} NAME)
-# add_executable(${execname} tools/${srcfile})
-# add_dependencies(${execname} labRemote)
-# set_target_properties(${execname} PROPERTIES LINKER_LANGUAGE CXX)
-
-
-# if(APPLE)
-#   set(MACOSX_DEPLOYMENT_TARGET 10.10)
-#   target_link_libraries(${execname} labRemote /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib ${OpenCV_LIBS})
-#   # target_link_libraries(${execname} labRemote /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib)
-# else()
-#   target_link_libraries(${execname} labRemote gclib gclibo ${OpenCV_LIBS})
-#   # target_link_libraries(${execname} labRemote gclib gclibo)
-# endif()
-
-# endforeach()
+add_subdirectory(prober)
