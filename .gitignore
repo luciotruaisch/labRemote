@@ -1,6 +1,1 @@
-*.*
-!*.cpp
-!.gitignore
-!src/*.cpp
-!include/*.h
-!README
+*.DS_Store
