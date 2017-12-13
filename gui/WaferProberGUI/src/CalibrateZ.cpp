@@ -28,14 +28,14 @@ void CalibrateWorker::run()
 {
     if(m_running){
         // start to move chunk up and down to compare to mean value.
-        m_ctrl->set_speed(2, 0.020);
+        m_ctrl->set_speed(2, 0.040);
 
         const double MAX_DISTANCE = 0.300;
-        const int Max_TRIES = 20;
-        const int MAX_FLIPS = 6;
+        const int Max_TRIES = 50;
+        const int MAX_FLIPS = 10;
 
         bool foundFocus = true;
-        double step = 0.02;
+        double step = 0.08;
         double direction = 1; // 1 for increase; -1 for decrease
 
         double offset = 0.;
@@ -80,7 +80,6 @@ void CalibrateWorker::run()
                 offset = step;
                 nFlip += 1;
                 step *= 0.5;
-                // flip-and-turn for 4 times..
                 // increase the number to get more presion.
                 if(nFlip > MAX_FLIPS) break;
             } else {

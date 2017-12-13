@@ -98,6 +98,8 @@ ApplicationWindow {
                                             Settings.chip_y_for_calibration
                                             )
             current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
+
+            Settings.height_table.read(height_input.read())
         }
 
         onPositionChanged: {
@@ -252,9 +254,6 @@ ApplicationWindow {
 
                         Motion {
                             id: motion_content
-//                            onReadyForChipCorrection: {
-//                                object_detection.dstImage(camera.cvImage)
-//                            }
                         }
 
                         Measurement {}

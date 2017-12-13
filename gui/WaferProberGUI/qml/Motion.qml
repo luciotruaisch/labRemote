@@ -375,11 +375,13 @@ Item {
                                         backend.run_cmd("ENDCALIBRATE")
                                         backend.run_cmd("MR Y " + (-1*yOffSet).toString())
                                     }
-                                    Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
+                                    var chip_num = Settings.find_chip_number(txt_chip_id_calibrate.text)
+                                    Settings.update_true_chip_table(chip_num,
                                                                     Number(txt_chip_x_calibrate.text),
                                                                     Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
                                     isCalibrated = true
+                                    Settings.height_table.refID = chip_num
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered

@@ -73,7 +73,7 @@ var find_location = function(id_){
 }
 
 var find_chip_number = function(id_) {
-    console.log("HELLO: ", id_)
+    // console.log("HELLO: ", id_)
     var items = id_.split("-");
     var x = Number(items[0]) - 1;
     var y = Number(items[1]) - 1;
@@ -146,7 +146,7 @@ var real_chip_table = {
             var items = lines[line_nb].split(' ');
             this.updateWithArray(items)
         }
-        console.log(this.input_name+" is loaded.")
+        console.log(this.input_name+" is read.")
     },
     output: function() {
         var out = "";
@@ -214,13 +214,18 @@ var height_table = {
         if (items.length < 2) return;
         this.update(items[0], Number(items[1]))
     },
-    get: function(id_input) {
+    get_origin_height: function(id_input) {
         var id_ = find_chip_number(id_input)
-        z_height = this.table[id_.toString()]
+        var z_height = this.table[id_.toString()]
         if(z_height == undefined) {
             return 0.
         } else {
-            return z_height - this.table[refID.toString()]
+            return z_height
         }
+    },
+    get: function(id_input) {
+        var cur_height = this.get_origin_height(id_input)
+        var ref_height = this.get_origin_height(this.refID)
+        return cur_height - ref_height
     }
 }
