@@ -92,11 +92,16 @@ int MojoCom::readReg(unsigned reg, unsigned &val) {
 }
 
 int MojoCom::enableI2C() {
-    // Do some magic
     log(logINFO) << __PRETTY_FUNCTION__ << " : Enabling I2C!";
-    if (this->writeReg(0x4c, 0x03)) return -1;
+    // Reset I2C
+    if (this->writeReg(0x4c, 0x0))  return -1;
+    if (this->writeReg(0x4c, 0x03)) return -1; // unreset I2C + drive SCL active
+
+    // Set the I2C clock prescale
     if (this->writeReg(0x100, 0x00)) return -1;
     if (this->writeReg(0x101, 0x01)) return -1;
+
+    // Enable the I2C core
     if (this->writeReg(0x102, 0x80)) return -1;
     return 0;
 }
