@@ -1,74 +1,51 @@
-cmake_minimum_required (VERSION 2.8)
-project (WaferProb)
-# The version number.
-set (WaferProb_VERSION_MAJOR 1)
-set (WaferProb_VERSION_MINOR 0)
-
-#IF(CMAKE_COMPILER_IS_GNUCC)
-#  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
-#ENDIF(CMAKE_COMPILER_IS_GNUCC)
-#IF(CMAKE_COMPILER_IS_GNUCXX)
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
-#ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-
-# what for?
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
+#
+# Check for recent compiler
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
-        message(FATAL_ERROR "GCC version must be at least 4.8!")
-    endif()
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
+    message(FATAL_ERROR "GCC version must be at least 4.8!")
+  endif()
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.2)
-        message(FATAL_ERROR "Clang version must be at least 3.2!")
-    endif()
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.2)
+    message(FATAL_ERROR "Clang version must be at least 3.2!")
+  endif()
 else()
-    message(WARNING "You are using an unsupported compiler! Compilation has only been tested with Clang and GCC.")
+  message(WARNING "You are using an unsupported compiler! Compilation has only been tested with Clang and GCC.")
 endif()
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-add_compile_options(-g)
+  add_compile_options(-g)
 else()
-add_compile_options(-O4)
+  add_compile_options(-O4)
 endif()
 add_compile_options(-Wfatal-errors)
 add_compile_options(-Wno-deprecated)
 add_compile_options(-std=c++11)
-# add_compile_options(-Wc++11-extensions)
+
+#
+# Add libraries
+add_subdirectory(libGPIB)
+
+#
+# Add binaries
+add_subdirectory(pbv2)
+
+# # add executables
+# file(GLOB tools tools/*.c*)
+# foreach(target ${tools})
+# get_filename_component(execname ${target} NAME_WE)
+# get_filename_component(srcfile ${target} NAME)
+# add_executable(${execname} tools/${srcfile})
+# add_dependencies(${execname} labRemote)
+# set_target_properties(${execname} PROPERTIES LINKER_LANGUAGE CXX)
 
 
-# add libraries
-list(APPEND libs Galil Zaber WaferProb GPIB ImageRec)
+# if(APPLE)
+#   set(MACOSX_DEPLOYMENT_TARGET 10.10)
+#   target_link_libraries(${execname} labRemote /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib ${OpenCV_LIBS})
+#   # target_link_libraries(${execname} labRemote /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib)
+# else()
+#   target_link_libraries(${execname} labRemote gclib gclibo ${OpenCV_LIBS})
+#   # target_link_libraries(${execname} labRemote gclib gclibo)
+# endif()
 
-foreach(lib ${libs})
-include_directories(lib${lib}/include)
-file(GLOB SrcFiles lib${lib}/*.c*)
-list(APPEND LibSrcFiles ${SrcFiles})
-endforeach()
-
-add_library(WaferProb STATIC ${LibSrcFiles}) 
-
-find_package( OpenCV REQUIRED )
-
-# add executables
-file(GLOB tools tools/*.c*)
-foreach(target ${tools})
-get_filename_component(execname ${target} NAME_WE)
-get_filename_component(srcfile ${target} NAME)
-add_executable(${execname} tools/${srcfile})
-add_dependencies(${execname} WaferProb)
-set_target_properties(${execname} PROPERTIES LINKER_LANGUAGE CXX)
-
-
-if(APPLE)
-	set(MACOSX_DEPLOYMENT_TARGET 10.10)
-	target_link_libraries(${execname} WaferProb /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib ${OpenCV_LIBS})
-    # target_link_libraries(${execname} WaferProb /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib)
-else()
-	target_link_libraries(${execname} WaferProb gclib gclibo ${OpenCV_LIBS})
-    # target_link_libraries(${execname} WaferProb gclib gclibo)
-endif()
-
-endforeach()
+# endforeach()
