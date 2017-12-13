@@ -105,19 +105,19 @@ Item {
                         idx_frame = 1
                     }
                 }
-                Button {
-                    text: "Set Files"
-                    onClicked: menu_files.open()
-                    Menu {
-                        id: menu_files
-                        MenuItem {
-                            text: "Height Calibration Files"
-                            onTriggered: {
-                                height_file_dialog.open()
-                            }
-                        }
-                    }
-                }
+//                Button {
+//                    text: "Set Files"
+//                    onClicked: menu_files.open()
+//                    Menu {
+//                        id: menu_files
+//                        MenuItem {
+//                            text: "Height Calibration Files"
+//                            onTriggered: {
+//                                height_file_dialog.open()
+//                            }
+//                        }
+//                    }
+//                }
 
                 Switch {
                     id: btn_is_contact
@@ -373,13 +373,15 @@ Item {
                                     if(with_correction) {
                                         backend.run_cmd("MR Y " + yOffSet.toString())
                                         backend.run_cmd("ENDCALIBRATE")
-                                        backend.run_cmd("MR Y -" + yOffSet.toString())
+                                        backend.run_cmd("MR Y " + (-1*yOffSet).toString())
                                     }
-                                    Settings.update_true_chip_table(Settings.find_chip_number(txt_chip_id_calibrate.text),
+                                    var chip_num = Settings.find_chip_number(txt_chip_id_calibrate.text)
+                                    Settings.update_true_chip_table(chip_num,
                                                                     Number(txt_chip_x_calibrate.text),
                                                                     Number(txt_chip_y_calibrate.text) + Number(yOffSet)
                                                                     )
                                     isCalibrated = true
+                                    Settings.height_table.refID = txt_chip_id_calibrate.text
                                 }
                                 ToolTip.text: qsTr("Set a starting point! Make sure RD53 is in the image.")
                                 ToolTip.visible: hovered
@@ -437,7 +439,7 @@ Item {
                             Button {
                                 enabled: !isContact
                                 id: btn_stop_Z_calib
-                                text: "STOP"
+                                text: "STOP Z calib"
                                 onClicked: {
                                     autoZcal.stop()
                                 }
@@ -656,15 +658,6 @@ Item {
                                     backend.run_cmd(command)
                                 }
                             }
-
-//                            Button {
-//                                id: btx_z_calibrate
-//                                text: "CalibrateZ"
-//                                Layout.fillWidth: true
-//                                onClicked: {
-//                                    warning_calibrateZ.open()
-//                                }
-//                            }
 
                         }
                     }

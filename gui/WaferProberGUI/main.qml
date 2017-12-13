@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Extras 1.4
 
 import "qml" // Housing customized Items
+
 //import "settings.js" as Settings
 import "qrc:settings.js" as Settings
 
@@ -27,7 +28,7 @@ ApplicationWindow {
     property var withCamera: false
     property var with_correction: false
     property var calibrateAllChips: false
-    property var yOffSet: 0
+    property var yOffSet: -0.3
 
     // handy functions
     function go2chip(chip_id){
@@ -36,7 +37,11 @@ ApplicationWindow {
         var cmd_y = "MA Y " + chip_axises.yAxis.toString()
         backend.run_cmd(cmd_x)
         backend.run_cmd(cmd_y)
-        backend.run_cmd("ENDCHIP")
+        if(with_correction) {
+            backend.run_cmd("ENDCHIP")
+        }
+        console.log(Settings.convert_ID_to_name(chip_id))
+        console.log("Z corrections are: ", Settings.height_table.get(Settings.convert_ID_to_name(chip_id)))
     }
     function goNextChip(){
         go2chip(1+Settings.find_chip_number(current_chip_id.text))
@@ -51,21 +56,9 @@ ApplicationWindow {
         txt_pos_z.text = Number(backend.getPosZ()).toLocaleString(Qt.locale("en_US"), 'f', 3)
     }
 
-    Timer {
-        id: timer
-
-    }
-
     CVCamera {
         id: camera
     }
-
-
-//    FileIO {
-//        id: real_chip_input
-//        source: Settings.real_chip_table.input_name
-//        onError: console.log(msg)
-//    }
 
     FileIO {
         id: height_input
@@ -80,7 +73,7 @@ ApplicationWindow {
             // change pixel to mm.
             dx *= 0.002
             dy *= -0.002
-            dy -= yOffSet
+            // dy -= yOffSet
             var dx_str = dx.toLocaleString(Qt.locale("en_US"), 'f', 3)
             var dy_str = dy.toLocaleString(Qt.locale("en_US"), 'f', 3)
             if(with_correction) {
@@ -105,13 +98,15 @@ ApplicationWindow {
                                             Settings.chip_x_for_calibration,
                                             Settings.chip_y_for_calibration
                                             )
-            current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
+            current_chip_id.text = Settings.find_chip_name(Number(txt_pos_x.text), Number(txt_pos_y.text))
+
+            Settings.height_table.read(height_input.read())
         }
 
         onPositionChanged: {
             update_position()
             if(axis != 2){
-                current_chip_id.text = Settings.find_chip_ID(Number(txt_pos_x.text), Number(txt_pos_y.text))
+                current_chip_id.text = Settings.find_chip_name(Number(txt_pos_x.text), Number(txt_pos_y.text))
             }
         }
 
@@ -136,13 +131,14 @@ ApplicationWindow {
         }
     }
 
+    // calibration for focus. measurement of height.
     CalibrateZ {
         id: autoZcal
         motionHandle: backend
         camera: camera
         onFocusFound: {
             update_position()
-            Settings.height_table.update(current_chip_id.text, txt_pos_z.text)
+            Settings.height_table.update(current_chip_id.text, Number(txt_pos_z.text))
             if(calibrateAllChips){
                 goNextChip()
                 backend.run_cmd("ENDFORCALIBRATEZ")
@@ -259,9 +255,6 @@ ApplicationWindow {
 
                         Motion {
                             id: motion_content
-//                            onReadyForChipCorrection: {
-//                                object_detection.dstImage(camera.cvImage)
-//                            }
                         }
 
                         Measurement {}

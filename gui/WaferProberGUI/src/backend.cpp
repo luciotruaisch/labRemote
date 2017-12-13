@@ -71,7 +71,6 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
 
     m_ctrl = 0;
     m_current_x = m_current_y = m_current_z = -1.0;
-    unit = 1000;
     m_z_sep = 0.700; // unit of mm.
     m_z_isContact = false;
 
@@ -80,6 +79,7 @@ BackEnd::BackEnd(QObject *parent) : QObject(parent)
 int BackEnd::connectDevice()
 {
     if(m_ctrl == 0) {
+
         const char* deviceName = m_xyDeviceName.toLatin1().data();
         // One can changes to any other motion controller that
         // is derived from ControllerBase.
@@ -119,13 +119,13 @@ void BackEnd::get_pos_xy(){
 
 void BackEnd::setSpeedX(float speed_x){
     m_speed_x = speed_x;
-    m_ctrl->set_speed(0, m_speed_x*unit);
+    m_ctrl->set_speed(0, m_speed_x);
     emit speedXSet();
 }
 
 void BackEnd::setSpeedY(float speed_y){
     m_speed_y = speed_y;
-    m_ctrl->set_speed(1, m_speed_y*unit);
+    m_ctrl->set_speed(1, m_speed_y);
     emit speedYSet();
 }
 
@@ -138,7 +138,7 @@ void BackEnd::setSpeedZ(float speed_z){
 void BackEnd::setTestXY(float axis){
     vector<int> steps{20, 46, 73, 100, 126, 152, 179, 206, 226};
     for(int step: steps){
-        m_ctrl->mv_abs(axis, unit*step);
+        m_ctrl->mv_abs(axis, step);
         QThread::sleep(6);
     }
 }

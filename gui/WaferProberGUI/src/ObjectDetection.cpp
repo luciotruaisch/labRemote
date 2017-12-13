@@ -8,6 +8,8 @@
 Q_DECLARE_METATYPE(cv::Mat)
 ObjectDetection::ObjectDetection(QObject *parent) : QObject(parent)
 {
+    m_object = cv::imread("/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/images/RD53A_template_rotated.png",
+                           cv::IMREAD_GRAYSCALE);
     m_sourceLocation.reserve(4);
 }
 
@@ -35,8 +37,8 @@ void ObjectDetection::dstImage(QVariant dstImage) {
 void ObjectDetection::setObjectName(QString objectName)
 {
         m_objectName = objectName;
-        m_object = cv::imread( m_objectName.toLatin1().data(),
-                               cv::IMREAD_GRAYSCALE);
+//        m_object = cv::imread( m_objectName.toLatin1().data(),
+//                               cv::IMREAD_GRAYSCALE);
         qInfo()<< objectName << " is loaded";
         emit objectNameChanged();
 }

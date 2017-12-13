@@ -151,6 +151,8 @@ int ControllerZaber::unpark()
     int status = write("/tools parking unpark\n");
     if(status == 0){
         printf("%s is unparked\n", dn.c_str());
+    } else {
+        printf("%s cannot unparked\n", dn.c_str());
     }
     return status;
 }

@@ -80,12 +80,12 @@ void OpenCVHelper::SIFT_obj_identify(
 		obj_corners[3] = cvPoint(0, img1.rows);
 		// vector<Point2f> scene_corners(4);
 		if(debug) cout << "before the transformation" << endl;
-		/**
-		if(matchedCorners.size() != 4) {
-			matchedCorners.reserve(4);
-		}
-		**/
-		perspectiveTransform(obj_corners, matchedCorners, H);
+
+        try {
+            perspectiveTransform(obj_corners, matchedCorners, H);
+        }catch(cv::Exception e){
+            ;
+        }
 	} else {
 		cout <<"Found less than " << min_match_count << " matches" << endl;
 	}
