@@ -437,7 +437,7 @@ Item {
                             Button {
                                 enabled: !isContact
                                 id: btn_stop_Z_calib
-                                text: "STOP"
+                                text: "STOP Z calib"
                                 onClicked: {
                                     autoZcal.stop()
                                 }

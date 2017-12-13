@@ -31,7 +31,8 @@ void CalibrateWorker::run()
         m_ctrl->set_speed(2, 0.020);
 
         const double MAX_DISTANCE = 0.300;
-        const int Max_TRIES = 30;
+        const int Max_TRIES = 20;
+        const int MAX_FLIPS = 6;
 
         bool foundFocus = true;
         double step = 0.02;
@@ -66,8 +67,8 @@ void CalibrateWorker::run()
             m_ctrl->mv_abs(2, absZ);
             currentFeature = CalibrateZ::calFeature(m_camera->getCvImage());
 
-//             m_ctrl->get_position();
-//             qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentFeature;
+             m_ctrl->get_position();
+             qInfo() << "Z: " << absZ << "("<< m_ctrl->m_position[2] << "); mean: " << currentFeature<<"; moved: " << accumulateMovement;
             if(currentFeature > maxFeature) {
                 maxFeature = currentFeature;
                 maxAbsZ = absZ;
@@ -81,7 +82,7 @@ void CalibrateWorker::run()
                 step *= 0.5;
                 // flip-and-turn for 4 times..
                 // increase the number to get more presion.
-                if(nFlip > 5) break;
+                if(nFlip > MAX_FLIPS) break;
             } else {
                 offset = 0;
             }
@@ -135,11 +136,6 @@ void CalibrateZ::start() {
         m_worker->startRun();
     }
 }
-
-//void CalibrateZ::receiveFoundedFocus(double maxAbsZ){
-//    // qInfo() << "received maximu position: " << maxAbsZ;
-//    // m_backend->run_cmd("MA Z "+ QString::number(maxAbsZ));
-//}
 
 BackEnd* CalibrateZ::motionHandle(){
     return m_backend;

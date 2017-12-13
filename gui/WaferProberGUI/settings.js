@@ -178,6 +178,7 @@ var height_table = {
     // input_name: "",
     input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/height_table.txt",
     table: {},
+    refID: 1,
     read: function (input_text) {
         var lines = input_text.split('\n')
         for(var line_nb in lines){
@@ -211,6 +212,15 @@ var height_table = {
     },
     updateWithArray: function(items) {
         if (items.length < 2) return;
-        this.update(Number(items[0]), Number(items[1]))
+        this.update(items[0], Number(items[1]))
+    },
+    get: function(id_input) {
+        var id_ = find_chip_number(id_input)
+        z_height = this.table[id_.toString()]
+        if(z_height == undefined) {
+            return 0.
+        } else {
+            return z_height - this.table[refID.toString()]
+        }
     }
 }

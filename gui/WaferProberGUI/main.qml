@@ -37,7 +37,9 @@ ApplicationWindow {
         var cmd_y = "MA Y " + chip_axises.yAxis.toString()
         backend.run_cmd(cmd_x)
         backend.run_cmd(cmd_y)
-        backend.run_cmd("ENDCHIP")
+        if(with_correction) {
+            backend.run_cmd("ENDCHIP")
+        }
     }
     function goNextChip(){
         go2chip(1+Settings.find_chip_number(current_chip_id.text))
@@ -80,6 +82,7 @@ ApplicationWindow {
                 motion_content.txt_rel_y.text = dy_str
             }
             console.log("automated correction is:",dx_str, dy_str)
+            console.log("Z corrections are: ", Settings.height_table.get(current_chip_id.text))
         }
     }
 
