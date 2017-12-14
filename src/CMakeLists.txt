@@ -40,7 +40,7 @@ add_compile_options(-std=c++11)
 
 
 # add libraries
-list(APPEND libs Galil Zaber WaferProb GPIB ImageRec)
+list(APPEND libs Galil Zaber WaferProb GPIB)
 
 foreach(lib ${libs})
 include_directories(lib${lib}/include)
@@ -50,7 +50,7 @@ endforeach()
 
 add_library(WaferProb STATIC ${LibSrcFiles}) 
 
-find_package( OpenCV REQUIRED )
+# find_package( OpenCV REQUIRED )
 
 # add executables
 file(GLOB tools tools/*.c*)
@@ -64,11 +64,9 @@ set_target_properties(${execname} PROPERTIES LINKER_LANGUAGE CXX)
 
 if(APPLE)
 	set(MACOSX_DEPLOYMENT_TARGET 10.10)
-	target_link_libraries(${execname} WaferProb /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib ${OpenCV_LIBS})
-    # target_link_libraries(${execname} WaferProb /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib)
+	target_link_libraries(${execname} WaferProb /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib)
 else()
-	target_link_libraries(${execname} WaferProb gclib gclibo ${OpenCV_LIBS})
-    # target_link_libraries(${execname} WaferProb gclib gclibo)
+    target_link_libraries(${execname} WaferProb gclib gclibo)
 endif()
 
 endforeach()

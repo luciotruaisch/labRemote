@@ -60,7 +60,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
-INCLUDEPATH += ../../src/libImageRec/include
 
 unix:!macx{
     LIBS += -L../../src/build/lib -lWaferProb -lgclibo -lgclib
@@ -68,7 +67,6 @@ unix:!macx{
 
 macx: {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
-    # LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
     LIBS += -L../../src/build/Debug/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
 
