@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     Keithley24XX sm(gpibDev, 9);
     sm.init();
     sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-    sm.setSense(KeithleyMode::VOLTAGE, 100, 100);
+    sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
 
     log(logINFO) << " ... DC Load:";
     Bk85xx dc(bkDev);
@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
     amac.write(AMACreg::HV_ENABLE, 0x1);
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     double ileak_min = 1e-6;
-    double ileak_max = 5e-3;
+    double ileak_max = 1e-3;
     double ileak_step = 1e-6;
     sm.setSource(KeithleyMode::CURRENT, ileak_min, ileak_min);
     sm.turnOn();
