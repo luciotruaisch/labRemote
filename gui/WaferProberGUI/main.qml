@@ -41,7 +41,9 @@ ApplicationWindow {
             backend.run_cmd("ENDCHIP")
         }
         console.log(Settings.convert_ID_to_name(chip_id))
-        console.log("Z corrections are: ", Settings.height_table.get(Settings.convert_ID_to_name(chip_id)))
+        var cmd_z = "MR Z " + (-1* Settings.height_table.get(Settings.convert_ID_to_name(chip_id)))
+        backend.run_cmd(cmd_z)
+        //console.log("Z corrections are: ", cmd_z)
     }
     function goNextChip(){
         go2chip(1+Settings.find_chip_number(current_chip_id.text))
@@ -73,7 +75,7 @@ ApplicationWindow {
             // change pixel to mm.
             dx *= 0.002
             dy *= -0.002
-            // dy -= yOffSet
+            dy -= yOffSet
             var dx_str = dx.toLocaleString(Qt.locale("en_US"), 'f', 3)
             var dy_str = dy.toLocaleString(Qt.locale("en_US"), 'f', 3)
             if(with_correction) {
