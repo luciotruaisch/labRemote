@@ -1,27 +1,23 @@
-# add global dependencies
-if ( OpenCV_FOUND )
-  include_directories( ../libGalil/include )
-  include_directories( ../libZaber/include )
-  include_directories( ../libWaferProb/include )
-  link_libraries( Galil )
-  link_libraries( Zaber )
-  link_libraries( WaferProb )
+include_directories( ../libGalil/include )
+include_directories( ../libZaber/include )
+include_directories( ../libWaferProb/include )
 
-  if(APPLE)
-    set(MACOSX_DEPLOYMENT_TARGET 10.10)
-    link_libraries(/Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib ${OpenCV_LIBS})
-  else()
-    link_libraries(gclib gclibo ${OpenCV_LIBS})
-  endif()
+# add one exectable foreach 
+add_executable(eg_galil eg_galil.cpp)
+target_link_libraries(eg_galil Galil WaferProb)
 
-  # add executables
-  file(GLOB tools *.c*)
-  foreach(target ${tools})
-    get_filename_component(execname ${target} NAME_WE)
-    get_filename_component(srcfile ${target} NAME)
+add_executable(eg_zaber eg_zaber.cpp)
+target_link_libraries(eg_zaber Zaber)
 
-    add_executable(${execname} ${srcfile})
+add_executable(motion_controller motion_controller.cpp)
+target_link_libraries(motion_controller Galil Zaber WaferProb)
 
-    add_dependencies(${execname} libGalil libZaber libWaferProb)
-  endforeach()
+find_package( OpenCV QUIET )
+if ( ${OpenCV_FOUND} )
+	include_directories( ../libImageRec/include )
+	add_executable(test_opencv_camera test_opencv_camera.cpp)
+	target_link_libraries(test_opencv_camera ${OpenCV_LIBS})
+
+	add_executable(test_sift test_sift.cpp)
+	target_link_libraries(test_sift ImageRec ${OpenCV_LIBS})
 endif()

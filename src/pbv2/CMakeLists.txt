@@ -1,6 +1,8 @@
 # add global dependencies
 include_directories( ../libGPIB/include )
-link_libraries( GPIB )
+
+# preferred to use target_link_libraries
+#link_libraries( GPIB )
 
 # add executables
 file(GLOB tools *.c*)
@@ -9,7 +11,8 @@ foreach(target ${tools})
   get_filename_component(srcfile ${target} NAME)
 
   add_executable(${execname} ${srcfile})
-
-  add_dependencies(${execname} libGPIB)
-
+  target_link_libraries(${execname} GPIB)
+  # seems reduntant
+  #add_dependencies(${execname} libGPIB)
+  
 endforeach()

@@ -27,14 +27,6 @@ SOURCES += src/main.cpp \
 
 RESOURCES += qml.qrc
 
-#unix: {
-#    CONFIG += link_pkgconfig
-#    PKGCONFIG += opencv
-#}
-#mac {
-#    PKG_CONFIG = /usr/local/bin/pkg-config
-#}
-
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
@@ -62,12 +54,12 @@ INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
 
 unix:!macx{
-    LIBS += -L../../src/build/lib -lWaferProb -lgclibo -lgclib
+    LIBS += -L../../build/lib -lWaferProb -lgclibo -lgclib
 }
 
 macx: {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
-    LIBS += -L../../src/build/Debug/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
+    LIBS += -L../../build/lib -lWaferProb -L/Applications/gclib/dylib -lgclib.0 -lgclibo.0
 }
 
 unix: INCLUDEPATH += /usr/local/include

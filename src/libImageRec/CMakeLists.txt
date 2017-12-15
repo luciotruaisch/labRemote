@@ -8,6 +8,7 @@ if ( ${OpenCV_FOUND} )
   # Add all *.c* files as source code
   file(GLOB SrcFiles *.c*)
   add_library(ImageRec SHARED ${SrcFiles}) 
+  target_link_libraries(ImageRec ${OpenCV_LIBS})
 else()
   message("Disabling libImageRec due to missing OpenCV")
 endif()
