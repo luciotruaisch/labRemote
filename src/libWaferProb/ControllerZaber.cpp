@@ -27,7 +27,7 @@ int ControllerZaber::connect(){
         printf("%s connected\n", dn.c_str());
         status = 0;
         m_is_connected = true;
-        this->unpark();
+        unpark();
     } else {
         printf("%s not connected\n", dn.c_str());
         status = 1;
@@ -83,21 +83,21 @@ int ControllerZaber::set_speed(int axis, float value)
 {
     int steps = convert_mm_to_turns(value);
     char cmd[256];
-    int n = sprintf(cmd, "/1 %d set maxspeed %d\n", axis, steps);
+    sprintf(cmd, "/1 %d set maxspeed %d\n", axis, steps);
     return write(cmd);
 }
 
 int ControllerZaber::mv_abs(int axis, float value){
     int steps = convert_mm_to_turns(value);
     char cmd[256];
-    int n = sprintf(cmd, "/1 %d move abs %d\n", axis, steps);
+    sprintf(cmd, "/1 %d move abs %d\n", axis, steps);
     return write(cmd);
 }
 
 int ControllerZaber::mv_rel(int axis, float value){
     int steps = convert_mm_to_turns(value);
     char cmd[256];
-    int n = sprintf(cmd, "/1 %d move rel %d\n", axis, steps);
+    sprintf(cmd, "/1 %d move rel %d\n", axis, steps);
     return write(cmd);
 }
 
@@ -107,7 +107,7 @@ int ControllerZaber::get_position()
         return 1;
     }
     char cmd[256];
-    int n = sprintf(cmd, "/1 get pos\n");
+    sprintf(cmd, "/1 get pos\n");
 
     string* rpy = write_with_reply(cmd) ;
     if(rpy == NULL) return 2;

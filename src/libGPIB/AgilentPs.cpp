@@ -1,6 +1,8 @@
 #include "AgilentPs.h"
 #include "Logger.h"
 
+loglevel_e loglevel;
+
 AgilentPs::AgilentPs(std::string dev, unsigned addr) {
     m_com = new SerialCom(dev, B115200);
     m_addr = addr;

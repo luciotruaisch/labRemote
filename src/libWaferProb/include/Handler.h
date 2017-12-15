@@ -23,7 +23,7 @@ using namespace std;
 class Handler {
 private:
     MotionController* ctrl;
-    vector<string>* supported_actions;
+    // vector<string>* supported_actions;
 
 public:
     Handler();

@@ -20,16 +20,18 @@ endif()
 add_compile_options(-Wfatal-errors)
 add_compile_options(-Wno-deprecated)
 add_compile_options(-std=c++11)
+add_compile_options(-Wall)
+add_compile_options(-fPIC)
 
 #
 # Add libraries
 add_subdirectory(libGPIB)
 add_subdirectory(libGalil)
 add_subdirectory(libImageRec)
-add_subdirectory(libWaferProb)
 add_subdirectory(libZaber)
+add_subdirectory(libWaferProb)
 
 #
 # Add binaries
-add_subdirectory(pbv2)
 add_subdirectory(prober)
+add_subdirectory(pbv2)

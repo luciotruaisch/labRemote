@@ -6,4 +6,5 @@ include_directories( ../libZaber/include )
 # Add all *.c* files as source code
 file(GLOB SrcFiles *.c*)
 add_library(WaferProb SHARED ${SrcFiles}) 
-add_dependencies(WaferProb libGalil libZaber)
+target_link_libraries(WaferProb Galil Zaber)
+#add_dependencies(WaferProb libGalil libZaber)

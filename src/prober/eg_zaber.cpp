@@ -82,7 +82,7 @@ int main(int argc, char** argv)
         if(input[0] == 'q') break;
         if(input[0] == '\n') continue;
         char cmd[256];
-        int n = sprintf(cmd, "%s\n", input.c_str());
+        sprintf(cmd, "%s\n", input.c_str());
         send(port, cmd);
     }
     za_disconnect(port);

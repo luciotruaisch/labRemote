@@ -1,6 +1,9 @@
 #ifndef OBJECTDETECTION_H
 #define OBJECTDETECTION_H
 
+#include "opencv2/core.hpp"
+#include "opencv2/highgui.hpp"
+
 // This class finds the object provided by the objectName in a "reference" image (or "source image")
 // and save the coordinates of the matched object in the reference image.
 // This class then finds the object in a "destination" image (or a new image).
@@ -36,6 +39,8 @@ signals:
 
 public slots:
 
+public:
+    static void SIFT_obj_identify(const cv::Mat& img1, const cv::Mat& img2, std::vector<cv::Point2f>& matchedCorners);
 private:
     QString m_objectName;
     cv::Mat m_object;
