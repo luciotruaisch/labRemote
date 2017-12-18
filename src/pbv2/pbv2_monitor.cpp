@@ -55,7 +55,6 @@ int main(int argc, char* argv[]) {
   ps.setVoltage(11.0);
   ps.setCurrent(2.00);
   ps.turnOn();
-  std::this_thread::sleep_for(std::chrono::seconds(5));
 
   log(logINFO) << " ... Keithley 2410:";
   Keithley24XX sm(gpibDev, 9);
@@ -96,7 +95,7 @@ int main(int argc, char* argv[]) {
 
 
   log(logINFO) << "  ++ Const ADC values:";
-  unsigned ota_l, ota_r, bgo, dvdd2;
+  unsigned ota_l=0, ota_r=0, bgo=0, dvdd2=0;
   amac.read(AMACreg::VALUE_LEFT_CH5, ota_l);
   std::cout << "OTA_LEFT : \t" << ota_l << std::endl;
   amac.read(AMACreg::VALUE_RIGHT_CH5, ota_r);
@@ -111,7 +110,7 @@ int main(int argc, char* argv[]) {
   // Run monitoring
   std::string logpath = "log/" + TestName + "_monitor.log";
   std::fstream logfile(logpath, std::fstream::out);
-    logfile << "time bgo rtch3gain ltch3gain rtrg ltrg rtog ltog hvfreq ch0la ch0lb ch1l ch2l ch3l ch4l ch5l ch6l ch0ra ch0rb ch1r ch2r ch3r ch4r ch5r ch6r" << std::endl;
+  logfile << "time bgo rtch3gain ltch3gain rtrg ltrg rtog ltog hvfreq ch0la ch0lb ch1l ch2l ch3l ch4l ch5l ch6l ch0ra ch0rb ch1r ch2r ch3r ch4r ch5r ch6r" << std::endl;
 
   log(logINFO) << "Start monitoring...";
 
