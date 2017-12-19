@@ -31,10 +31,17 @@ int AMAC::read(AMACreg reg, unsigned &val){
 		case AMACreg::VALUE_RIGHT_CH3: 	return this->readBits(32,10,6, val);
 		case AMACreg::VALUE_RIGHT_CH4: 	return this->readBits(34,10,0, val);
 		case AMACreg::VALUE_RIGHT_CH5: 	return this->readBits(35,10,2, val);
-		case AMACreg::VALUE_RIGHT_CH6: 	return this->readBits(36,10,4, val);	
-		case AMACreg::HV_ENABLE:	return this->readBits(43,1,0,val);	
-		case AMACreg::LV_ENABLE:	return this->readBits(44,1,0,val);
-		case AMACreg::HV_FREQ:		return this->readBits(43,2,1,val);
+		case AMACreg::VALUE_RIGHT_CH6: 	return this->readBits(36,10,4, val);
+		case AMACreg::LEFT_RAMP_GAIN: 	return this->readBits(45,2,0, val);
+		case AMACreg::RIGHT_RAMP_GAIN: 	return this->readBits(45,2,4, val);
+		case AMACreg::OPAMP_GAIN_RIGHT:	return this->readBits(42,4,4, val);
+		case AMACreg::OPAMP_GAIN_LEFT:	return this->readBits(42,4,0, val);
+		case AMACreg::BANDGAP_CONTROL: 	return this->readBits(40,5,0, val);
+		case AMACreg::RT_CH3_GAIN_SEL: 	return this->readBits(45,1,7, val);
+		case AMACreg::LT_CH3_GAIN_SEL: 	return this->readBits(45,1,3, val);
+		case AMACreg::HV_ENABLE:	return this->readBits(43,1,0, val);	
+		case AMACreg::LV_ENABLE:	return this->readBits(44,1,0, val);
+		case AMACreg::HV_FREQ:		return this->readBits(43,2,1, val);
 		case AMACreg::ILOCK_FLAG_HV_LEFT_HI:	return this->readBits(1,7,0,val);
 		case AMACreg::ILOCK_FLAG_HV_LEFT_LO:	return this->readBits(2,7,0,val);
 		case AMACreg::ILOCK_FLAG_HV_RIGHT_HI:	return this->readBits(3,7,0,val);
@@ -67,6 +74,7 @@ int AMAC::read(AMACreg reg, unsigned &val){
 		case AMACreg::WARN_EN_LV_LEFT_LO:	return this->readBits(63,7,0,val);
 		case AMACreg::WARN_EN_LV_RIGHT_HI:	return this->readBits(64,7,0,val);
 		case AMACreg::WARN_EN_LV_RIGHT_LO:	return this->readBits(65,7,0,val);
+		case AMACreg::ILOCK_HV_THRESH_HI_L_CH0:	return this->readBits(66,10,0,val);
 		default:
 			return -2; break;
 	}
@@ -76,13 +84,13 @@ int AMAC::read(AMACreg reg, unsigned &val){
 int AMAC::write(AMACreg reg, unsigned val){
 	switch(reg){
 		case AMACreg::LEFT_RAMP_GAIN: 		return this->writeBits(45,2,0,val);	
-		case AMACreg::RIGHT_RAMP_GAIN: 		return this->writeBits(45,2,4,val);	
+		case AMACreg::RIGHT_RAMP_GAIN: 		return this->writeBits(45,2,4,val);
 		case AMACreg::OPAMP_GAIN_RIGHT:		return this->writeBits(42,4,4,val);
 		case AMACreg::OPAMP_GAIN_LEFT:		return this->writeBits(42,4,0,val);
-		case AMACreg::BANDGAP_CONTROL: 		return this->writeBits(40,5,0,val);		
-		case AMACreg::RT_CH3_GAIN_SEL: 		return this->writeBits(45,1,7,val);		
-		case AMACreg::LT_CH3_GAIN_SEL: 		return this->writeBits(45,1,3,val);		
-		case AMACreg::RT_CH0_SEL: 		return this->writeBits(45,1,6,val);		
+	        case AMACreg::BANDGAP_CONTROL: 		return this->writeBits(40,5,0,val);
+		case AMACreg::RT_CH3_GAIN_SEL: 		return this->writeBits(45,1,7,val);
+		case AMACreg::LT_CH3_GAIN_SEL: 		return this->writeBits(45,1,3,val);
+		case AMACreg::RT_CH0_SEL: 		return this->writeBits(45,1,6,val);
 		case AMACreg::LT_CH0_SEL: 		return this->writeBits(45,1,2,val);	
 		case AMACreg::CLK_OUT_ENABLE : 		return this->writeBits(41,1,0,val);	
 		case AMACreg::CLK_SELECT:		return this->writeBits(49,1,0,val);	

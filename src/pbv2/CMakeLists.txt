@@ -5,7 +5,9 @@ include_directories( ../libGPIB/include )
 #link_libraries( GPIB )
 
 # add executables
-file(GLOB tools *.c*)
+file(GLOB tools [a-zA-Z]*.c[a-zA-Z]*)
+
+
 foreach(target ${tools})
   get_filename_component(execname ${target} NAME_WE)
   get_filename_component(srcfile ${target} NAME)

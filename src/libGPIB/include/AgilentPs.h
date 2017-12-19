@@ -24,6 +24,7 @@ class AgilentPs {
         void setCh(unsigned ch);
         void setRange(unsigned range);
         void setVoltage(double volt);
+        std::string getVoltage();
         void setCurrent(double cur);
         std::string getCurrent();
         void turnOn();

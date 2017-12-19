@@ -1,10 +1,16 @@
-# Add the headers
-include_directories( include )
-include_directories( ../libGalil/include )
-include_directories( ../libZaber/include )
+# Check for OpenCV
+find_package( OpenCV QUIET )
 
-# Add all *.c* files as source code
-file(GLOB SrcFiles *.c*)
-add_library(WaferProb SHARED ${SrcFiles}) 
-target_link_libraries(WaferProb Galil Zaber)
-#add_dependencies(WaferProb libGalil libZaber)
+if ( ${OpenCV_FOUND} )
+  # Add the headers
+  include_directories( include )
+  include_directories( ../libGalil/include )
+  include_directories( ../libZaber/include )
+
+  # Add all *.c* files as source code
+  file(GLOB SrcFiles *.c*)
+  add_library(WaferProb SHARED ${SrcFiles}) 
+  target_link_libraries(WaferProb Galil Zaber)
+else()
+  message("Disabling libWaferProb due to missing OpenCV")
+endif()
