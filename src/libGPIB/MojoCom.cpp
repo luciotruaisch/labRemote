@@ -25,7 +25,7 @@ MojoCom::~MojoCom() {
     delete m_com;
 }
 
-int MojoCom::writeReg(unsigned reg, unsigned val) {
+int MojoCom::writeReg(unsigned reg, char val) {
   log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ") val(" << val << ")";
   char outbuf[7];
 
@@ -47,7 +47,7 @@ int MojoCom::writeReg(unsigned reg, unsigned val) {
   return 0;
 }
 
-int MojoCom::readReg(unsigned reg, unsigned &val) {
+int MojoCom::readReg(unsigned reg, char &val) {
   log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ")";
   char outbuf[3], inbuf[6];
 
@@ -95,8 +95,9 @@ int MojoCom::enableI2C() {
     return 0;
 }
 
-int MojoCom::readI2C(unsigned id, unsigned addr, unsigned *data, unsigned bytes) {
-    unsigned i(0), reg(0);
+int MojoCom::readI2C(unsigned id, unsigned addr, char *data, unsigned bytes) {
+    unsigned i(0);
+    char reg(0);
 
     // Write Slave Address(RW = W) + Start Condition
     if(writeReg(0x103, id<<1)) return -1;
@@ -153,8 +154,9 @@ int MojoCom::readI2C(unsigned id, unsigned addr, unsigned *data, unsigned bytes)
     return 0;
 }
 
-int MojoCom::writeI2C(unsigned id, unsigned addr, unsigned *data, unsigned bytes) {
-  unsigned i(0), reg(0);
+int MojoCom::writeI2C(unsigned id, unsigned addr, char *data, unsigned bytes) {
+  unsigned i(0);
+  char reg(0);
 
   // Write id + Start Condition
   if(writeReg(0x103, id<<1)) return -1;
