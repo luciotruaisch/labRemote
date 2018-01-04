@@ -13,3 +13,7 @@ Requirements for probe station controller:
  * OpenCV 3.3.1 [Install in Linux](https://docs.opencv.org/3.3.1/d7/d9f/tutorial_linux_install.html)
  * gclib [link](http://galilmc.com/sw/pub/all/doc/gclib/html/osx.html)
 
+Requirements for FTDICom:
+ * [libftdi](https://www.intra2net.com/en/developer/libftdi/download.php) - Generic FTDI library
+ * [libmpsse](https://github.com/l29ah/libmpsse) - Library that implements common communication protocols (I2C, SPI) using the MPSSE framework on FTDI chips
+  
