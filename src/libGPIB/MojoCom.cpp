@@ -27,7 +27,7 @@ MojoCom::~MojoCom() {
 
 int MojoCom::writeReg(unsigned reg, unsigned val) {
   log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ") val(" << val << ")";
-  char outbuf[7], inbuf[4];
+  char outbuf[7];
 
   // Prepare buffer
   outbuf[0] = 0x80 | ((reg >> 8) & 0xFF);
