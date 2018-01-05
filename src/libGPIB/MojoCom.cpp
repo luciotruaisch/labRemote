@@ -136,7 +136,7 @@ int MojoCom::readI2C(unsigned id, unsigned addr, char *data, unsigned bytes) {
 	usleep(1000);
 	if(readReg(0x104, reg)) return -1;
       }while(reg & 0x02);
-      if(reg != 0x41)
+      if(reg != '\x41')
 	return -1;
       if(readReg(0x103, data[i])) return -1;
     }
@@ -147,7 +147,7 @@ int MojoCom::readI2C(unsigned id, unsigned addr, char *data, unsigned bytes) {
       usleep(1000);
       if(readReg(0x104, reg)) return -1;
     }while(reg & 0x02);
-    if(reg != 0x81)
+    if(reg != '\x81')
       return -1;
     if(readReg(0x103, data[i])) return -1;
 

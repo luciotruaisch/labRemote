@@ -245,14 +245,12 @@ int AMAC::readBits(unsigned startreg, unsigned num_bits, unsigned offset, unsign
 	int num_bytes = ((num_bits + offset -1) / 8) + 1;
 	char* buf = new char[num_bytes];
 
-	if(m_i2c->readI2C(m_id, startreg, buf, num_bytes)) return -1;	
+	if(m_i2c->readI2C(m_id, startreg, buf, num_bytes)) return -1;
 	uint temp = 0;
 	for(int i = num_bytes - 1; i >= 0; i--){
-	  //std::cout << "a " << i << ": " << std::hex << +buf[i] << std::dec << std::endl;
 		temp <<= 8;
 		temp += (buf[i] & 0xFF);
 	}
-	//std::cout << "temp " << std::hex << temp << std::dec << std::endl;
 	value = (temp >> offset) & ((1 << num_bits) -1);
 	return 0;
 }
