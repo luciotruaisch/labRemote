@@ -30,4 +30,6 @@ else()
 endif()
 
 add_library(GPIB SHARED ${SrcFiles}) 
-target_link_libraries(GPIB mpsse ftdi1)
+if ( ${ENABLE_FTDI} )
+  target_link_libraries(GPIB mpsse ftdi1)
+endif()

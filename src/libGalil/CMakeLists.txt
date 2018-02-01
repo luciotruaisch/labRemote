@@ -1,7 +1,6 @@
-# Check for OpenCV
-find_package( OpenCV QUIET )
+find_package( gclib QUIET )
 
-if ( ${OpenCV_FOUND} )
+if ( ${gclib_FOUND} )
   # Add the headers
   include_directories( include )
 
@@ -13,6 +12,12 @@ if ( ${OpenCV_FOUND} )
   else()
     target_link_libraries(Galil gclib gclibo)
   endif()
+
+  # Tell rest of labRemote that the library exists
+  set(libGalil_FOUND TRUE PARENT_SCOPE)
 else()
-  message("Disabling libGalil due to missing OpenCV")
+  message("Disabling libGalil due to missing dependencies")
+  message(" gclib = ${gclib_FOUND}")
+
+  set(libGalil_FOUND FALSE PARENT_SCOPE)
 endif()

@@ -1,7 +1,7 @@
 # Check for OpenCV
 find_package( OpenCV QUIET )
 
-if ( ${OpenCV_FOUND} )
+if ( ${libGalil_FOUND} AND ${libZaber_FOUND} AND ${libWaferProb_FOUND} )
   include_directories( ../libGalil/include )
   include_directories( ../libZaber/include )
   include_directories( ../libWaferProb/include )
@@ -23,5 +23,8 @@ if ( ${OpenCV_FOUND} )
   add_executable(test_sift test_sift.cpp)
   target_link_libraries(test_sift ImageRec ${OpenCV_LIBS})
 else()
-  message("Disabling prober due to missing OpenCV")
+  message("Disabling prober due to missing dependencies")
+  message(" libGalil = ${libGalil_FOUND}")
+  message(" libZaber = ${libZaber_FOUND}")
+  message(" libWaferProb = ${libWaferProb_FOUND}")
 endif()
