@@ -9,18 +9,21 @@
 enum class AMACreg;
 
 class AMAC {
-    public:
-        AMAC(unsigned id, std::unique_ptr<I2CCom>& i2c);
-        ~AMAC();
+public:
+  AMAC(unsigned id, std::unique_ptr<I2CCom>& i2c);
+  ~AMAC();
 
-        int read(AMACreg reg, unsigned &val);
-        int write(AMACreg reg, unsigned val);
-    private:
-        unsigned m_id;
-	std::unique_ptr<I2CCom> m_i2c;
+  void init();
 
-        int readBits(unsigned startreg, unsigned num_bits, unsigned offset, unsigned &value);
-        int writeBits(unsigned startreg, unsigned num_bits, unsigned offset, unsigned value);
+  int read(AMACreg reg, unsigned &val);
+  int write(AMACreg reg, unsigned val);
+
+private:
+  unsigned m_id;
+  std::unique_ptr<I2CCom> m_i2c;
+
+  int readBits(unsigned startreg, unsigned num_bits, unsigned offset, unsigned &value);
+  int writeBits(unsigned startreg, unsigned num_bits, unsigned offset, unsigned value);
 };
 
 //AMAC registers

@@ -11,6 +11,20 @@ AMAC::~AMAC() {
 
 }
 
+void AMAC::init()
+{
+  write(AMACreg::BANDGAP_CONTROL, 10); //1.2V LDO output
+  write(AMACreg::RT_CH3_GAIN_SEL, 0); // no attenuation
+  write(AMACreg::LT_CH3_GAIN_SEL, 0); // no attentuation
+  write(AMACreg::RT_CH0_SEL, 1); //a
+  write(AMACreg::LT_CH0_SEL, 1); //a 
+  write(AMACreg::LEFT_RAMP_GAIN, 3); // best range
+  write(AMACreg::RIGHT_RAMP_GAIN, 3); // best range
+  write(AMACreg::OPAMP_GAIN_RIGHT, 0); // highest gain
+  write(AMACreg::OPAMP_GAIN_LEFT, 0); // highest gain
+  write(AMACreg::HV_FREQ, 0x1);
+}
+
 //Reads the according bits from the according AMAC register
 int AMAC::read(AMACreg reg, unsigned &val){
 	switch(reg){

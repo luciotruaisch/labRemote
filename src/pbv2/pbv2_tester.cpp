@@ -94,16 +94,7 @@ int main(int argc, char* argv[]) {
   AMAC amac(0, i2c);
 
   log(logINFO) << "  ++Init";
-  amac.write(AMACreg::BANDGAP_CONTROL, 10); //1.2V LDO output
-  amac.write(AMACreg::RT_CH3_GAIN_SEL, 0); // no attenuation
-  amac.write(AMACreg::LT_CH3_GAIN_SEL, 0); // no attentuation
-  amac.write(AMACreg::RT_CH0_SEL, 1); //a
-  amac.write(AMACreg::LT_CH0_SEL, 1); //a 
-  amac.write(AMACreg::LEFT_RAMP_GAIN, 3); // best range
-  amac.write(AMACreg::RIGHT_RAMP_GAIN, 3); // best range
-  amac.write(AMACreg::OPAMP_GAIN_RIGHT, 0); // highest gain
-  amac.write(AMACreg::OPAMP_GAIN_LEFT, 0); // highest gain
-  amac.write(AMACreg::HV_FREQ, 0x1);
+  amac.init();
 
   log(logINFO) << "  ++Enable LV";
   amac.write(AMACreg::LV_ENABLE, 0x1);
@@ -134,11 +125,13 @@ int main(int argc, char* argv[]) {
   double lv_off = dc.getValues().vol;//mV
   amac.write(AMACreg::LV_ENABLE, 0x1);
 
+  bool lv_enable_works=false;
   if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
     log(logERROR) << " ++ LV enable not working! " << lv_on << " " << lv_off;
-    return -1;
+    lv_enable_works=false;
   } else {
     log(logINFO) << " ++ LV enable good!";
+    lv_enable_works=true;
   }
 
 #if 0
@@ -147,10 +140,10 @@ int main(int argc, char* argv[]) {
   sm.setSense(KeithleyMode::VOLTAGE, 100, 100);
   sm.turnOn();
   std::this_thread::sleep_for(std::chrono::seconds(2));
-  double hv_off = std::stod(sm.sense().substr(0,13));
+  double hv_off = std::stod(sm.sense(KeithleyMode::VOLTAGE).substr(0,13));
   amac.write(AMACreg::HV_ENABLE, 0x1);
   std::this_thread::sleep_for(std::chrono::seconds(2));
-  double hv_on = std::stod(sm.sense().substr(0,13));
+  double hv_on = std::stod(sm.sense(KeithleyMode::VOLTAGE).substr(0,13));
   // If HVmux does not conduct, source meter will go into compliance
   if (!(hv_off > 90.0 && hv_on < 1.0)) {
     log(logERROR) << " ++ HV enable not working! " << hv_off << " " << hv_on;
@@ -161,16 +154,18 @@ int main(int argc, char* argv[]) {
   sm.turnOff();
 #endif
 
+  std::string logpath;
+  std::fstream logfile;
   //
   // Testing Current Sense Amp & Efficiency...
   log(logINFO) << "Testing Current Sense Amp & Efficiency...";
 
-  std::string logpath = "log/" + TestName + "_DCDCEfficiency.log";
-  std::fstream logfile(logpath, std::fstream::out);
+  logpath = "log/" + TestName + "_DCDCEfficiency.log";
+  logfile.open(logpath, std::fstream::out);
   logfile << "Iout Vout Iin Vin IoutADC ntc ptat" << std::endl;
 
   double iout_min = 0;
-  double iout_max = 4000;
+  double iout_max = (lv_enable_works)?4000:0;
   double iout_step = 100;
 
   for (double iout = iout_min; iout <= iout_max; iout+=iout_step) {
@@ -186,6 +181,38 @@ int main(int argc, char* argv[]) {
     logfile << iout << " " << dc.getValues().vol << " " << ps.getCurrent() << " " << ps.getVoltage() << " " << cur << " " << ntc << " " << ptat << std::endl;
   }
   dc.setCurrent(1000);
+  dc.turnOff();
+  logfile.close();
+
+  //
+  // Testing Current Sense Amp & Efficiency...
+  log(logINFO) << "Testing current usage as a funciton of input voltage...";
+
+  logpath = "log/" + TestName + "_VinIin.log";
+  logfile.open(logpath, std::fstream::out);
+  logfile << "Vin\tIin\tVout" << std::endl;
+
+  double vin_min = 4.0;
+  double vin_max = 5.0;
+  double vin_step = 0.05;
+
+  dc.setCurrent(100);
+  dc.turnOn();
+
+  for (double vin=vin_min; vin<=vin_max; vin+=vin_step) {
+    ps.turnOff();
+    ps.setVoltage(vin);
+    ps.turnOn();
+    amac.init();
+    amac.write(AMACreg::LV_ENABLE, 0x1);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    double lv = dc.getValues().vol;//mV
+    std::cout << vin << "\t" << ps.getCurrent() << "\t" << lv << std::endl;
+    logfile << vin << "\t" << ps.getCurrent() << "\t" << lv << std::endl;
+  }
+  amac.write(AMACreg::LV_ENABLE, 0x0);
+  dc.turnOff();
   logfile.close();
 
   //
@@ -196,9 +223,9 @@ int main(int argc, char* argv[]) {
   logfile.open(logpath, std::fstream::out);
   logfile << "Vin VinADC" << std::endl;
 
-  double vin_min = 6.0;
-  double vin_max = 12.0;
-  double vin_step = 0.1;
+  vin_min = 6.0;
+  vin_max = 12.0;
+  vin_step = 0.1;
 
   for (double vin=vin_min; vin<=vin_max; vin+=vin_step) {
     ps.setVoltage(vin);
@@ -218,7 +245,7 @@ int main(int argc, char* argv[]) {
 
   logpath = "log/" + TestName + "_Ileak.log";
   logfile.open(logpath, std::fstream::out);
-  logfile << "Ileak OpAmpGain0 OpAmpGain1 OpAmpGain2 OpAmpGain4 OpAmpGain8" << std::endl;
+  logfile << "HV Ileak OpAmpGain0 OpAmpGain1 OpAmpGain2 OpAmpGain4 OpAmpGain8" << std::endl;
 
   amac.write(AMACreg::HV_ENABLE, 0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(3000));
@@ -230,24 +257,24 @@ int main(int argc, char* argv[]) {
 
   int counter = 0;
   for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step) {
-      counter++;
-      if (counter%10 == 0)
-          ileak_step = ileak_step*10;
-      sm.setSource(KeithleyMode::CURRENT, ileak, ileak);
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-      unsigned val[5];
-      for (unsigned i=0; i<5; i++) {
-          if (i == 0) {
-              amac.write(AMACreg::OPAMP_GAIN_LEFT, 0);
-          } else {
-              amac.write(AMACreg::OPAMP_GAIN_LEFT, pow(2,i-1));
-          }
+    counter++;
+    if (counter%10 == 0)
+      ileak_step = ileak_step*10;
+    sm.setSource(KeithleyMode::CURRENT, ileak, ileak);
+    std::string hv=sm.sense(KeithleyMode::VOLTAGE);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    unsigned val[5];
+    for (unsigned i=0; i<5; i++) {
+      if (i == 0)
+	amac.write(AMACreg::OPAMP_GAIN_LEFT, 0);
+      else
+	amac.write(AMACreg::OPAMP_GAIN_LEFT, pow(2,i-1));
 
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));
-          amac.read(AMACreg::VALUE_LEFT_CH6, *&val[i]);
-      }
-      std::cout << ileak << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
-      logfile << ileak << " " << val[0] << " " << val[1] << " " << val[2] << " " << val[3] << " " << val[4] << std::endl;
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      amac.read(AMACreg::VALUE_LEFT_CH6, *&val[i]);
+    }
+    std::cout << hv << "\t" << ileak << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
+    logfile << hv << " " << ileak << " " << val[0] << " " << val[1] << " " << val[2] << " " << val[3] << " " << val[4] << std::endl;
   }
 
   //

@@ -86,7 +86,21 @@ void Keithley24XX::setSense(enum KeithleyMode mode, double range, double protect
     }
 }
 
-std::string Keithley24XX::sense() {
-    return this->receive(":READ?").substr(0, 13);
+std::string Keithley24XX::sense(enum KeithleyMode mode) {
+  switch (mode) {
+  case KeithleyMode::VOLTAGE:
+    this->send(":SENSE:FUNC \"VOLT\"");
+    this->send(":FORMAT:ELEMENTS VOLT");
+    break;
+  case KeithleyMode::CURRENT:
+    this->send(":SENSE:FUNC \"CURR\"");
+    this->send(":FORMAT:ELEMENTS CURR");
+    break;
+  default:
+    log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+    break;
+  }
+
+  return this->receive(":READ?").substr(0, 13);
 }
 

@@ -31,7 +31,7 @@ class Keithley24XX {
         void setSource(enum KeithleyMode, double range, double value);
         void setSense(enum KeithleyMode, double range, double protection);
 
-        std::string sense();
+        std::string sense(enum KeithleyMode);
 
 
     private:
