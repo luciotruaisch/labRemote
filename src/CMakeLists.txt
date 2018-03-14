@@ -25,18 +25,19 @@ add_compile_options(-fPIC)
 
 #
 # Check dependencies
-# Find libFTDI1
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-find_package ( libftdi1 )
+
+# Find libFTDI1
+find_package ( LibFTDI1 )
 
 # Find libmpsse
 find_package ( libmpsse )
 
-if ( (${LIBFTDI1_FOUND}) AND (${LIBMPSSE_FOUND}) )
+if ( (${LIBFTDI_FOUND}) AND (${LIBMPSSE_FOUND}) )
   set(ENABLE_FTDI 1)
 else()
   message("Disabling FTDI code due to missing libftdi1 or libmpsse")
-  message(" libftdi1 = ${LIBFTDI1_FOUND}")
+  message(" libftdi1 = ${LIBFTDI_FOUND}")
   message(" libmpsse = ${LIBMPSSE_FOUND}")
 endif()
 
