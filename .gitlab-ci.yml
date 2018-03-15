@@ -1,0 +1,26 @@
+image: centos:7
+
+before_script:
+- yum -y install epel-release
+- yum -y install make gcc gcc-c++
+- yum -y install cmake
+- yum -y install libftdi-devel libftdi-c++-devel
+- yum -y install opencv-devel
+- yum -y install autoconf git swig
+- pushd $(mktemp -d)
+- git clone https://github.com/l29ah/libmpsse.git
+- cd libmpsse/src
+- autoconf
+- ./configure --disable-python
+- make
+- make install
+- popd
+
+build:
+ script:
+  - echo "Hello World"
+  - ls
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
