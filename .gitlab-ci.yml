@@ -2,7 +2,8 @@ image: centos:7
 
 before_script:
 - yum -y install epel-release
-- yum -y install make gcc gcc-c++
+- yum -y install make gcc gcc-c++ autoconf
+- yum -y install git
 - yum -y install cmake
 - yum -y install libftdi-devel libftdi-c++-devel
 - yum -y install opencv-devel
