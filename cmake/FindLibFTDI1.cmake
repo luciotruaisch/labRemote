@@ -1,9 +1,9 @@
-# - Try to find libmpsse
+# - Try to find libftdi1
 # Once done this will define
-#  LIBLIBFTDI_FOUND - System has libmpsse
-#  LIBLIBFTDI_INCLUDE_DIRS - The libmpsse include directories
-#  LIBLIBFTDI_LIBRARIES - The libraries needed to use libmpsse
-#  LIBLIBFTDI_DEFINITIONS - Compiler switches required for using libmpsse
+#  LIBLIBFTDI_FOUND - System has libftdi1
+#  LIBLIBFTDI_INCLUDE_DIRS - The libftdi1 include directories
+#  LIBLIBFTDI_LIBRARIES - The libraries needed to use libftdi1
+#  LIBLIBFTDI_DEFINITIONS - Compiler switches required for using libftdi1
 
 FIND_PATH(LIBFTDI_INCLUDE_DIR ftdi.h
   HINTS /usr/include/libftdi1 )
