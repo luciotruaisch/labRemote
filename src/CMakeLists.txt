@@ -54,3 +54,4 @@ add_subdirectory(libWaferProb)
 # Add binaries
 add_subdirectory(prober)
 add_subdirectory(pbv2)
+add_subdirectory(varload)
