@@ -39,6 +39,7 @@ void AgilentPs::init() {
     this->send("*RST");
     this->send("TRIGGER:SOURCE IMM");
     this->send("VOLT:PROT MAX");
+    this->send("SYST:BEEP:STAT OFF");//disable beep
 }
 
 

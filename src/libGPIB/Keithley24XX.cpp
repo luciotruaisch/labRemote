@@ -38,6 +38,7 @@ void Keithley24XX::init() {
     this->send("*RST");
     this->send(":TRIGGER:COUNT 1");
     this->send(":FORMAT:ELEMENTS TIME,VOLT,CURR");
+    this->send(":SYST:BEEP:STAT OFF");//disable beep
 }
 
 void Keithley24XX::turnOn() {
