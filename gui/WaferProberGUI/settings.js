@@ -89,6 +89,59 @@ var update_true_chip_table = function(id_, x_, y_) {
     var y_zero = y_ - incre_y * input_loc.y_loc;
     var n_properties = 0
     for(var j = 0; j < 10; j ++) {
+        // a table that stores a height different between the first chip(1-6) and other chips.
+        var height_table = {
+            // input_name: "",
+            input_name: "/home/pixel/Documents/probing_station/code/labRemote/gui/WaferProberGUI/height_table.txt",
+            table: {},
+            refID: "1-6",
+            read: function (input_text) {
+                var lines = input_text.split('\n')
+                for(var line_nb in lines){
+                    var items = lines[line_nb].split(' ');
+                    this.update(items[0], items[1])
+                }
+                console.log(this.input_name+" is loaded with "+lines.length+" lines")
+            },
+            output: function() {
+                var out = "";
+                for(var item in this.table) {
+                    var locs = this.table[item]
+                    var input_loc = find_location(Number(item));
+                    var res = (input_loc.x_loc+1)+"-"+(input_loc.y_loc+1)
+                    out += res + " " + locs.deltaZ + "\n"
+                }
+                return out
+            },
+            update: function(id_input, z_){
+                // id_: 1-6
+                // z_: 0.1
+                var id_ = find_chip_number(id_input)
+                if(this.table[id_.toString()] === undefined){
+                    this.table[id_.toString()] = {
+                        deltaZ: z_
+                    }
+                } else {
+                    this.table[id_.toString()].deltaZ = z_
+                }
+                console.log("Height table is updated: ", id_input, z_)
+            },
+            get_origin_height: function(id_input) {
+                var id_ = find_chip_number(id_input)
+                var z_height = this.table[id_.toString()]
+                if(z_height == undefined) {
+                    return 0.
+                } else {
+                    return z_height
+                }
+            },
+            get: function(id_input) {
+                var cur_height = this.get_origin_height(id_input).deltaZ
+                var ref_height = this.get_origin_height(this.refID).deltaZ
+                var diff = (cur_height - ref_height)
+                return diff
+            }
+        }
         for(var i = 0; i < 12; i++){
             var chip_id = chip_numbering[i][j];
             if(chip_id < 0) continue;

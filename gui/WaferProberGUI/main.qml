@@ -131,6 +131,14 @@ ApplicationWindow {
         onChipArrivedForCalibrateZ: {
             autoZcal.start()
         }
+        onCheckZminFinished: {
+            // add a dialog to tell user if z is calibrated.
+            if(backend.IsZCalibrated) {
+                output.append("Z is calibrated")
+            } else {
+                output.append("Z is not calibrated")
+            }
+        }
     }
 
     // calibration for focus. measurement of height.
@@ -147,7 +155,6 @@ ApplicationWindow {
             }
         }
     }
-
 
     onClosing: {
         if(motion_content.connectResult == 0 && motion_content.isContact) {
@@ -295,3 +302,6 @@ ApplicationWindow {
         }
     }
 }
+
+
+

@@ -63,6 +63,13 @@ Item {
                             backend.speedY = txt_speed_y.text.toString()
                             backend.speedZ = txt_speed_z.text.toString()
 
+                            //output.append("Now moving to minimum z position.") //TO DO
+                            //var command = "MR Z " + txt_speed_z.text.toString() //don't know what to put for z increment yet
+                            //backend.run_cmd(command)
+                            //backend.run_cmd("CheckZmin")
+                            //backend.run_cmd("END_CheckZmin")
+
+
                         } else if(connectResult == 1) {
                             output.append("XY station failed connection\n")
                             output.append("check if "+ Settings.xy_device +" is avaiable!")
@@ -93,6 +100,7 @@ Item {
                 }
             }
         }
+
 
         Pane {
             Layout.fillWidth: true
@@ -457,6 +465,19 @@ Item {
                                 ToolTip.delay: 1000
                                 ToolTip.timeout: 4000
                             }
+//                            Button{
+//                                id: calib_z_range
+//                                checkable: true
+//                                checked: false
+//                                text: "Calib Z Range"
+//                                onClicked: {
+//                                   // backend.run_cmd("MA Z")
+//                                }
+//                                ToolTip.text: qsTr("Moves to the minimum Z, and checks the range with ./bin/findz_max_min txt file output")
+//                                ToolTip.visible: hovered
+//                                ToolTip.delay: 1000
+//                                ToolTip.timeout: 4000
+//                            }
                         }
 
                     }
@@ -578,114 +599,223 @@ Item {
 
                 }
             }
-
-            // the frame that controls Z axis.
+            // id: calib_z_range
+            //                                checkable: true
+            //                                checked: false
+            //                                text: "Calib Z Range"
+            //                                onClicked: {
+            //                                   // backend.run_cmd("FZrange")
+            //                                }
+            //                                ToolTyes_z_calibrated.open()ip.text: qsTr("Moves to the minimum Z, and checks the range with ./bin/findz_max_min txt file output")
+            //                                ToolTip.visible: hovered
+            //                                ToolTip.delay: 1000
+            //                                ToolTip.timeout: 4000
+            //                            }
             Pane {
-                Layout.fillWidth: true
-                ColumnLayout {
-                    anchors.fill: parent
+                    Layout.fillWidth: true
+                    ColumnLayout {
+                        anchors.fill: parent
 
-                    GroupBox {
-                        title: "Settings"
-                        Layout.fillWidth: true
-                        GridLayout {
-                            anchors.fill: parent
-                            columns: 3
-                            Label {
-                                text: "Z speed"
-                            }
-                            TextField{
-                                id: txt_speed_z
-                                text: "0.1"
-                                selectByMouse: true
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                onEditingFinished: {
-                                    backend.speedZ = txt_speed_z.text.toString()
+                        GroupBox {
+                            title: "Settings"
+                            Layout.fillWidth: true
+                            GridLayout {
+                                anchors.fill: parent
+                                columns: 3
+                                Label {
+                                    text: "Z speed"
+                                }
+                                TextField{
+                                    id: txt_speed_z
+                                    text: "0.1"
+                                    selectByMouse: true
+                                    verticalAlignment: Text.AlignVCenter
+                                    horizontalAlignment: Text.AlignHCenter
+                                    onEditingFinished: {
+                                        backend.speedZ = txt_speed_z.text.toString()
+                                    }
+                                }
+                                Label {
+                                    text: "mm/s"
+                                }
+                                Label {
+                                    text: "Z separation"
+                                }
+                                TextField{
+                                    id: txt_sep_z
+                                    text: "0.700"
+                                    selectByMouse: true
+                                    verticalAlignment: Text.AlignVCenter
+                                    horizontalAlignment: Text.AlignHCenter
+                                    onEditingFinished: {
+                                        backend.zSep = txt_sep_z.text.toString()
+                                    }
+                                }
+                                Label {
+                                    text: "mm"
                                 }
                             }
-                            Label {
-                                text: "mm/s"
-                            }
-                            Label {
-                                text: "Z separation"
-                            }
-                            TextField{
-                                id: txt_sep_z
-                                text: "0.700"
-                                selectByMouse: true
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                onEditingFinished: {
-                                    backend.zSep = txt_sep_z.text.toString()
+                       }
+                        GroupBox{
+                            title: "CLOSER Z Fine Adjustment"
+                            Layout.fillWidth: true
+                            RowLayout{
+                                anchors.fill: parent
+                                Button{
+                                    id: ten_micron
+                                    text: "10um"
+                                    Layout.fillWidth: true
+                                    onClicked: {
+
+
+                                        //var command = "MR Z 0.01"
+                                        //backend.run_cmd(command)
+
+                                    }
                                 }
-                            }
-                            Label {
-                                text: "mm"
+                                Button{
+                                    id: twenty_micron
+                                    text: "20um"
+                                    Layout.fillWidth: true
+                                    onClicked: {
+                                        var command = "MR Z 0.02"
+                                        backend.run_cmd(command)
+                                    }
+                                }
+                                Button{
+                                    id: thirty_micron
+                                    text: "30um"
+                                    Layout.fillWidth: true
+                                    onClicked:{
+                                        var command = "MR Z 0.03"
+                                        backend.run_cmd(command)
+                                    }
+                                }
+                                Button{
+                                    id: fifty_micron
+                                    text: "50um"
+                                    Layout.fillWidth: true
+                                    onClicked:{
+                                        var command = "MR Z 0.05"
+                                        backend.run_cmd(command)
+                                    }
+                                }
+                                Button{
+                                    id: hundred_micron
+                                    text: "100um"
+                                    Layout.fillWidth: true
+                                    onClicked:{
+                                        var command = "MR Z 0.1"
+                                        backend.run_cmd(command)
+                                    }
+                                }
+
                             }
                         }
-                   }
-                    GroupBox{
-                        title: "controller"
-                        Layout.fillWidth: true
+
+                        GroupBox{
+                            title: "controller"
+                            Layout.fillWidth: true
+                            RowLayout {
+                                anchors.fill: parent
+                                Button {
+                                    id: btn_z_up
+                                    text: "Closer"
+                                    Layout.fillWidth: true
+                                    contentItem: Text {
+                                        text: btn_z_up.text
+                                        font: btn_z_up.font
+                                        color: "red"
+                                    }
+                                    onClicked: {
+                                        if(parseFloat(txt_speed_z.text.toString()) >= 0.1){
+                                             warning_closerZ.open()
+                                        }
+                                        else{
+                                            var command = "MR Z " + txt_speed_z.text.toString()
+                                            backend.run_cmd(command)
+                                        }
+                                    }
+                                }
+
+                                Button {
+                                    id: btn_z_down
+                                    text: "Further"
+                                    Layout.fillWidth: true
+                                    contentItem: Text {
+                                        text: btn_z_down.text
+                                        font: btn_z_down.font
+                                        color: "green"
+                                    }
+                                    onClicked: {
+                                        var command = "MR Z " + (-1 * txt_speed_z.text).toString()
+                                        backend.run_cmd(command)
+                                    }
+                                }
+
+                                  Button{
+                                        id: find_z_min
+                                        text: "Find Z min"
+                                        Layout.fillWidth: true
+                                        onClicked: {
+                                            backend.run_cmd("FZMIN")
+                                        }
+                                    }  
+                                  
+//                                Button {
+//                                    id: check_Z_cal
+//                                    text: "Check Z calibration"
+//                                    Layout.fillWidth: true
+//                                    onClicked: {
+//                                        backend.run_cmd("CheckZmin")
+//                                        backend.run_cmd("END_CheckZmin")
+
+//                                        if(backend.IsZCalibrated){
+//                                            z_is_calibrated.open()
+//                                        } else{
+//                                            z_not_calibrated.open()
+//                                        }
+//                                    }
+//                                }
+
+//                                Button {
+//                                    id: find_min_max_Z
+//                                    text: "Recalibrate Z"
+//                                    Layout.fillWidth: true
+//                                    onClicked: {
+//                                        warning_calibrateZ.open()
+//                                    }
+//                                }
+
+                            }
+                        }
                         RowLayout {
-                            anchors.fill: parent
+                            Layout.fillWidth: true
                             Button {
-                                id: btn_z_up
-                                text: "Closer"
                                 Layout.fillWidth: true
-                                contentItem: Text {
-                                    text: btn_z_up.text
-                                    font: btn_z_up.font
-                                    color: "red"
-                                }
+                                text: "Back"
+                                // Layout.alignment: Qt.AlignHCenter
                                 onClicked: {
-                                    var command = "MR Z " + txt_speed_z.text.toString()
-                                    backend.run_cmd(command)
+                                    if(checkedSeparation) idx_frame = 0
+                                    else {
+                                        warning_dialog.open()
+                                    }closer
                                 }
                             }
                             Button {
-                                id: btn_z_down
-                                text: "Further"
                                 Layout.fillWidth: true
-                                contentItem: Text {
-                                    text: btn_z_down.text
-                                    font: btn_z_down.font
-                                    color: "green"
-                                }
+                                text: "Confirm"
+                                // Layout.alignment: Qt.AlignHCenter
                                 onClicked: {
-                                    var command = "MR Z " + (-1 * txt_speed_z.text).toString()
-                                    backend.run_cmd(command)
+                                    contact_confirm.open()
                                 }
-                            }
-
-                        }
-                    }
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Button {
-                            Layout.fillWidth: true
-                            text: "Back"
-                            // Layout.alignment: Qt.AlignHCenter
-                            onClicked: {
-                                if(checkedSeparation) idx_frame = 0
-                                else {
-                                    warning_dialog.open()
-                                }
-                            }
-                        }
-                        Button {
-                            Layout.fillWidth: true
-                            text: "Confirm"
-                            // Layout.alignment: Qt.AlignHCenter
-                            onClicked: {
-                                contact_confirm.open()
                             }
                         }
                     }
                 }
-            }
         }
+
+            // the frame that controls Z axis.
     }
 
     Dialog {
@@ -712,6 +842,7 @@ Item {
 
         }
     }
+
     Dialog{
         id: warning_dialog
         modal: true
@@ -721,12 +852,13 @@ Item {
             text: "Leave without finishing calibrating contact position?"
         }
         standardButtons: Dialog.Ok | Dialog.Cancel
-        onAccepted: {            
+        onAccepted: {
             idx_frame = 0
         }
         onRejected: {
         }
     }
+
     Dialog {
         id: warning_calibrateZ
         modal: true
@@ -749,7 +881,8 @@ Item {
         }
         standardButtons: Dialog.Ok | Dialog.Cancel
         onAccepted: {
-            backend.calibrateZ()
+            // backend.calibrateZ()
+            backend.run_cmd("FZrange")
         }
         onRejected: {
 
@@ -757,4 +890,60 @@ Item {
 
     }
 
+    Dialog {
+        id: warning_closerZ
+        modal: true
+        focus: true
+        title: "Confirmation"
+        Label {
+            text: "Are you sure you want to move the needles " + txt_speed_z.text.toString() + "mm closer to the chip?"
+            //color: red
+        }
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted:{
+            var command = "MR Z " + txt_speed_z.text.toString()
+            backend.run_cmd(command)
+        }
+        onRejected:{
+
+        }
+    }
+
+    Dialog {
+        id: z_is_calibrated
+        modal: true
+        focus: true
+        title: "Z IS CALIBRATED"
+        Label {
+            text: "You may now adjust the Z stage."
+        }
+
+        standardButtons: Dialog.Ok
+
+        onAccepted: {
+
+        }
+        onRejected: {
+
+        }
+    }
+
+    Dialog {
+        id: z_not_calibrated
+        modal: true
+        focus: true
+        title: "Z IS NOT CALIBRATED"
+        Label {
+            text: "Controls for Z controller are locked. Please Recalibrate Z."
+        }
+
+        standardButtons: Dialog.Ok
+
+        onAccepted: {
+
+        }
+        onRejected: {
+
+        }
+    }
 }

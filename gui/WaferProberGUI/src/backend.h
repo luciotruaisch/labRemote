@@ -63,6 +63,7 @@ class BackEnd : public QObject
     Q_PROPERTY(bool zContact READ zContact WRITE setZContact)
     Q_PROPERTY(float zSep READ zSep WRITE setZSep)
     Q_PROPERTY(bool IsAtContact READ IsAtContact WRITE setIsAtContact)
+    Q_PROPERTY(bool IsZCalibrated READ IsZCalibrated)
 
 // functions that can be called by QML
 public:
@@ -123,6 +124,8 @@ public:
     }
 
     bool IsAtContact() {return m_z_isContact; }
+
+    bool IsZCalibrated() { return m_ctrl->is_z_calibrated(); }
     void setIsAtContact(bool is_contact) {
         m_z_isContact = is_contact;
     }
@@ -149,10 +152,26 @@ public slots:
             emit srcImageArrived();
         } else if(message.contains("ENDFORCALIBRATEZ")) {
             emit chipArrivedForCalibrateZ();
+        } else if(message.contains("END_CheckZmin")) {
+            emit checkZminFinished();
         } else {
             emit infoUpdated(message);
         }
     }
+
+//    void edit_z_txt(QString message){
+//        if(message.contains("0.01")){
+//            emit tenMicron();
+//        } else if(message.contains("0.02")){
+//            emit twentyMicron();
+//        } else if(message.contains("0.03")){
+//            emit thirtyMicron();
+//        } else if(message.contains("0.05")){
+//            emit fiftyMicron();
+//        } else if(message.contains("0.1")){
+//            emit hundredMicron();
+//        }
+//    }
 
 signals:
     void xyDeviceNameChanged();
@@ -164,6 +183,7 @@ signals:
     void chipArrived();
     void srcImageArrived();
     void chipArrivedForCalibrateZ();
+    void checkZminFinished();
 
     void posXGot(); // X postion returned
     void posYGot(); // Y postion returned
@@ -172,6 +192,12 @@ signals:
     void speedXSet();
     void speedYSet();
     void speedZSet();
+
+//    void tenMicron();
+//    void twentyMicron();
+//    void thirtyMicron();
+//    void fiftyMicron();
+//    void hundredMicron();
 
 private:
     QString m_xyDeviceName;

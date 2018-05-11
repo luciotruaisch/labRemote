@@ -27,7 +27,7 @@ void CalibrateWorker::stop(){
 void CalibrateWorker::run()
 {
     if(m_running){
-        // start to move chunk up and down to compare to mean value.
+        // start to move chuck up and down to compare to mean value.
         m_ctrl->set_speed(2, 0.040);
 
         const double MAX_DISTANCE = 0.300;
