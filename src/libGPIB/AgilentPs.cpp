@@ -68,6 +68,17 @@ std::string AgilentPs::getCurrent() {
     return this->receive("MEAS:CURR?").substr(0, 15);
 }
 
+void AgilentPs::setVoltageProtect(double volt) {
+    this->send("VOLT:PROT " + std::to_string(volt));
+    this->send("VOLT:PROT:STAT ON");
+} 
+
+void AgilentPs::setCurrentProtect(double cur) {
+    //this->send("CURRENT:LIMIT " + std::to_string(cur) + "A"); 
+    //this->send("CURRENT:PROT " + std::to_string(cur));
+    //this->send("CURRENT:PROT:STAT ON");
+}
+
 void AgilentPs::turnOn() {
     this->send("OUTPUT ON");
 }

@@ -14,7 +14,9 @@ int main(int argc, char*argv[]){
         meter.init();
 	
 	//meter.setRange(8); //if power supply has multiple ranges, write maximum value of desired range here
-
+	
+	//meter.setVoltageProtect(2);
+	//meter.setCurrentProtect(1.00);
         meter.setVoltage(1.85); //1.85V for Linear Regulator
 
         meter.turnOn();

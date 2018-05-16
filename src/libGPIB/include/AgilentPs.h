@@ -27,7 +27,9 @@ class AgilentPs {
         std::string getVoltage();
         void setCurrent(double cur);
         std::string getCurrent();
-        void turnOn();
+	void setVoltageProtect(double volt);
+        void setCurrentProtect(double cur);
+	void turnOn();
         void turnOff();
 
     private:

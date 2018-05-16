@@ -17,7 +17,8 @@ set(SrcFiles AgilentPs.cpp
   Keithley24XX.cpp
   Keithley2000.cpp
   MojoCom.cpp
-  SerialCom.cpp)
+  SerialCom.cpp
+  HP3478A.cpp)
 
 if ( ${ENABLE_FTDI} )
   set(SrcFiles ${SrcFiles}
