@@ -4,16 +4,14 @@
 #include "Logger.h"
 #include "AgilentPs.h"
 
-using namespace std;
-
 loglevel_e loglevel = logDEBUG4;
 
 int main(int argc, char*argv[]){
 
-        ofstream outputfile;
+        std::ofstream outputfile;
         outputfile.open("output.txt"); //create output file and open
-        cout << "Output file is created and opened" << endl;
-        outputfile << "Voltage [V]   Current [uA] \n" << endl;
+        std::cout << "Output file is created and opened" << std::endl;
+        outputfile << "Voltage [V]   Current [uA] \n" << std::endl;
 
         AgilentPs meter(argv[1], 4);
         meter.init();
@@ -33,7 +31,7 @@ int main(int argc, char*argv[]){
 		}
 
         outputfile.close();
-	cout << "Output file is now closed" << endl;
+	std::cout << "Output file is now closed" << std::endl;
 	
 	unsigned rampdown_v=9.0;
 	while(rampdown_v!=0.0){

@@ -74,8 +74,8 @@ void AgilentPs::setVoltageProtect(double volt) {
 } 
 
 void AgilentPs::setCurrentProtect(double cur) {
-    //this->send("CURRENT:LIMIT " + std::to_string(cur) + "A"); 
-    //this->send("CURRENT:PROT " + std::to_string(cur));
+    //this->send("CURRENT:LIMIT " + std::to_string(cur)); 
+    this->send("CURRENT:PROT " + std::to_string(cur));
     //this->send("CURRENT:PROT:STAT ON");
 }
 
@@ -87,5 +87,4 @@ void AgilentPs::turnOn() {
 void AgilentPs::turnOff() {
     this->send("OUTPUT OFF");
 }
-
 

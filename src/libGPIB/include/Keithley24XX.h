@@ -30,8 +30,8 @@ class Keithley24XX {
         void turnOff();
         void setSource(enum KeithleyMode, double range, double value);
         void setSense(enum KeithleyMode, double range, double protection);
-
         std::string sense(enum KeithleyMode);
+	void setCompl(enum KeithleyMode, double protection);
 
 
     private:

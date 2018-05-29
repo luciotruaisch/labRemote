@@ -4,12 +4,14 @@
 #include "Logger.h"
 #include "AgilentPs.h"
 
-using namespace std;
-
 loglevel_e loglevel = logDEBUG4;
 
 int main(int argc, char*argv[]){
-
+	
+	std::ofstream outputfile;
+	outputfile.open("output.txt"); //Create output file and open. Rewrite if there is already a file.
+	std::cout << "Output file is created and opened" << std::endl;
+	outputfile << "Voltage [V]	Current[A] \n" << std::endl;
         AgilentPs meter(argv[1], 4); // ( , GPIB address)
         meter.init();
 	
@@ -23,6 +25,10 @@ int main(int argc, char*argv[]){
 
 	log(logINFO) << meter.getCurrent();
 
+	outputfile << meter.getVoltage() << "	" << meter.getCurrent() << "\n"; //writing voltage and current to output file.
+	
+	outputfile.close();
+	std::cout << "Output file is now closed." << std::endl;
 
         return 0;
 }

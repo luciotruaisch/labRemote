@@ -4,8 +4,6 @@
 #include "Logger.h"
 #include "AgilentPs.h"
 
-using namespace std;
-
 loglevel_e loglevel = logDEBUG4;
 
 int main(int argc, char*argv[]){

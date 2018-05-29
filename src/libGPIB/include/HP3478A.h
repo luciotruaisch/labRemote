@@ -29,7 +29,7 @@ class HP3478A {
 		HP3478A(std::string dev, unsigned addr);
 		~HP3478A();
 
-		void setSense(enum HPMode);
+		std::string setSense(enum HPMode);
 
 		void send(std::string cmd);
 		std::string receive(std::string cmd);

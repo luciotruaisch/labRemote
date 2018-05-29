@@ -40,7 +40,7 @@ std::string HP3478A::receive(std::string cmd) {
 
 
 //All these settings uses digit_mode="N5" ( 5 1/2 digit mode; best noise rejection, but slowest reading rate).
-void HP3478A::setSense(enum HPMode mode) {
+std::string HP3478A::setSense(enum HPMode mode) {
 	switch (mode) {
 		case HPMode::SETTING:  //currently not working
 			this->send("\"S\"");
@@ -53,7 +53,8 @@ void HP3478A::setSense(enum HPMode mode) {
 			this->send("++auto 0\n\r");
 			this->send("\"F1RAZ1N5\"");
 			this->send("++auto 1\n\r");
-			std::cout << this->receive("++read 10\n\r");
+			return this->receive("++read 10\n\r");
+			//std::cout << this->receive("++read 10\n\r");
 			//this->send("TRIGGER 7");
 			//this->send("ENTER 704; I10");
 			//this->send("DISP I10");
@@ -63,7 +64,8 @@ void HP3478A::setSense(enum HPMode mode) {
 			this->send("++auto 0\n\r");
 			this->send("\"F5RAZ1N5\"");
 			this->send("++auto 1\n\r");
-			std::cout << this->receive("++read 10\n\r");
+			return this->receive("++read 10\n\r");
+			//std::cout << this->receive("++read 10\n\r");
 			//this->send("ENTER 704; B1");
 			//this->send("DISP A3");
 			//this->receive("PRINT A3");
@@ -72,13 +74,13 @@ void HP3478A::setSense(enum HPMode mode) {
 			this->send("++auto 0\n\r");
 			this->send("F2RAZ1N5\"");
 			this->receive("++auto 1\n\r");
-			this->receive("++read 10\n\r");
+			return this->receive("++read 10\n\r");
 			break;
 		case HPMode::AC_CURRENT:
 			this->send("++auto 0\n\r");
 			this->send("\"F6RAZ1N5\"");
 			this->receive("++auto 1\n\r");
-			this->receive("++read 10\n\r");
+			return this->receive("++read 10\n\r");
 			break;
 		default:
 			log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
