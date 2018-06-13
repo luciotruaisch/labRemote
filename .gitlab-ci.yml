@@ -12,7 +12,7 @@ before_script:
 - git clone https://github.com/l29ah/libmpsse.git
 - cd libmpsse/src
 - autoconf
-- ./configure --disable-python
+- ./configure CFLAGS="-std=c99" --disable-python
 - make
 - make install
 - popd
