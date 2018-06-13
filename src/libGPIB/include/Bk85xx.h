@@ -79,8 +79,7 @@ class Bk85xx {
         void setModeCW();
         void setModeCR();
 
-        void setRemoteSense();
-        void unsetRemoteSense();
+        void setRemoteSense(bool enableRemoteSense=true);
 
         void setCurrent(double current); // mA
         double getCurrent();

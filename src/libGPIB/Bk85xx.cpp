@@ -201,9 +201,9 @@ struct values Bk85xx::getValues() {
     return val;
 }
 
-void Bk85xx::setRemoteSense() {
+void Bk85xx::setRemoteSense(bool enableRemoteSense) {
     log(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
-    data[0] = 0x1;
+    data[0] = enableRemoteSense;
     this->checkStatus(this->sendCommand(CMD_SET_REMOTE_SENSE, data));
 }
