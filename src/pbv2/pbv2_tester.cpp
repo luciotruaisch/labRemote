@@ -77,12 +77,12 @@ int main(int argc, char* argv[]) {
   log(logINFO) << " ... DC Load:";
   Bk85xx dc(bkDev);
   dc.setRemote();
-  dc.setRemoteSense();
+  dc.setRemoteSense(false);
   dc.setModeCC();
   dc.setCurrent(0);
   dc.turnOn();
 
-  std::unique_ptr<I2CCom> i2c;
+  std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
   if(mojoDev=="FTDI")
     i2c.reset(new FTDICom());
@@ -96,9 +96,8 @@ int main(int argc, char* argv[]) {
   log(logINFO) << "  ++Init";
   amac.init();
 
-  log(logINFO) << "  ++Enable LV";
-  amac.write(AMACreg::LV_ENABLE, 0x1);
-  sleep(10);
+  log(logINFO) << "  ++Disable LV";
+  amac.write(AMACreg::LV_ENABLE, 0x0);
   log(logINFO) << "  ++Disable HV";
   amac.write(AMACreg::HV_ENABLE, 0x0);
 
@@ -114,16 +113,20 @@ int main(int argc, char* argv[]) {
   amac.read(AMACreg::VALUE_LEFT_CH2, bgo);
   std::cout << "BGO : \t" << bgo << std::endl;
 
+  log(logINFO) << "  ++ Baseline values:";
+  std::cout << "Input LV Current : " << ps.getCurrent() << std::endl;
+
   log(logINFO) << "Test LV enable: ";
   dc.setCurrent(0);
   dc.turnOn();
+
+  amac.write(AMACreg::LV_ENABLE, 0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
   double lv_on = dc.getValues().vol;//mV
-  amac.write(AMACreg::LV_ENABLE, 0x0);
 
+  amac.write(AMACreg::LV_ENABLE, 0x0);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
   double lv_off = dc.getValues().vol;//mV
-  amac.write(AMACreg::LV_ENABLE, 0x1);
 
   bool lv_enable_works=false;
   if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
@@ -134,25 +137,8 @@ int main(int argc, char* argv[]) {
     lv_enable_works=true;
   }
 
-#if 0
-  log(logINFO) << "Test HV enable: ";
-  sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-  sm.setSense(KeithleyMode::VOLTAGE, 100, 100);
-  sm.turnOn();
-  std::this_thread::sleep_for(std::chrono::seconds(2));
-  double hv_off = std::stod(sm.sense(KeithleyMode::VOLTAGE).substr(0,13));
-  amac.write(AMACreg::HV_ENABLE, 0x1);
-  std::this_thread::sleep_for(std::chrono::seconds(2));
-  double hv_on = std::stod(sm.sense(KeithleyMode::VOLTAGE).substr(0,13));
-  // If HVmux does not conduct, source meter will go into compliance
-  if (!(hv_off > 90.0 && hv_on < 1.0)) {
-    log(logERROR) << " ++ HV enable not working! " << hv_off << " " << hv_on;
-    return -1;
-  } else {
-    log(logINFO) << " ++ HV enable good!";
-  }
-  sm.turnOff();
-#endif
+  amac.write(AMACreg::LV_ENABLE, 0x1);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
   std::string logpath;
   std::fstream logfile;

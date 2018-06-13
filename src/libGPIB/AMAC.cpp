@@ -1,10 +1,10 @@
 #include "AMAC.h"
 
-AMAC::AMAC(unsigned id, std::unique_ptr<I2CCom>& i2c)
-  : m_i2c(std::move(i2c))
+AMAC::AMAC(unsigned id, std::shared_ptr<I2CCom> i2c)
+  : m_i2c(i2c)
 {
-    m_id = id;
-    m_i2c->enableI2C();
+  m_id = id;
+  m_i2c->enableI2C();
 }
 
 AMAC::~AMAC() {

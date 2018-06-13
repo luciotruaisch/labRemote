@@ -79,13 +79,13 @@ int main(int argc, char* argv[]) {
   log(logINFO) << " ... DC Load:";
   Bk85xx dc(bkDev);
   dc.setRemote();
-  dc.setRemoteSense();
+  dc.setRemoteSense(false);
   dc.setModeCC();
   dc.setCurrent(0);
   //dc.turnOn();
 
   log(logINFO) << " ... AMAC:";
-  std::unique_ptr<I2CCom> i2c;
+  std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
   if(mojoDev=="FTDI")
     i2c.reset(new FTDICom());
@@ -97,23 +97,17 @@ int main(int argc, char* argv[]) {
   AMAC amac(0, i2c);
 
   log(logINFO) << "  ++Init";
-  amac.write(AMACreg::BANDGAP_CONTROL, 10); //1.2V LDO output
-  amac.write(AMACreg::RT_CH3_GAIN_SEL, 0); // no attenuation
-  amac.write(AMACreg::LT_CH3_GAIN_SEL, 0); // no attentuation
-  amac.write(AMACreg::RT_CH0_SEL, 1); //a
-  amac.write(AMACreg::LT_CH0_SEL, 1); //a 
-  amac.write(AMACreg::LEFT_RAMP_GAIN, 3); // best range
-  amac.write(AMACreg::RIGHT_RAMP_GAIN, 3); // best range
-  amac.write(AMACreg::OPAMP_GAIN_RIGHT, 0); // highest gain
-  amac.write(AMACreg::OPAMP_GAIN_LEFT, 0); // highest gain
-  amac.write(AMACreg::HV_FREQ, 0x1);
+  amac.init();
 
-  log(logINFO) << "  ++Enable LV";
+  log(logINFO) << "  ++Disable LV";
   amac.write(AMACreg::LV_ENABLE, 0x0);
   log(logINFO) << "  ++Disable HV";
   amac.write(AMACreg::HV_ENABLE, 0x0);
 
-  //dc.setCurrent(1);
+  log(logINFO) << "  ++Enable load";
+  amac.write(AMACreg::LV_ENABLE, 0x1);
+  dc.setCurrent(1000);
+  dc.turnOn();
 
 
   log(logINFO) << "  ++ Const ADC values:";

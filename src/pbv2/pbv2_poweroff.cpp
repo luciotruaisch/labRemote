@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
   dc.setCurrent(0);
   dc.turnOn();
 
-  std::unique_ptr<I2CCom> i2c;
+  std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
   if(mojoDev=="FTDI")
     i2c.reset(new FTDICom());

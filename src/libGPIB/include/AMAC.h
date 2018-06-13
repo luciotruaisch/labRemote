@@ -10,7 +10,7 @@ enum class AMACreg;
 
 class AMAC {
 public:
-  AMAC(unsigned id, std::unique_ptr<I2CCom>& i2c);
+  AMAC(unsigned id, std::shared_ptr<I2CCom> i2c);
   ~AMAC();
 
   void init();
@@ -20,7 +20,7 @@ public:
 
 private:
   unsigned m_id;
-  std::unique_ptr<I2CCom> m_i2c;
+  std::shared_ptr<I2CCom> m_i2c;
 
   int readBits(unsigned startreg, unsigned num_bits, unsigned offset, unsigned &value);
   int writeBits(unsigned startreg, unsigned num_bits, unsigned offset, unsigned value);
