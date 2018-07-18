@@ -1,6 +1,9 @@
 image: centos:7
 
 before_script:
+- curl -o /etc/yum.repos.d/picoscope.repo https://labs.picotech.com/rpm/picoscope.repo
+- rpmkeys --import https://labs.picotech.com/rpm/repodata/repomd.xml.key
+- yum check-update
 - yum -y install epel-release
 - yum -y install make gcc gcc-c++ autoconf
 - yum -y install git
@@ -8,6 +11,7 @@ before_script:
 - yum -y install libftdi-devel libftdi-c++-devel
 - yum -y install opencv-devel
 - yum -y install autoconf git swig
+- yum -y install picoscope
 - pushd $(mktemp -d)
 - git clone https://github.com/l29ah/libmpsse.git
 - cd libmpsse/src
