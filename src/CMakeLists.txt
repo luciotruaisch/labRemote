@@ -49,6 +49,7 @@ add_subdirectory(libGalil)
 add_subdirectory(libImageRec)
 add_subdirectory(libZaber)
 add_subdirectory(libWaferProb)
+add_subdirectory(libScope)
 
 #
 # Add binaries

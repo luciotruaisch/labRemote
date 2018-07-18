@@ -1,6 +1,8 @@
 # add global dependencies
 include_directories( ../libGPIB/include )
+include_directories( ../libScope/include )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
+include_directories( ${LIBPICO_INCLUDE_DIR} )
 
 if( ${ENABLE_FTDI} )
   add_definitions(-DFTDI)
@@ -14,5 +16,5 @@ foreach(target ${tools})
   get_filename_component(srcfile ${target} NAME)
 
   add_executable(${execname} ${srcfile})
-  target_link_libraries(${execname} -lGPIB)
+  target_link_libraries(${execname} -lGPIB -lScope)
 endforeach()
