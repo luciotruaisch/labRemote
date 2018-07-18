@@ -58,21 +58,40 @@ int main(int argc, char* argv[]) {
 
   //
   // Run tests
+  std::string logpath;
+  std::fstream logfile;
+
   log(logINFO) << "Initialising ...";
     
   log(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
-  ps.init();
-  ps.setRange(20);
-  ps.setVoltage(11.0);
-  ps.setCurrent(2.00);
-  ps.turnOn();
+  try
+    {
+      ps.init();
+      ps.setRange(20);
+      ps.setVoltage(11.0);
+      ps.setCurrent(2.00);
+      ps.turnOn();
+    }
+  catch(std::string e)
+    {
+      log(logERROR) << e;
+      return 1;
+    }
 
   log(logINFO) << " ... Keithley 2410:";
   Keithley24XX sm(gpibDev, 9);
-  sm.init();
-  sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-  sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+  try
+    {
+      sm.init();
+      sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
+      sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+    }
+  catch(std::string e)
+    {
+      log(logERROR) << e;
+      return 1;
+    }
 
   log(logINFO) << " ... DC Load:";
   Bk85xx dc(bkDev);
@@ -116,6 +135,12 @@ int main(int argc, char* argv[]) {
   log(logINFO) << "  ++ Baseline values:";
   std::cout << "Input LV Current : " << ps.getCurrent() << std::endl;
 
+  logpath = "log/" + TestName + "_General.log";
+  logfile.open(logpath, std::fstream::out);
+  logfile << "OTALEFT OTARIGHT DVDD2 BGO InBase" << std::endl;
+  logfile << ota_l << " " << ota_r << " " << dvdd2 << " " << bgo << " " << ps.getCurrent() << std::endl;
+  logfile.close();
+
   log(logINFO) << "Test LV enable: ";
   dc.setCurrent(0);
   dc.turnOn();
@@ -140,8 +165,6 @@ int main(int argc, char* argv[]) {
   amac.write(AMACreg::LV_ENABLE, 0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-  std::string logpath;
-  std::fstream logfile;
   //
   // Testing Current Sense Amp & Efficiency...
   log(logINFO) << "Testing Current Sense Amp & Efficiency...";

@@ -60,11 +60,19 @@ int main(int argc, char* argv[]) {
 
   log(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
-  ps.init();
-  ps.setRange(20);
-  ps.setVoltage(11.0);
-  ps.setCurrent(2.00);
-  ps.turnOn();
+  try
+    {
+      ps.init();
+      ps.setRange(20);
+      ps.setVoltage(11.0);
+      ps.setCurrent(2.00);
+      ps.turnOn();
+    }
+  catch(std::string e)
+    {
+      log(logERROR) << e;
+      return 1;
+    }
 
   std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
