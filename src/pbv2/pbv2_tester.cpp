@@ -16,6 +16,7 @@
 #include "Bk85xx.h"
 #include "AgilentPs.h"
 #include "Keithley24XX.h"
+#include "PS6000.h"
 
 loglevel_e loglevel = logINFO;
 
@@ -100,6 +101,19 @@ int main(int argc, char* argv[]) {
   dc.setModeCC();
   dc.setCurrent(0);
   dc.turnOn();
+
+  // Configure pico scope
+  log(logINFO) << " ... PicoScope Load:";
+  PS6000 pico;
+  pico.open();
+  pico.setEnable(1,false);
+  pico.setEnable(2,false);
+  pico.setEnable(3,false);
+  pico.setPeriod(1e-8);
+  pico.setRange(0, 200);
+  pico.configChannels();
+  float period=pico.getPeriod();
+  std::vector<std::vector<float>> picodata;
 
   std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
@@ -275,9 +289,9 @@ int main(int argc, char* argv[]) {
     unsigned val[5];
     for (unsigned i=0; i<5; i++) {
       if (i == 0)
-	amac.write(AMACreg::OPAMP_GAIN_LEFT, 0);
+  	amac.write(AMACreg::OPAMP_GAIN_LEFT, 0);
       else
-	amac.write(AMACreg::OPAMP_GAIN_LEFT, pow(2,i-1));
+  	amac.write(AMACreg::OPAMP_GAIN_LEFT, pow(2,i-1));
 
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
       amac.read(AMACreg::VALUE_LEFT_CH6, *&val[i]);
@@ -285,9 +299,43 @@ int main(int argc, char* argv[]) {
     std::cout << hv << "\t" << ileak << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
     logfile << hv << " " << ileak << " " << val[0] << " " << val[1] << " " << val[2] << " " << val[3] << " " << val[4] << std::endl;
   }
+  logfile.close();
+
+  //
+  // Testing shieldbox leakage
+  log(logINFO) << "Testing shield box leakage ...";
+
+  // Run test with LV on
+  logpath = "log/" + TestName + "_CoilLVON.log";
+  logfile.open(logpath, std::fstream::out);
+
+  amac.write(AMACreg::LV_ENABLE, 0x1);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  picodata=pico.run();
+
+  logfile << "time coil" << std::endl;
+  for(unsigned int row=0; row<picodata[0].size(); row++)
+    logfile << row*period << " " << picodata[0][row] << std::endl;
+
+  logfile.close();
+
+  // Run test with LV off
+  logpath = "log/" + TestName + "_CoilLVOFF.log";
+  logfile.open(logpath, std::fstream::out);
+
+  amac.write(AMACreg::LV_ENABLE, 0x0);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  picodata=pico.run();
+
+  logfile << "time coil" << std::endl;
+  for(unsigned int row=0; row<picodata[0].size(); row++)
+    logfile << row*period << " " << picodata[0][row] << std::endl;
+
+  logfile.close();
 
   //
   // Power-off
+  pico.close();
   sm.turnOff();
   ps.turnOff();
   dc.turnOff();
