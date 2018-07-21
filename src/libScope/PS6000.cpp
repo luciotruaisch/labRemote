@@ -315,38 +315,23 @@ void PS6000::initInfo()
     }
 }
 
-void PS6000::configChannels()
+void PS6000::setEnable(unsigned short ch, bool enable)
 {
-  ps6000SetEts(m_handle, PS6000_ETS_OFF, 0, 0, 0); // Turn off ETS
+  if(ch>=m_channelCount)
+    throw std::string("Channel out of range"); //: "+ch+"/"+m_channelCount);
 
-  for(int16_t i = 0; i < m_channelCount; i++) // reset channels to most recent settings
-    {
-      ps6000SetChannel(m_handle, (PS6000_CHANNEL) (PS6000_CHANNEL_A + i),
-		       m_channelSettings[PS6000_CHANNEL_A + i].enabled,
-		       (PS6000_COUPLING)m_channelSettings[PS6000_CHANNEL_A + i].DCcoupled,
-		       (PS6000_RANGE)m_channelSettings[PS6000_CHANNEL_A + i].range, 0, PS6000_BW_FULL);
-    }
+  m_channelSettings[ch].enabled=enable;
 }
 
-void PS6000::setPeriod(float period)
+bool PS6000::getEnable(unsigned short ch) const
 {
-  if(period<=3.2e-9)
-    {
-      m_timebase=logf(period*5000000000)/logf(2);
-      m_period=pow(2,m_timebase)/5000000000;
-      std::cout << "m_timebase " << m_timebase << std::endl;
-    }
-  else
-    {
-      m_timebase=period*156250000+4;
-      m_period=((float)(m_timebase-4))/156250000;
-    } 
+  if(ch>=m_channelCount)
+    throw std::string("Channel out of range"); //: "+ch+"/"+m_channelCount);
+
+  return m_channelSettings[ch].enabled;
 }
 
-float PS6000::getPeriod()
-{ return m_period; }
-
-void PS6000::setRange(unsigned short ch, int range)
+void PS6000::setRange(unsigned short ch, unsigned int range)
 {
   if(ch>=m_channelCount)
     throw std::string("Channel out of range"); //: "+ch+"/"+m_channelCount);
@@ -360,6 +345,44 @@ void PS6000::setRange(unsigned short ch, int range)
     throw std::string("Invalid range");
 
   m_channelSettings[ch].range=thisRangeIdx;
+}
+
+unsigned int PS6000::getRange(unsigned short ch) const
+{
+  if(ch>=m_channelCount)
+    throw std::string("Channel out of range"); //: "+ch+"/"+m_channelCount);
+
+  return m_availRanges[m_channelSettings[ch].range];
+}
+
+void PS6000::setPeriod(float period)
+{
+  if(period<=3.2e-9)
+    {
+      m_timebase=logf(period*5000000000)/logf(2);
+      m_period=pow(2,m_timebase)/5000000000;
+    }
+  else
+    {
+      m_timebase=period*156250000+4;
+      m_period=((float)(m_timebase-4))/156250000;
+    } 
+}
+
+float PS6000::getPeriod() const
+{ return m_period; }
+
+void PS6000::configChannels()
+{
+  ps6000SetEts(m_handle, PS6000_ETS_OFF, 0, 0, 0); // Turn off ETS
+
+  for(int16_t i = 0; i < m_channelCount; i++) // reset channels to most recent settings
+    {
+      ps6000SetChannel(m_handle, (PS6000_CHANNEL) (PS6000_CHANNEL_A + i),
+		       m_channelSettings[PS6000_CHANNEL_A + i].enabled,
+		       (PS6000_COUPLING)m_channelSettings[PS6000_CHANNEL_A + i].DCcoupled,
+		       (PS6000_RANGE)m_channelSettings[PS6000_CHANNEL_A + i].range, 0, PS6000_BW_FULL);
+    }
 }
 
 std::vector<std::vector<float>> PS6000::run()
@@ -384,7 +407,6 @@ std::vector<std::vector<float>> PS6000::run()
   uint32_t realSampleCount;
   ps6000GetTimebase2(m_handle, m_timebase, sampleCount, &m_period, 0, &realSampleCount, 0);
   m_period*=1e-9;
-  std::cout << "Will sample " << realSampleCount << " / " << sampleCount << std::endl;
 
   // Gather data
   ps6000RunBlock(m_handle, 0, sampleCount, m_timebase, 1, nullptr, 0, nullptr, nullptr);

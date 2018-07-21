@@ -43,10 +43,14 @@ public:
   virtual void open();
   virtual void close();
 
-  virtual void setPeriod(float period);
-  virtual float getPeriod();
+  virtual void setEnable(unsigned short ch, bool enable);
+  virtual bool getEnable(unsigned short ch) const;
 
-  virtual void setRange(unsigned short ch, int range);
+  virtual void setRange(unsigned short ch, unsigned int range);
+  virtual unsigned int getRange(unsigned short ch) const;
+
+  virtual void setPeriod(float period);
+  virtual float getPeriod() const;
 
   virtual void configChannels();
 
