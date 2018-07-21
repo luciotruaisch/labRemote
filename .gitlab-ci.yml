@@ -3,7 +3,6 @@ image: centos:7
 before_script:
 - curl -o /etc/yum.repos.d/picoscope.repo https://labs.picotech.com/rpm/picoscope.repo
 - rpmkeys --import https://labs.picotech.com/rpm/repodata/repomd.xml.key
-- yum -y check-update
 - yum -y install epel-release
 - yum -y install make gcc gcc-c++ autoconf
 - yum -y install git
