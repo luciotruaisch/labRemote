@@ -7,7 +7,7 @@
 
 #include <math.h>
 
-#define BUFFER_SIZE 8192
+#define BUFFER_SIZE 2097152
 
 PS6000::PS6000()
   : PicoScope()
@@ -390,12 +390,14 @@ std::vector<std::vector<float>> PS6000::run()
   PICO_STATUS status;
 
   // Configure buffers for readback
-  int16_t buffers[4][BUFFER_SIZE];
+  int16_t* buffers[4]={nullptr, nullptr, nullptr, nullptr};
 
   for(int16_t i = 0; i < m_channelCount; i++)
     {
       if(m_channelSettings[i].enabled)
 	{
+	  buffers[i]=new int16_t[BUFFER_SIZE];
+
 	  status=ps6000SetDataBuffer(m_handle, (PS6000_CHANNEL)i, &buffers[i][0], BUFFER_SIZE, PS6000_RATIO_MODE_NONE);
 	  if(status!=PICO_OK)
 	    throw std::string("Unable to set data buffer: "+status);
@@ -407,6 +409,7 @@ std::vector<std::vector<float>> PS6000::run()
   uint32_t realSampleCount;
   ps6000GetTimebase2(m_handle, m_timebase, sampleCount, &m_period, 0, &realSampleCount, 0);
   m_period*=1e-9;
+  //std::cout << "sampleCount = " << sampleCount << ", m_period = " << m_period << ", realSampleCount = " << realSampleCount << std::endl;
 
   // Gather data
   ps6000RunBlock(m_handle, 0, sampleCount, m_timebase, 1, nullptr, 0, nullptr, nullptr);
@@ -428,16 +431,21 @@ std::vector<std::vector<float>> PS6000::run()
     {
       std::vector<float> chresult;
       if(m_channelSettings[ch].enabled)
-	{
-	  for(uint j=0;j<sampleCount;j++)
-	    chresult.push_back((float)buffers[ch][j]*m_availRanges[m_channelSettings[ch].range]/PS6000_MAX_VALUE);
-	}
+   	{
+  	  for(uint j=0;j<sampleCount;j++)
+  	    chresult.push_back((float)buffers[ch][j]*m_availRanges[m_channelSettings[ch].range]/PS6000_MAX_VALUE);
+   	}
       result.push_back(chresult);
     }
 
   //
   // Cleanup
   ps6000Stop(m_handle);
+
+  for(int16_t i = 0; i < m_channelCount; i++)
+    {
+      if(m_channelSettings[i].enabled) delete[] buffers[i];
+    }
 
   return result;
 }
