@@ -76,11 +76,12 @@ int SerialCom::write(std::string buf) {
     return ::write(m_dev, buf.c_str(), buf.size());
 }
 
-int SerialCom::read(std::string &buf) {
-    char *tmp = new char[MAX_READ];
-    unsigned n_read = ::read(m_dev, tmp, MAX_READ);
-    buf = std::string(tmp, n_read);
-    return n_read;
+int SerialCom::read(std::string &buf) 
+{
+  char *tmp = new char[MAX_READ];
+  unsigned n_read = ::read(m_dev, tmp, MAX_READ);
+  buf = std::string(tmp, n_read);
+  return n_read;
 }
 
 bool SerialCom::is_open() {

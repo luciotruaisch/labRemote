@@ -25,17 +25,18 @@ void AgilentPs::send(std::string cmd) {
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
 }
 
-std::string AgilentPs::receive(std::string cmd) {
-    m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
-    cmd += "\r\n";
-    m_com->write(cmd);
-    m_com->write("++read eoi\n\r");
-    std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
-    std::string buf;
-    m_com->read(buf);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
-    return buf;
+std::string AgilentPs::receive(std::string cmd) 
+{
+  m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
+  log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+  cmd += "\r\n";
+  m_com->write(cmd);
+  m_com->write("++read eoi\n\r");
+  std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
+  std::string buf;
+  m_com->read(buf);
+  log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+  return buf;
 }
 
 void AgilentPs::init() {

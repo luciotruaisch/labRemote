@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
       ps.setCurrent(2.00);
       ps.turnOn();
     }
-  catch(std::string e)
+  catch(std::string &e)
     {
       log(logERROR) << e;
       return 1;
