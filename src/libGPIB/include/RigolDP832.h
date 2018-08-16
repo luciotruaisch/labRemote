@@ -24,9 +24,11 @@ class RigolDP832 {
         void turnOn(unsigned channel);
         void turnOff(unsigned channel);
 	//void setCh(unsigned ch);
-        void setVoltageCurrent(unsigned channel, double volt, double cur);
-        std::string getVoltage(unsigned channel);
-        std::string getCurrent(unsigned channel);
+        void setVoltageCurrent(unsigned channel, float volt, float cur);
+        float getVoltage(unsigned channel);
+        float getCurrent(unsigned channel);
+        std::string getVoltageStr(unsigned channel);
+        std::string getCurrentStr(unsigned channel);
 
     private:
         SerialCom *m_com;

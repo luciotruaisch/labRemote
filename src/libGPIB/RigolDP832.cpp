@@ -1,5 +1,6 @@
 #include "RigolDP832.h"
 #include "Logger.h"
+#include <stdlib.h>
 
 RigolDP832::RigolDP832(std::string dev) {
     m_com = new SerialCom(dev);
@@ -35,7 +36,7 @@ void RigolDP832::init() {
     //this->send(":SYSTem:BEEPer:IMMediate"); //beep
     //this->send(":SYSTEM:REMOTE");
     std::string result=this->receive("*IDN?");
-    std::cout<<result<<std::endl;
+    //std::cout<<result<<std::endl;
     //this->send(":TRIGGER:COUNT 1");
     //this->send(":FORMAT:ELEMENTS TIME,VOLT,CURR");
 }
@@ -48,15 +49,25 @@ void RigolDP832::turnOff(unsigned channel) {
     this->send(":OUTP CH" + std::to_string(channel) + ",OFF");
 }
 
-void RigolDP832::setVoltageCurrent(unsigned channel, double volt, double cur) {
+void RigolDP832::setVoltageCurrent(unsigned channel, float volt, float cur) {
     this->send(":APPL CH" + std::to_string(channel) + ", " + std::to_string(volt) + ", " + std::to_string(cur));
 }
 
-std::string RigolDP832::getVoltage(unsigned channel) {
+std::string RigolDP832::getVoltageStr(unsigned channel) {
     return this->receive(":MEAS? CH" + std::to_string(channel));
 }
 
-std::string RigolDP832::getCurrent(unsigned channel) {
+std::string RigolDP832::getCurrentStr(unsigned channel) {
     return this->receive(":MEAS:CURR? CH" + std::to_string(channel));
+}
+
+float RigolDP832::getVoltage(unsigned channel) {
+  std::string v = getVoltageStr(channel);
+  return atof(v.c_str());
+}
+
+float RigolDP832::getCurrent(unsigned channel) {
+  std::string i = getCurrentStr(channel);
+  return atof(i.c_str());  
 }
 
