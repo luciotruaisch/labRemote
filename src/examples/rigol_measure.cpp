@@ -7,6 +7,8 @@ loglevel_e loglevel = logINFO;
 
 int main(int argc, char*argv[]) {
 
+//Run ./bin/rigol_measure /dev/usbtmc0 
+
     RigolDP832 testsource(argv[1]);
     //testsource.init();
 
