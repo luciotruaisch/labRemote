@@ -15,6 +15,7 @@ set(SrcFiles AgilentPs.cpp
   AMAC.cpp
   Bk85xx.cpp
   Keithley24XX.cpp
+  RigolDP832.cpp
   MojoCom.cpp
   SerialCom.cpp)
 
