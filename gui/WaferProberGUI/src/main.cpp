@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
+
     qmlRegisterType<BackEnd>("qt.wafer.backend", 1, 0, "BackEnd");
     qmlRegisterType<FileIO, 1>("qt.wafer.FileIO", 1, 0, "FileIO");
     qmlRegisterType<ObjectDetection, 1>("qt.wafer.objectdetection", 1, 0, "ObjectDetection");

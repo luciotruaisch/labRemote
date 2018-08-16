@@ -666,8 +666,7 @@ Item {
                                     text: "10um"
                                     Layout.fillWidth: true
                                     onClicked: {
-
-
+                                        txt_speed_z.text = 0.01;
                                         //var command = "MR Z 0.01"
                                         //backend.run_cmd(command)
 

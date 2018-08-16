@@ -1,17 +1,14 @@
 #ifndef OBJECTDETECTION_H
 #define OBJECTDETECTION_H
 
-#include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 // This class finds the object provided by the objectName in a "reference" image (or "source image")
 // and save the coordinates of the matched object in the reference image.
 // This class then finds the object in a "destination" image (or a new image).
 // and emit the difference of the coordinates of the matched object between reference image and destination image.
 // This difference is then used to correct the destination image.
-
-#include "opencv2/core.hpp"
-#include "opencv2/highgui.hpp"
 
 #include <QObject>
 #include <QVariant>

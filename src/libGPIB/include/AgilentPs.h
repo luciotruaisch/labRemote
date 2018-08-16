@@ -31,7 +31,8 @@ class AgilentPs {
         void setCurrentProtect(double cur);
 	void turnOn();
         void turnOff();
-    private:
+	void beepOff(); 
+   private:
         SerialCom *m_com;
         unsigned m_addr;
 

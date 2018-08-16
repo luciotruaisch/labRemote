@@ -88,3 +88,8 @@ void AgilentPs::turnOff() {
     this->send("OUTPUT OFF");
 }
 
+void AgilentPs::beepOff() {
+    this->send("SYST:BEEP:STAT OFF");//disable beep
+
+}
+

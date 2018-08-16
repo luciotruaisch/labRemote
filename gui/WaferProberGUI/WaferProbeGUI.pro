@@ -1,6 +1,8 @@
 #QT_CONFIG -= no-pkg-config
 
-QT += qml quick multimedia
+INCLUDEPATH += /usr/include/qt5/QtCore /usr/include/qt5/QtQml /usr/include/qt5/QtQuick /usr/include/qt5/QtMultimedia /usr/include/qt5/QtGui
+
+QT += core qml quick multimedia gui
 
 CONFIG += c++11
 
