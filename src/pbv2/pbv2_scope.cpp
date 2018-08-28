@@ -15,12 +15,18 @@
 #include "AMAC.h"
 #include "AgilentPs.h"
 #include "Keithley24XX.h"
+
+#ifdef SCOPE
 #include "PS6000.h"
+#endif
 
 loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[])
 {
+#ifndef SCOPE
+  log(logERROR) << "Missing libScope";
+#else // SCOPE
   //
   // Get settings from the command line
   if (argc < 4) {
@@ -160,5 +166,7 @@ int main(int argc, char* argv[])
   pico->close();
   ps.turnOff();
 
+#endif // SCOPE
+  
   return 0;
 }

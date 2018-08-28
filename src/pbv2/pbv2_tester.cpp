@@ -16,7 +16,10 @@
 #include "Bk85xx.h"
 #include "AgilentPs.h"
 #include "Keithley24XX.h"
+
+#ifdef SCOPE
 #include "PS6000.h"
+#endif
 
 loglevel_e loglevel = logINFO;
 
@@ -104,6 +107,7 @@ int main(int argc, char* argv[]) {
 
   // Configure pico scope
   log(logINFO) << " ... PicoScope Load:";
+#ifdef SCOPE
   PS6000 pico;
   pico.open();
   pico.setEnable(1,false);
@@ -114,6 +118,9 @@ int main(int argc, char* argv[]) {
   pico.configChannels();
   float period=pico.getPeriod();
   std::vector<std::vector<float>> picodata;
+#else // SCOPE
+  log(logINFO) << "\tSkipping noise measurement due to missing libScope";
+#endif // SCOPE
 
   std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
@@ -303,6 +310,7 @@ int main(int argc, char* argv[]) {
 
   //
   // Testing shieldbox leakage
+#ifdef SCOPE
   log(logINFO) << "Testing shield box leakage ...";
 
   // Run test with LV on
@@ -332,10 +340,13 @@ int main(int argc, char* argv[]) {
     logfile << row*period << " " << picodata[0][row] << std::endl;
 
   logfile.close();
+#endif // SCOPE
 
   //
   // Power-off
+#ifdef SCOPE
   pico.close();
+#endif // SCOPE
   sm.turnOff();
   ps.turnOff();
   dc.turnOff();

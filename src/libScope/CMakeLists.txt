@@ -1,11 +1,18 @@
 #
 # Look for dependencies
 
-# Find pico
+# Find libpico
+find_package(Pico)
+
+if ( ${LIBPICO_FOUND} )
+  set(ENABLE_SCOPE 1)
+else()
+  message("Disabling libScope due to missing libpico")
+  return()
+endif()
 
 #
 # Prepare the library
-find_package(Pico REQUIRED)
 
 # Add the headers
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
