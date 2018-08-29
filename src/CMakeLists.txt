@@ -45,6 +45,7 @@ endif()
 #
 # Add libraries
 add_subdirectory(libGPIB)
+add_subdirectory(libDevCom)
 add_subdirectory(libGalil)
 add_subdirectory(libImageRec)
 add_subdirectory(libZaber)
@@ -55,5 +56,6 @@ add_subdirectory(libScope)
 # Add binaries
 add_subdirectory(prober)
 add_subdirectory(pbv2)
+add_subdirectory(pbv2active)
 add_subdirectory(varload)
 add_subdirectory(examples)
