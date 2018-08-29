@@ -11,7 +11,7 @@ set(SrcFiles DeviceCom.cpp
   
   #FreqMeas.cpp
 
-  #ComIOException.cpp
+  ComIOException.cpp
   #EndeavourComException.cpp
 
   #ClimateSensor.cpp
