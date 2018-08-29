@@ -26,8 +26,8 @@ public:
   virtual uint16_t read_reg16(uint32_t address) =0;
   virtual uint8_t  read_reg8 (uint32_t address) =0;
 
-  virtual std::vector<uint8_t> read_block(uint32_t address, uint32_t numBytes) =0;
-  virtual std::vector<uint8_t> read_block(uint32_t numBytes) =0;
+  virtual void read_block(uint32_t address, std::vector<uint8_t>& data) =0;
+  virtual void read_block(std::vector<uint8_t>& data) =0;
 
   virtual uint8_t read_byte() =0;  
 };

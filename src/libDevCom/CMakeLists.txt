@@ -8,6 +8,7 @@ set(SrcFiles DeviceCom.cpp
 
   I2CCom.cpp
   I2CDevCom.cpp
+  PCA9548ACom.cpp
   
   #FreqMeas.cpp
 

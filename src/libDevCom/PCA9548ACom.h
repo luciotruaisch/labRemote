@@ -1,13 +1,15 @@
-#ifndef I2CDEVCOM_H
-#define I2CDEVCOM_H
+#ifndef PCA9548ACOM_H
+#define PCA9548ACOM_H
+
+#include <memory>
 
 #include "I2CCom.h"
 
-class I2CDevCom : public I2CCom
+class PCA9548ACom : public I2CCom
 {
 public:
-  I2CDevCom(uint8_t deviceAddr, const std::string& i2cdev);
-  virtual ~I2CDevCom();
+  PCA9548ACom(uint8_t deviceAddr, uint8_t channel, std::shared_ptr<I2CCom> com);
+  virtual ~PCA9548ACom();
 
   //
   // Write commands
@@ -30,9 +32,11 @@ public:
   virtual void read_block(std::vector<uint8_t>& data);
 
   virtual uint8_t read_byte();
-  
+
 private:
-  int m_fh =0;
+  std::shared_ptr<I2CCom> m_com;
+  uint8_t m_muxAddr;
+  uint8_t m_channel;
 };
 
-#endif // I2CDEVCOM_H
+#endif // PCA9548ACOM_H

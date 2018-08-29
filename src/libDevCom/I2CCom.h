@@ -12,7 +12,7 @@ public:
   I2CCom(uint8_t deviceAddr);
   virtual ~I2CCom();
 
-  void deviceAddr(uint8_t deviceAddr);
+  void setDeviceAddr(uint8_t deviceAddr);
   uint8_t deviceAddr() const;
 
 private:
