@@ -13,7 +13,7 @@ set(SrcFiles DeviceCom.cpp
   #FreqMeas.cpp
 
   ComIOException.cpp
-  #EndeavourComException.cpp
+  NotSupportedException.cpp
 
   #ClimateSensor.cpp
   #BME280.cpp
@@ -21,7 +21,8 @@ set(SrcFiles DeviceCom.cpp
   #DACDevice.cpp
   #LTC2666.cpp
 
-  #ADCDevice.cpp
+  ADCDevice.cpp
+  AD799X.cpp
   #LTC2333.cpp
 
   #AD5160.cpp
