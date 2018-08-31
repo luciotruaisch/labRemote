@@ -18,7 +18,8 @@ set(SrcFiles DeviceCom.cpp
   #ClimateSensor.cpp
   #BME280.cpp
 
-  #DACDevice.cpp
+  DACDevice.cpp
+  DAC5574.cpp
   #LTC2666.cpp
 
   ADCDevice.cpp
