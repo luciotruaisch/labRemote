@@ -29,7 +29,7 @@ uint32_t AD799X::readCount()
   return chcounts;
 }
 
-uint32_t AD799X::readCountChannel(uint8_t ch)
+uint32_t AD799X::readCount(uint8_t ch)
 {
   uint8_t chmask=0;
 
@@ -58,7 +58,7 @@ uint32_t AD799X::readCountChannel(uint8_t ch)
   return chcounts;
 }
 
-void AD799X::readCountChannels(const std::vector<uint8_t>& chs, std::vector<uint32_t>& counts)
+void AD799X::readCount(const std::vector<uint8_t>& chs, std::vector<uint32_t>& counts)
 {
   uint8_t chmask=0;
   for(uint8_t ch : chs)

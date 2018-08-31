@@ -13,13 +13,13 @@ double ADCDevice::counts2volts(uint32_t counts) const
 double ADCDevice::read()
 { return counts2volts(readCount()); }
 
-double ADCDevice::readChannel(uint8_t ch)
-{ return counts2volts(readCountChannel(ch)); }
+double ADCDevice::read(uint8_t ch)
+{ return counts2volts(readCount(ch)); }
 
-void ADCDevice::readChannels(const std::vector<uint8_t>& chs, std::vector<double>& data)
+void ADCDevice::read(const std::vector<uint8_t>& chs, std::vector<double>& data)
 {
   std::vector<uint32_t> counts(chs.size());
-  readCountChannels(chs, counts);
+  readCount(chs, counts);
 
   data.clear();
   for(uint32_t count : counts)

@@ -24,8 +24,8 @@ public:
   virtual ~AD799X();
 
   virtual uint32_t readCount();
-  virtual uint32_t readCountChannel(uint8_t ch);
-  virtual void readCountChannels(const std::vector<uint8_t>& chs, std::vector<uint32_t>& data);
+  virtual uint32_t readCount(uint8_t ch);
+  virtual void     readCount(const std::vector<uint8_t>& chs, std::vector<uint32_t>& data);
 
 private:
   // Model information
