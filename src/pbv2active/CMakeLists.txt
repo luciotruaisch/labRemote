@@ -2,24 +2,9 @@
 include_directories( ../libDevCom )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
-# if( ${ENABLE_SCOPE} )
-#   include_directories( ../libScope/include )
-#   include_directories( ${LIBPICO_INCLUDE_DIR} )
-  
-#   add_definitions(-DSCOPE)
-# endif()
+set(SrcFiles PBv2TB.cpp
+)
 
-# add executables
-file(GLOB tools [a-zA-Z]*.c[a-zA-Z]*)
+add_library(pbv2active SHARED ${SrcFiles}) 
 
-foreach(target ${tools})
-  get_filename_component(execname ${target} NAME_WE)
-  get_filename_component(srcfile ${target} NAME)
-
-  add_executable(${execname} ${srcfile})
-  target_link_libraries(${execname} -lDevCom)
-  # target_link_libraries(${execname} -lGPIB)
-  # if ( ${ENABLE_SCOPE} )
-  #   target_link_libraries(${execname} -lScope)
-  # endif()
-endforeach()
+add_subdirectory(tools)

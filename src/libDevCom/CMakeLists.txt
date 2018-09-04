@@ -27,6 +27,10 @@ set(SrcFiles DeviceCom.cpp
   #LTC2333.cpp
 
   #AD5160.cpp
+
+  DeviceCalibration.cpp
+  DummyCalibration.cpp
+  LinearCalibration.cpp
 )
 
 add_library(DevCom SHARED ${SrcFiles}) 

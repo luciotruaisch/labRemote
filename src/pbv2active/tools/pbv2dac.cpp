@@ -16,7 +16,7 @@
 
 #include "DAC5574.h"
 
-int main(int argc, char* argv[])
+int main()
 {
   try
     {
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
       std::cout << "----- Clear All -----" << std::endl;
       dac0->set(0, 0);
-      dac0->set(1, 0xF);
+      dac0->set(1, 0);
       dac0->set(2, 0);
       dac0->set(3, 0);
       dac1->set(0, 0);
@@ -72,9 +72,6 @@ int main(int argc, char* argv[])
       dac2->set(1, 0);
       dac2->set(2, 0);
       dac2->set(3, 0);
-
-      dac0->set(atoi(argv[1]), 1);
-
     }
   catch(ComIOException &e)
     {

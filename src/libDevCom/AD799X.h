@@ -20,7 +20,7 @@ class AD799X : public ADCDevice
 public:
   enum Model {AD7993, AD7994, AD7997, AD7998};
 
-  AD799X(float reference, Model model, std::shared_ptr<I2CCom> com);
+  AD799X(double reference, Model model, std::shared_ptr<I2CCom> com);
   virtual ~AD799X();
 
   virtual uint32_t readCount();

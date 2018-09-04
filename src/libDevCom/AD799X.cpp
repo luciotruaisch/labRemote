@@ -1,5 +1,7 @@
 #include "AD799X.h"
 
+#include "LinearCalibration.h"
+
 #include "NotSupportedException.h"
 
 const std::unordered_map<AD799X::Model, AD799XModelInfo> AD799X::ModelInfo =
@@ -10,8 +12,9 @@ const std::unordered_map<AD799X::Model, AD799XModelInfo> AD799X::ModelInfo =
    {AD799X::Model::AD7998, AD799XModelInfo({.NumChannels=8, .MaxValue=0xFFF}) }
   };
 
-AD799X::AD799X(float reference, Model model, std::shared_ptr<I2CCom> com)
-  : ADCDevice(reference, ModelInfo.at(model).MaxValue), m_model(model), m_numChannels(ModelInfo.at(model).NumChannels), m_com(com)
+AD799X::AD799X(double reference, Model model, std::shared_ptr<I2CCom> com)
+  : ADCDevice(std::make_shared<LinearCalibration>(reference, ModelInfo.at(model).MaxValue)),
+    m_model(model), m_numChannels(ModelInfo.at(model).NumChannels), m_com(com)
 { }
 
 AD799X::~AD799X()
