@@ -667,9 +667,6 @@ Item {
                                     Layout.fillWidth: true
                                     onClicked: {
                                         txt_speed_z.text = 0.01;
-                                        //var command = "MR Z 0.01"
-                                        //backend.run_cmd(command)
-
                                     }
                                 }
                                 Button{
@@ -677,8 +674,9 @@ Item {
                                     text: "20um"
                                     Layout.fillWidth: true
                                     onClicked: {
-                                        var command = "MR Z 0.02"
-                                        backend.run_cmd(command)
+                                        txt_speed_z.text = 0.02;
+                                        //var command = "MR Z 0.02"
+                                        //backend.run_cmd(command)
                                     }
                                 }
                                 Button{
@@ -686,8 +684,7 @@ Item {
                                     text: "30um"
                                     Layout.fillWidth: true
                                     onClicked:{
-                                        var command = "MR Z 0.03"
-                                        backend.run_cmd(command)
+                                        txt_speed_z.text = 0.03;
                                     }
                                 }
                                 Button{
@@ -695,8 +692,7 @@ Item {
                                     text: "50um"
                                     Layout.fillWidth: true
                                     onClicked:{
-                                        var command = "MR Z 0.05"
-                                        backend.run_cmd(command)
+                                        txt_speed_z.text = 0.05;
                                     }
                                 }
                                 Button{
@@ -704,8 +700,7 @@ Item {
                                     text: "100um"
                                     Layout.fillWidth: true
                                     onClicked:{
-                                        var command = "MR Z 0.1"
-                                        backend.run_cmd(command)
+                                        txt_speed_z.text = 0.1;
                                     }
                                 }
 

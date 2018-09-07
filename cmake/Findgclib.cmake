@@ -8,8 +8,8 @@
 FIND_PATH(gclib_INCLUDE_DIR gclib.h
           HINTS /usr/include)
 
-FIND_LIBRARY(gclib_LIBRARY NAMES gclib libgclib
-              HINTS /usr/lib64 )
+FIND_LIBRARY(gclib_LIBRARY NAMES libgclib.so.0
+              HINTS /usr/lib )
 
 INCLUDE(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set gclib_FOUND to TRUE
