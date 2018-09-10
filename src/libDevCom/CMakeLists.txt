@@ -3,8 +3,6 @@
 set(SrcFiles DeviceCom.cpp
   #UIOCom.cpp
   #SPICom.cpp
-  #EndeavourCom.cpp
-  #EndeavourRaw.cpp
 
   I2CCom.cpp
   I2CDevCom.cpp
