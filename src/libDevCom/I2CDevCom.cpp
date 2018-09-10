@@ -229,10 +229,10 @@ uint32_t I2CDevCom::read_reg32()
   struct i2c_msg msgs[1];
   struct i2c_rdwr_ioctl_data msgset[1];
 
-  msgs[1].addr = deviceAddr();
-  msgs[1].flags = I2C_M_RD;
-  msgs[1].len = 4;
-  msgs[1].buf = outbuf;
+  msgs[0].addr = deviceAddr();
+  msgs[0].flags = I2C_M_RD;
+  msgs[0].len = 4;
+  msgs[0].buf = outbuf;
 
   msgset[0].msgs = msgs;
   msgset[0].nmsgs = 1;
@@ -249,10 +249,10 @@ uint16_t I2CDevCom::read_reg16()
   struct i2c_msg msgs[1];
   struct i2c_rdwr_ioctl_data msgset[1];
 
-  msgs[1].addr = deviceAddr();
-  msgs[1].flags = I2C_M_RD;
-  msgs[1].len = 2;
-  msgs[1].buf = outbuf;
+  msgs[0].addr = deviceAddr();
+  msgs[0].flags = I2C_M_RD;
+  msgs[0].len = 2;
+  msgs[0].buf = outbuf;
 
   msgset[0].msgs = msgs;
   msgset[0].nmsgs = 1;
@@ -269,10 +269,10 @@ uint8_t  I2CDevCom::read_reg8 ()
   struct i2c_msg msgs[1];
   struct i2c_rdwr_ioctl_data msgset[1];
 
-  msgs[1].addr = deviceAddr();
-  msgs[1].flags = I2C_M_RD;
-  msgs[1].len = 1;
-  msgs[1].buf = outbuf;
+  msgs[0].addr = deviceAddr();
+  msgs[0].flags = I2C_M_RD;
+  msgs[0].len = 1;
+  msgs[0].buf = outbuf;
 
   msgset[0].msgs = msgs;
   msgset[0].nmsgs = 1;
