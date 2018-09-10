@@ -8,45 +8,42 @@
 class EndeavourRaw
 {
 public:
-  EndeavourRaw(std::shared_ptr<DeviceCom> fpgaCom);
+  EndeavourRaw();
 
-  void setDitMin(uint DIT_MIN);
-  uint getDitMin();
+  virtual void setDitMin(uint DIT_MIN) =0;
+  virtual uint getDitMin() =0;
 
-  void setDitMid(uint DIT_MID);
-  uint getDitMid();
+  virtual void setDitMid(uint DIT_MID) =0;
+  virtual uint getDitMid() =0;
 
-  void setDitMax(uint DIT_MAX);  
-  uint getDitMax();
+  virtual void setDitMax(uint DIT_MAX) =0;  
+  virtual uint getDitMax() =0;
 
-  void setDahMin(uint DAH_MIN);
-  uint getDahMin();
+  virtual void setDahMin(uint DAH_MIN) =0;
+  virtual uint getDahMin() =0;
 
-  void setDahMid(uint DAH_MID);
-  uint getDahMid();
+  virtual void setDahMid(uint DAH_MID) =0;
+  virtual uint getDahMid() =0;
 
-  void setDahMax(uint DAH_MAX);  
-  uint getDahMax();
+  virtual void setDahMax(uint DAH_MAX) =0;  
+  virtual uint getDahMax() =0;
 
-  void setBitGapMin(uint BITGAP_MIN);
-  uint getBitGapMin();
+  virtual void setBitGapMin(uint BITGAP_MIN) =0;
+  virtual uint getBitGapMin() =0;
 
-  void setBitGapMid(uint BITGAP_MID);
-  uint getBitGapMid();
+  virtual void setBitGapMid(uint BITGAP_MID) =0;
+  virtual uint getBitGapMid() =0;
 
-  void setBitGapMax(uint BITGAP_MAX);  
-  uint getBitGapMax();
+  virtual void setBitGapMax(uint BITGAP_MAX) =0;  
+  virtual uint getBitGapMax() =0;
   
-  void reset();
+  virtual void reset() =0;
 
-  void sendData(unsigned long long int data, unsigned int size);
+  virtual void sendData(unsigned long long int data, unsigned int size) =0;
 
-  bool isError();
-  bool isDataValid();
-  void readData(unsigned long long int& data, unsigned int& size);
-
-private:
-  std::shared_ptr<DeviceCom> m_fpgaCom;
+  virtual bool isError() =0;
+  virtual bool isDataValid() =0;
+  virtual void readData(unsigned long long int& data, unsigned int& size) =0;
 };
 
 #endif //ENDEAVOURRAW_H

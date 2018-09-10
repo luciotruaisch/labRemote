@@ -1,14 +1,14 @@
 #include <iostream>
 #include <iomanip>
 
-#include "EndeavourRaw.h"
+#include "EndeavourRawUIO.h"
 
 int main()
 {
   std::cout << "Hello world!" << std::endl;
 
   std::shared_ptr<DeviceCom> dev; //=std::make_shared<UIOCom>("/dev/uio2", 0x10000);
-  EndeavourRaw end(dev);
+  EndeavourRawUIO end(dev);
 
   std::cout << "Running reset" << std::endl;
   end.reset();

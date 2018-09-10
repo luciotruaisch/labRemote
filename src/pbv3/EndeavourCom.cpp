@@ -1,8 +1,10 @@
 #include "EndeavourCom.h"
 
 #include "EndeavourComException.h"
+#include "EndeavourRawUIO.h"
 
 #include <iostream>
+#include <memory>
 #include <unistd.h>
 
 #define TIMEOUT 100
@@ -10,7 +12,7 @@
 EndeavourCom::EndeavourCom(unsigned short amacid, std::shared_ptr<DeviceCom> fpgaCom)
   : m_amacid(amacid&0x1F)
 {
-  m_raw=std::unique_ptr<EndeavourRaw>(new EndeavourRaw(fpgaCom));
+  m_raw=std::unique_ptr<EndeavourRaw>(new EndeavourRawUIO(fpgaCom));
 }
 
 const std::unique_ptr<EndeavourRaw>& EndeavourCom::raw()
