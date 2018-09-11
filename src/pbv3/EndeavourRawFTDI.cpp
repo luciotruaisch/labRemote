@@ -53,16 +53,22 @@ EndeavourRawFTDI::EndeavourRawFTDI()
   // Enable MPSSE mode
   ftdi_set_bitmode(m_ftdi, 0x0, BITMODE_MPSSE);
 
+  // Purge buffers
+  ftdi_usb_purge_rx_buffer(m_ftdi);
+  ftdi_usb_purge_tx_buffer(m_ftdi);
+
+
   std::vector<uint8_t> data={0x80, 0x00, 0xFB};
-  ftdi_write_data(m_ftdi, &data[0], data.size());
+  ret=ftdi_write_data(m_ftdi, &data[0], data.size());
+  std::cout << "Write 0x80, 0x00, 0xFB - Return " << ret << std::endl;
 
   data[0]=0x81;
-  ftdi_write_data(m_ftdi, &data[0], 1);
+  ret=ftdi_write_data(m_ftdi, &data[0], 1);
+  std::cout << "Write 0x81 - Return " << ret << std::endl;
 
-  data.clear();
-  data.resize(128, 0);
-  ret=ftdi_read_data(m_ftdi, &data[0], data.size());
-  std::cout << "returned " << ret << ": " << std::hex << (uint32_t)data[0] << std::dec << std::endl;
+  ret=ftdi_read_data(m_ftdi, &data[0], 1);
+  std::cout << "Read - Return " << ret << std::endl;
+  std::cout << std::hex; for(uint8_t i=0;i<ret;i++) { std::cout << " " << (uint32_t)data[i]; } std::cout << std::endl;
 
   data={0x8A};
   ftdi_write_data(m_ftdi, &data[0], data.size());
@@ -185,8 +191,8 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
     }
 
   // Prepare send package
-  uint16_t Length=ftdidata.size();
-  ftdidata.insert(ftdidata.begin(),0x31);
+  uint16_t Length=ftdidata.size()-1;
+  ftdidata.insert(ftdidata.begin(),0x10);
   ftdidata.insert(ftdidata.begin()+1,(Length>>0)&0xFF);
   ftdidata.insert(ftdidata.begin()+2,(Length>>8)&0xFF);
 
