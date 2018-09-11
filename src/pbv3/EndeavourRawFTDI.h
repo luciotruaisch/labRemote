@@ -9,7 +9,8 @@
 class EndeavourRawFTDI
 {
 public:
-  EndeavourRawFTDI(std::shared_ptr<DeviceCom> fpgaCom);
+  EndeavourRawFTDI();
+  ~EndeavourRawFTDI();
 
   void setDitMin(uint DIT_MIN);
   uint getDitMin();
@@ -47,7 +48,11 @@ public:
   void readData(unsigned long long int& data, unsigned int& size);
 
 private:
-  std::shared_ptr<DeviceCom> m_fpgaCom;
+  uint m_DIT_MIN   =  6*60/40,m_DIT_MID   = 14*60/40,m_DIT_MAX   = 22*60/40;
+  uint m_DAH_MIN   = 29*60/40,m_DAH_MID   = 76*60/40,m_DAH_MAX   =124*60/40;
+  uint m_BITGAP_MIN= 11*60/40,m_BITGAP_MID= 43*60/40,m_BITGAP_MAX= 75*60/40;
+
+  struct ftdi_context *m_ftdi;
 };
 
 #endif //ENDEAVOURRAWFTDI_H

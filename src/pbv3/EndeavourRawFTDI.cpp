@@ -1,144 +1,190 @@
 #include "EndeavourRawFTDI.h"
 
-EndeavourRawFTDI::EndeavourRawFTDI(std::shared_ptr<DeviceCom> fpgaCom)
-  : m_fpgaCom(fpgaCom)
+#include "EndeavourComException.h"
+
+#include <libftdi1/ftdi.h>
+#include <cstdint>
+#include <iostream>
+#include <unistd.h>
+#include <stdint.h>
+
+#define CHUNK_SIZE 65535
+#define LATENCY_MS 2
+#define USB_TIMEOUT 120000
+
+
+EndeavourRawFTDI::EndeavourRawFTDI()
 {
-  // Initialize default values (Note: FPGA clock = 100MHz, AMACv2 clock = 40MHz)
-  setDitMin(  6*100./40.);
-  setDitMid( 14*100./40.);
-  setDitMax( 22*100./40.);
+  int ret;
+  if((m_ftdi=ftdi_new())==0)
+    throw EndeavourComException("Unable to open FTDI");
 
-  setDahMin( 29*100./40.);
-  setDahMid( 76*100./40.);
-  setDahMax(124*100./40.);
+  if((ret=ftdi_usb_open(m_ftdi,0x0403,0x6014))<0)
+    throw EndeavourComException("Unable to find FTDI device: " + std::string(ftdi_get_error_string(m_ftdi)));
 
-  setBitGapMin( 11*100./40.);
-  setBitGapMid( 43*100./40.);
-  setBitGapMax( 75*100./40.);
+
+  //
+  // Configure device for MPSSE
   
+  // Reset USB device
+  ftdi_usb_reset(m_ftdi);
+  
+  // Set USB request transfer sizes to 64K
+  ftdi_write_data_set_chunksize(m_ftdi, CHUNK_SIZE);
+  ftdi_read_data_set_chunksize (m_ftdi, CHUNK_SIZE);
+
+  // Disable event and error characters
+  ftdi_set_event_char(m_ftdi, 0, false);
+  ftdi_set_error_char(m_ftdi, 0, false);
+
+  // Sets the read and write timeouts in milliseconds
+  m_ftdi->usb_read_timeout  = USB_TIMEOUT;
+  m_ftdi->usb_write_timeout = USB_TIMEOUT;
+
+  // Set the latency timer to 1mS (default is 16mS)
+  ftdi_set_latency_timer(m_ftdi, LATENCY_MS);
+
+  // Turn on flow control to synchronize IN requests
+  ftdi_setflowctrl(m_ftdi, SIO_RTS_CTS_HS);
+
+  // Reset controller
+  ftdi_set_bitmode(m_ftdi, 0x0, BITMODE_RESET);
+
+  // Enable MPSSE mode
+  ftdi_set_bitmode(m_ftdi, 0x0, BITMODE_MPSSE);
+
+  std::vector<uint8_t> data={0x80, 0xAA, 0xFF};
+  ftdi_write_data(m_ftdi, &data[0], data.size());
+
+  data[0]=0x81;
+  ftdi_write_data(m_ftdi, &data[0], 1);
+
+  ret=ftdi_read_data(m_ftdi, &data[0], data.size());
+  std::cout << "returned " << ret << ": " << std::hex << (uint32_t)data[0] << std::dec << std::endl;
+}
+
+EndeavourRawFTDI::~EndeavourRawFTDI()
+{
+  ftdi_usb_close(m_ftdi);
+  ftdi_free(m_ftdi);
 }
 
 void EndeavourRawFTDI::setDitMin(uint DIT_MIN)
-{
-  uint val=m_fpgaCom->read_reg32(7);
-  val=(val&0xFFFFFF00)|((DIT_MIN&0x0FF)<< 0);
-  m_fpgaCom->write_reg32(7, val);
-}
+{ m_DIT_MIN=DIT_MIN; }
 
 uint EndeavourRawFTDI::getDitMin()
-{ return (m_fpgaCom->read_reg32(7)>> 0)&0x0FF; }
+{ return m_DIT_MIN; }
 
 void EndeavourRawFTDI::setDitMid(uint DIT_MID)
-{
-  uint val=m_fpgaCom->read_reg32(7);
-  val=(val&0xFFF000FF)|((DIT_MID&0xFFF)<< 8);
-  m_fpgaCom->write_reg32(7, val);
-}
+{ m_DIT_MID=DIT_MID; }
 
 uint EndeavourRawFTDI::getDitMid()
-{ return (m_fpgaCom->read_reg32(7)>> 8)&0xFFF; }
+{ return m_DIT_MID; }
 
 void EndeavourRawFTDI::setDitMax(uint DIT_MAX)
-{
-  uint val=m_fpgaCom->read_reg32(7);
-  val=(val&0x000FFFFF)|((DIT_MAX&0xFFF)<<20);
-  m_fpgaCom->write_reg32(7, val);
-}
+{ m_DIT_MAX=DIT_MAX; }
 
 uint EndeavourRawFTDI::getDitMax()
-{ return (m_fpgaCom->read_reg32(7)>>16)&0xFFF; }
+{ return m_DIT_MAX; }
 
 void EndeavourRawFTDI::setDahMin(uint DAH_MIN)
-{
-  uint val=m_fpgaCom->read_reg32(8);
-  val=(val&0xFFFFFF00)|((DAH_MIN&0x0FF)<< 0);
-  m_fpgaCom->write_reg32(8, val);
-}
+{ m_DAH_MIN=DAH_MIN; }
 
 uint EndeavourRawFTDI::getDahMin()
-{ return (m_fpgaCom->read_reg32(8)>> 0)&0x0FF; }
+{ return m_DAH_MIN; }
 
 void EndeavourRawFTDI::setDahMid(uint DAH_MID)
-{
-  uint val=m_fpgaCom->read_reg32(8);
-  val=(val&0xFFF000FF)|((DAH_MID&0xFFF)<< 8);
-  m_fpgaCom->write_reg32(8, val);
-}
+{ m_DAH_MID=DAH_MID; }
 
 uint EndeavourRawFTDI::getDahMid()
-{ return (m_fpgaCom->read_reg32(8)>> 8)&0xFFF; }
+{ return m_DAH_MID; }
 
 void EndeavourRawFTDI::setDahMax(uint DAH_MAX)
-{
-  uint val=m_fpgaCom->read_reg32(8);
-  val=(val&0x000FFFFF)|((DAH_MAX&0xFFF)<<20);
-  m_fpgaCom->write_reg32(8, val);
-}
+{ m_DAH_MAX=DAH_MAX; }
 
 uint EndeavourRawFTDI::getDahMax()
-{ return (m_fpgaCom->read_reg32(8)>>16)&0xFFF; }
+{ return m_DAH_MAX; }
 
 void EndeavourRawFTDI::setBitGapMin(uint BITGAP_MIN)
-{
-  uint val=m_fpgaCom->read_reg32(9);
-  val=(val&0xFFFFFF00)|((BITGAP_MIN&0x0FF)<< 0);
-  m_fpgaCom->write_reg32(9, val);
-}
+{ m_BITGAP_MIN=BITGAP_MIN; }
 
 uint EndeavourRawFTDI::getBitGapMin()
-{ return (m_fpgaCom->read_reg32(9)>> 0)&0x0FF; }
+{ return m_BITGAP_MIN; }
 
 void EndeavourRawFTDI::setBitGapMid(uint BITGAP_MID)
-{
-  uint val=m_fpgaCom->read_reg32(9);
-  val=(val&0xFFF000FF)|((BITGAP_MID&0xFFF)<< 8);
-  m_fpgaCom->write_reg32(9, val);
-}
+{ m_BITGAP_MID=BITGAP_MID; }
 
 uint EndeavourRawFTDI::getBitGapMid()
-{ return (m_fpgaCom->read_reg32(9)>> 8)&0xFFF; }
+{ return m_BITGAP_MID; }
 
 void EndeavourRawFTDI::setBitGapMax(uint BITGAP_MAX)
-{
-  uint val=m_fpgaCom->read_reg32(9);
-  val=(val&0x000FFFFF)|((BITGAP_MAX&0xFFF)<<20);
-  m_fpgaCom->write_reg32(9, val);
-}
+{ m_BITGAP_MAX=BITGAP_MAX; }
 
 uint EndeavourRawFTDI::getBitGapMax()
-{ return (m_fpgaCom->read_reg32(9)>>16)&0xFFF; }
+{ return m_BITGAP_MAX; }
 
 void EndeavourRawFTDI::reset()
-{ m_fpgaCom->write_reg32(0, 0x1); }
+{  }
 
 bool EndeavourRawFTDI::isError()
-{ return (m_fpgaCom->read_reg32(0)>>2)&1; }
+{ return false; }
 
 bool EndeavourRawFTDI::isDataValid()
-{
-  return (m_fpgaCom->read_reg32(0)>>1)&1;
-}
+{ return false; }
 
 void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
 {
-  m_fpgaCom->write_reg32(1, size);
-  m_fpgaCom->write_reg32(2, (data>>0 )&0xFFFFFFFF);
-  m_fpgaCom->write_reg32(3, (data>>32)&0xFFFFFFFF);
-  m_fpgaCom->write_reg32(0, 0x2);
+  std::vector<uint8_t> ftdidata;
+  
+  uint8_t bytecounter=0, byte=0;
+  for(uint32_t bit=size;bit>0;bit--)
+    {
+      bool value=(data>>(bit-1))&1;
+
+      // Add 1's for data
+      for(uint32_t i=0;i<((value)?m_DAH_MID:m_DIT_MID);i++)
+      {
+	byte<<=1;
+	byte|=1;
+	bytecounter++;
+	if(bytecounter==8)
+	  {
+	    ftdidata.push_back(byte);
+	    byte=0;
+	    bytecounter=0;
+	  }
+      }
+
+      // Add 0's for interbit gap
+      for(uint32_t i=0;i<m_BITGAP_MID;i++)
+	{
+	  byte<<=1;
+	  bytecounter++;
+	  if(bytecounter==8)
+	    {
+	      ftdidata.push_back(byte);
+	      byte=0;
+	      bytecounter=0;
+	    }
+	}
+    }
+
+  // Pad rest of the bits
+  if(bytecounter>0)
+    {
+      byte<<=(8-bytecounter);
+      ftdidata.push_back(byte);
+    }
+
+  // Prepare send package
+  uint16_t Length=ftdidata.size();
+  ftdidata.insert(ftdidata.begin(),0x10);
+  ftdidata.insert(ftdidata.begin()+1,(Length>>0)&0xFF);
+  ftdidata.insert(ftdidata.begin()+2,(Length>>8)&0xFF);
+
+  // Set the data
+  ftdi_write_data(m_ftdi, &ftdidata[0], ftdidata.size());
 }
 
 void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size)
-{
-  if(isDataValid())
-    {
-      size=m_fpgaCom->read_reg32(4);
-      data=m_fpgaCom->read_reg32(6);
-      data<<=32;
-      data|=m_fpgaCom->read_reg32(5);
-    }
-  else
-    {
-      size=0;
-      data=0;
-    }
-}
+{ }
