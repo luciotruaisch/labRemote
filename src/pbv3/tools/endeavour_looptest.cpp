@@ -1,6 +1,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include <unistd.h>
+
 #include "EndeavourRawFTDI.h"
 #include "EndeavourComException.h"
 
@@ -14,7 +16,12 @@ int main()
       end.getDitMin();
       std::cout << "done?" << std::endl;
 
-      end.sendData(1,1);
+      //for(uint i=0;i<1000;i++)
+      //{
+      sleep(1);
+	  end.sendData(1,1);
+	  //sleep(1);
+	  //}
     }
   catch(const EndeavourComException& e)
     {

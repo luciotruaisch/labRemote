@@ -53,14 +53,22 @@ EndeavourRawFTDI::EndeavourRawFTDI()
   // Enable MPSSE mode
   ftdi_set_bitmode(m_ftdi, 0x0, BITMODE_MPSSE);
 
-  std::vector<uint8_t> data={0x80, 0xAA, 0xFF};
+  std::vector<uint8_t> data={0x80, 0x00, 0xFB};
   ftdi_write_data(m_ftdi, &data[0], data.size());
 
   data[0]=0x81;
   ftdi_write_data(m_ftdi, &data[0], 1);
 
+  data.clear();
+  data.resize(128, 0);
   ret=ftdi_read_data(m_ftdi, &data[0], data.size());
   std::cout << "returned " << ret << ": " << std::hex << (uint32_t)data[0] << std::dec << std::endl;
+
+  data={0x8A};
+  ftdi_write_data(m_ftdi, &data[0], data.size());
+
+  data={0x86, 0x00, 0x00};
+  ftdi_write_data(m_ftdi, &data[0], data.size());
 }
 
 EndeavourRawFTDI::~EndeavourRawFTDI()
@@ -178,12 +186,23 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
 
   // Prepare send package
   uint16_t Length=ftdidata.size();
-  ftdidata.insert(ftdidata.begin(),0x10);
+  ftdidata.insert(ftdidata.begin(),0x31);
   ftdidata.insert(ftdidata.begin()+1,(Length>>0)&0xFF);
   ftdidata.insert(ftdidata.begin()+2,(Length>>8)&0xFF);
 
+  std::cout << "sending" << std::hex << std::endl;
+  for(const auto& x : ftdidata)
+    std::cout << (uint32_t)x << std::endl;
+  std::cout << std::dec;
+
   // Set the data
-  ftdi_write_data(m_ftdi, &ftdidata[0], ftdidata.size());
+  std::cout << ftdi_write_data(m_ftdi, &ftdidata[0], ftdidata.size()) << std::endl;
+  usleep(500e3);
+  //std::cout << ftdi_read_data(m_ftdi, &ftdidata[0], ftdidata.size()) << std::endl;
+  //std::cout << "reading" << std::hex << std::endl;
+  //for(const auto& x : ftdidata)
+  //std::cout << (uint32_t)x << std::endl;
+  //std::cout << std::dec;
 }
 
 void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size)

@@ -48,9 +48,9 @@ public:
   void readData(unsigned long long int& data, unsigned int& size);
 
 private:
-  uint m_DIT_MIN   =  6*60/40,m_DIT_MID   = 14*60/40,m_DIT_MAX   = 22*60/40;
-  uint m_DAH_MIN   = 29*60/40,m_DAH_MID   = 76*60/40,m_DAH_MAX   =124*60/40;
-  uint m_BITGAP_MIN= 11*60/40,m_BITGAP_MID= 43*60/40,m_BITGAP_MAX= 75*60/40;
+  uint m_DIT_MIN   =  6*30/40,m_DIT_MID   = 14*30/40,m_DIT_MAX   = 22*30/40;
+  uint m_DAH_MIN   = 29*30/40,m_DAH_MID   = 76*30/40,m_DAH_MAX   =124*30/40;
+  uint m_BITGAP_MIN= 11*30/40,m_BITGAP_MID= 43*30/40,m_BITGAP_MAX= 75*30/40;
 
   struct ftdi_context *m_ftdi;
 };
