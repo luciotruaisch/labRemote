@@ -4,7 +4,7 @@
 
 #include "NotSupportedException.h"
 
-const std::unordered_map<AD799X::Model, AD799XModelInfo> AD799X::ModelInfo =
+const std::map<AD799X::Model, AD799XModelInfo> AD799X::ModelInfo =
   {
    {AD799X::Model::AD7993, AD799XModelInfo({.NumChannels=4, .MaxValue=0x3FF}) },
    {AD799X::Model::AD7994, AD799XModelInfo({.NumChannels=4, .MaxValue=0xFFF}) },

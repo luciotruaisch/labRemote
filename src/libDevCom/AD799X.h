@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include <memory>
-#include <unordered_map>
+#include <map>
 
 #include "I2CCom.h"
 #include "ADCDevice.h"
@@ -29,7 +29,7 @@ public:
 
 private:
   // Model information
-  static const std::unordered_map<Model, AD799XModelInfo> ModelInfo;
+  static const std::map<Model, AD799XModelInfo> ModelInfo;
   
   // Properties of device
   Model m_model;
