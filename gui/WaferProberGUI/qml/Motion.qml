@@ -623,7 +623,7 @@ Item {
                                 anchors.fill: parent
                                 columns: 3
                                 Label {
-                                    text: "Z speed"
+                                    text: "Z relative position increment" //Was labeled incorrectly. TO DO: Change id to txt_relpos_z
                                 }
                                 TextField{
                                     id: txt_speed_z
@@ -636,8 +636,26 @@ Item {
                                     }
                                 }
                                 Label {
+                                    text: "mm"
+                                }
+
+                                Label {
+                                    text: "Z speed (TO DO)" //TO DO: Need to figure out how to change speed
+                                }
+                                TextField{
+                                    id: txt_zspeed
+                                    text: "0.1"
+                                    selectByMouse: true
+                                    verticalAlignment: Text.AlignVCenter
+                                    horizontalAlignment: Text.AlignHCenter
+                                    onEditingFinished: {
+                                        //backend.speedZ =
+                                    }
+                                }
+                                Label {
                                     text: "mm/s"
                                 }
+
                                 Label {
                                     text: "Z separation"
                                 }

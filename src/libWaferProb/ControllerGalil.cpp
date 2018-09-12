@@ -13,8 +13,9 @@ ControllerGalil::ControllerGalil(const char* device_name){
     port = 0;
     m_position[0] = m_position[1] = m_position[2] = DEFAULT_GALIL_POS;
     m_raw_position[0] = m_raw_position[1] = m_raw_position[2] = DEFAULT_GALIL_POS;
-    m_ymax = 765253;
-    m_ymin = -364475;
+    //TO DO: to read in from the text file "z_range.txt"
+    m_ymax = 600000;//765253;
+    m_ymin = -100000;//-364475;
 }
 
 ControllerGalil::~ControllerGalil(){
@@ -132,6 +133,10 @@ string ControllerGalil::generate_cmd(const char* cmd, int axis, int steps)
 }
 
 void ControllerGalil::make_a_move(int axis){
+    if(axis == 2 && !m_z_calibrated) {
+        printf("ERROR, Z-axis is not calibrated!");
+        return;
+    }
     char mv[256];
     char axis_name = axis_index_to_name(axis);
     sprintf(mv, "BG %c", axis_name);
@@ -145,7 +150,10 @@ void ControllerGalil::make_a_move(int axis){
 
 void ControllerGalil::find_max_min()
 {
+    m_z_calibrated = true;
+
     int axis = 2;
+    set_speed(axis, 1); //second argument: mm per s 
     string cmd = generate_cmd("PA", axis, 1000000);
     write(cmd);
     make_a_move(axis);
@@ -160,5 +168,39 @@ void ControllerGalil::find_max_min()
     get_position();
     m_ymin = m_raw_position[2];
 
-    printf("range of z-axis: [%.2f, %.2f]\n", m_ymin, m_ymax);
+    printf("range of z-axis in turns: [%.2f, %.2f]\n", m_ymin, m_ymax);
+
+    //float quarter =  (m_ymax - m_ymin)/4;
+    //if (quarter<0) quarter = -quarter;
+    //float quarter_up = m_ymin +  quarter;
+
+    //Move quarter of the range up from the minimum
+    //string cmd3 = generate_cmd("PA", axis, quarter_up);
+    //write(cmd3);
+    //make_a_move(axis);
+    //get_position();
+
+}
+
+void ControllerGalil::find_z_min(){
+    m_z_calibrated = true;
+
+    int axis = 2;
+    set_speed(axis, 1);
+    
+    string cmd = generate_cmd("PA", axis, -1000000);
+    write(cmd);
+    make_a_move(axis);
+    get_position();
+    m_ymin = m_raw_position[2];
+    printf("HELLO: %.2f\n", m_ymin);
+}
+
+void ControllerGalil::check_z_min() {
+    int axis = 2;
+    string cmd2 = generate_cmd("PA", axis, -1000000);
+    write(cmd2);
+    make_a_move(axis);
+    get_position();
+    if (m_position[2] != 0) m_z_calibrated = false;
 }

@@ -48,7 +48,17 @@ public:
 	int run_cmd(const string& cmd);
 
     void calibrate_Z(){
-        z_ctrl->find_max_min();
+        z_ctrl->find_z_min();
+        //z_ctrl->find_max_min();
     }
+
+    void find_max_min();
+    void find_z_min();
+    void check_z_min();
+
+    bool is_z_calibrated() {
+        return z_ctrl->is_z_calibrated();
+    }
+
 };
 #endif

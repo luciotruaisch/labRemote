@@ -2,17 +2,17 @@
 find_package( OpenCV QUIET )
 
 if ( ${OpenCV_FOUND} )
-  list(FIND OpenCV_LIB_COMPONENTS "opencv_nonfree" OpenCV_nonfree_FOUND)
-  if( ${OpenCV_nonfree_FOUND} EQUAL -1 )
-    set(OpenCV_nonfree_FOUND FALSE)
+  list(FIND OpenCV_LIB_COMPONENTS "opencv_xfeatures2d" OpenCV_xfeatures2d_FOUND)
+  if( ${OpenCV_xfeatures2d_FOUND} EQUAL -1 )
+    set(OpenCV_xfeatures2d_FOUND FALSE)
   else()
-    set(OpenCV_nonfree_FOUND TRUE)
+    set(OpenCV_xfeatures2d_FOUND TRUE)
   endif()
 else()
-  set(OpenCV_nonfree_FOUND FALSE)
+  set(OpenCV_xfeatures2d_FOUND FALSE)
 endif()
 
-if ( ${OpenCV_FOUND} AND ${OpenCV_nonfree_FOUND} )
+if ( ${OpenCV_FOUND} AND ${OpenCV_xfeatures2d_FOUND} )
   # Add the headers
   include_directories( include )
 
@@ -26,7 +26,7 @@ if ( ${OpenCV_FOUND} AND ${OpenCV_nonfree_FOUND} )
 else()
   message("Disabling libImageRec due to missing dependencies")
   message(" OpenCV = ${OpenCV_FOUND}")
-  message(" OpenCV-nonfree = ${OpenCV_nonfree_FOUND}")
+  message(" OpenCV-xfeatures2d = ${OpenCV_xfeatures2d_FOUND}")
 
   set(libImageRec_FOUND FALSE)
 endif()

@@ -18,6 +18,7 @@ protected:
     // put it public so it's easy to access...
 public:
     float m_position[3];
+    bool m_z_calibrated;
 
 public:
     ControllerBase();
@@ -50,5 +51,9 @@ public:
     virtual int set_home() = 0;
     virtual int set_center() = 0;
 
+    virtual void find_max_min() { return; }
+    virtual void find_z_min(){ return; }
+    virtual void check_z_min() { return; }
+    virtual bool is_z_calibrated() {return m_z_calibrated; }
 };
 #endif

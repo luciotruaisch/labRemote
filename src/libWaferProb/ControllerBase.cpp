@@ -8,6 +8,7 @@ ControllerBase::ControllerBase()
 {
     status = -1;
     m_is_connected = false;
+    m_z_calibrated = true;
 }
 
 ControllerBase::~ControllerBase(){
@@ -19,6 +20,9 @@ void ControllerBase::print_cmd(){
             "SP X 10  --> set speed in x-axis direction by 10 millimeter/s\n"
             "SH --> move to HOME\n"
             "SM --> move to center\n"
+            "FZRANGE --> find maximum and minimum of Z-axis\n"
+            "FZMIN --> find minimum of Z-axis\n"
+            "CHECKZMIN --> check the minimum position of Z-axis\n"
             "----------------------------------------------------------\n"
             );
 }
@@ -78,6 +82,13 @@ int ControllerBase::run_cmd(const string& cmd) {
         }
         axis = WaferProb::axis_number(items[1]);
         this->set_speed(axis, atof(items[2].c_str()));
+    } else if (action == "FZRANGE") 
+    {
+        this->find_max_min();
+    } else if (action == "FZMIN"){
+        this->find_z_min();
+    } else if (action == "CHECKZMIN") {
+        this->check_z_min();
     } else {
         printf("%s not supported yet!\n", action.c_str());
         print_cmd();

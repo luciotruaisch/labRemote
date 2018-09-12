@@ -47,7 +47,9 @@ public:
     int set_center();
 
     void find_max_min();
-private:
+    void find_z_min();
+    void check_z_min();
+public:
     // 14.2 mili-meter is the total distance the Z-axis can travel.
     // project the absolute turns (or position) to the 14.2 mm length
     // lowest position would be zero, while highest position is 14.2 mm.

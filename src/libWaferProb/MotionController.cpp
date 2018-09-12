@@ -122,3 +122,15 @@ int MotionController::set_home(){
 int MotionController::set_center(){
     return xy_ctrl->set_center();
 }
+
+void MotionController::find_max_min() {
+    z_ctrl->find_max_min();
+}
+
+void MotionController::find_z_min() {
+    z_ctrl->find_z_min();
+}
+
+void MotionController::check_z_min() {
+    z_ctrl->check_z_min();
+}

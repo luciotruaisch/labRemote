@@ -1,4 +1,5 @@
 find_package( gclib QUIET )
+find_package( ZLIB )
 
 if ( ${gclib_FOUND} )
   # Add the headers
@@ -10,7 +11,7 @@ if ( ${gclib_FOUND} )
   if(APPLE)
     target_link_libraries(Galil /Applications/gclib/dylib/gclib.0.dylib /Applications/gclib/dylib/gclibo.0.dylib)
   else()
-    target_link_libraries(Galil gclib gclibo)
+    target_link_libraries(Galil gclib gclibo ${ZLIB_LIBRARIES} )
   endif()
 
   # Tell rest of labRemote that the library exists
