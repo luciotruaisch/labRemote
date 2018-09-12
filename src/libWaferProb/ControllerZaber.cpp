@@ -158,7 +158,7 @@ int ControllerZaber::unpark()
 }
 
 int ControllerZaber::stop(){
-    int status = write("/stop\n");
+    int status = write("/estop\n");
     get_position();
     return status;
 }

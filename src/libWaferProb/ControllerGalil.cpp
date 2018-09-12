@@ -62,7 +62,7 @@ int ControllerGalil::write(const string& cmd){
 }
 
 int ControllerGalil::stop(){
-    int status = write("ST");
+    int status = write("AB");
     get_position();
     return status;
 }
