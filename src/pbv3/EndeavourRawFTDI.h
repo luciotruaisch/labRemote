@@ -6,7 +6,7 @@
 #include "DeviceCom.h"
 #include "EndeavourRaw.h"
 
-class EndeavourRawFTDI
+class EndeavourRawFTDI : public EndeavourRaw
 {
 public:
   EndeavourRawFTDI();

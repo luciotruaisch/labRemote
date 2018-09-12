@@ -6,12 +6,12 @@
 #include "DeviceCom.h"
 #include "EndeavourRaw.h"
 
-class EndeavourCom : public DeviceCom
+class EndeavourCom // : public DeviceCom
 {
 public:
   enum REFMODE {IDPads, EfuseId};
 
-  EndeavourCom(unsigned short amacid, std::shared_ptr<DeviceCom> fpgaCom);
+  EndeavourCom(unsigned short amacid, std::unique_ptr<EndeavourRaw> raw);
 
   const std::unique_ptr<EndeavourRaw>& raw();
   

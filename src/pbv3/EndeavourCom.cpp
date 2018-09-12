@@ -9,10 +9,10 @@
 
 #define TIMEOUT 100
 
-EndeavourCom::EndeavourCom(unsigned short amacid, std::shared_ptr<DeviceCom> fpgaCom)
+EndeavourCom::EndeavourCom(unsigned short amacid, std::unique_ptr<EndeavourRaw> raw)
   : m_amacid(amacid&0x1F)
 {
-  m_raw=std::unique_ptr<EndeavourRaw>(new EndeavourRawUIO(fpgaCom));
+  m_raw=std::move(raw);
 }
 
 const std::unique_ptr<EndeavourRaw>& EndeavourCom::raw()
