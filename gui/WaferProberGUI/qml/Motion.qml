@@ -640,23 +640,6 @@ Item {
                                 }
 
                                 Label {
-                                    text: "Z speed (TO DO)" //TO DO: Need to figure out how to change speed
-                                }
-                                TextField{
-                                    id: txt_zspeed
-                                    text: "0.1"
-                                    selectByMouse: true
-                                    verticalAlignment: Text.AlignVCenter
-                                    horizontalAlignment: Text.AlignHCenter
-                                    onEditingFinished: {
-                                        //backend.speedZ =
-                                    }
-                                }
-                                Label {
-                                    text: "mm/s"
-                                }
-
-                                Label {
                                     text: "Z separation"
                                 }
                                 TextField{

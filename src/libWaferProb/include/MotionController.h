@@ -15,7 +15,7 @@ class MotionController : public ControllerBase{
 private:
 
     ControllerZaber* xy_ctrl; // xy-axis station is controlled by a machine from Zaber
-    ControllerGalil* z_ctrl;    // z-axis controled by a machine from Garlil
+    ControllerGalil* z_ctrl;    // z-axis controled by a machine from Galil
 
 public:
     MotionController(const char* dn_1);

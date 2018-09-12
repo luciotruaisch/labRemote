@@ -1,5 +1,5 @@
 import QtQuick.Controls 2.2
 
 Label {
-    text: "I will add controls for YARR"
+    text: "Will be added in future update"
 }

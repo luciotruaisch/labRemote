@@ -157,6 +157,7 @@ ApplicationWindow {
     }
 
     onClosing: {
+        backend.stop()
         if(motion_content.connectResult == 0 && motion_content.isContact) {
             backend.zContact = false
         }
