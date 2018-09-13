@@ -53,6 +53,10 @@ private:
   uint m_BITGAP_MIN= 11*30/40,m_BITGAP_MID= 43*30/40,m_BITGAP_MAX= 75*30/40;
 
   struct ftdi_context *m_ftdi;
+
+  // Last returned data
+  unsigned long long int m_readData;
+  unsigned int m_readSize;
 };
 
 #endif //ENDEAVOURRAWFTDI_H

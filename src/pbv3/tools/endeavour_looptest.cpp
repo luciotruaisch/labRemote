@@ -13,15 +13,12 @@ int main()
   try
     {
       EndeavourRawFTDI end;
-      end.getDitMin();
-      std::cout << "done?" << std::endl;
+      end.sendData(0xDEADDEAD,32);
 
-      //for(uint i=0;i<1000;i++)
-      //{
-      sleep(1);
-	  end.sendData(1,1);
-	  //sleep(1);
-	  //}
+      unsigned long long int data=0;
+      unsigned int size=0;
+      end.readData(data,size);
+      std::cout << "Read back " << std::hex << data << std::dec << " of size " << size << std::endl;
     }
   catch(const EndeavourComException& e)
     {

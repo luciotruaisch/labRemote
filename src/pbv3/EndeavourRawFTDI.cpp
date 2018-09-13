@@ -5,6 +5,7 @@
 #include <libftdi1/ftdi.h>
 #include <cstdint>
 #include <iostream>
+#include <iomanip>
 #include <unistd.h>
 #include <stdint.h>
 
@@ -54,25 +55,17 @@ EndeavourRawFTDI::EndeavourRawFTDI()
   ftdi_set_bitmode(m_ftdi, 0x0, BITMODE_MPSSE);
 
   // Purge buffers
-  ftdi_usb_purge_rx_buffer(m_ftdi);
-  ftdi_usb_purge_tx_buffer(m_ftdi);
+  ftdi_usb_purge_buffers(m_ftdi);
 
-
+  // Set default state of pins
   std::vector<uint8_t> data={0x80, 0x00, 0xFB};
-  ret=ftdi_write_data(m_ftdi, &data[0], data.size());
-  std::cout << "Write 0x80, 0x00, 0xFB - Return " << ret << std::endl;
+  ftdi_write_data(m_ftdi, &data[0], data.size());
 
-  data[0]=0x81;
-  ret=ftdi_write_data(m_ftdi, &data[0], 1);
-  std::cout << "Write 0x81 - Return " << ret << std::endl;
-
-  ret=ftdi_read_data(m_ftdi, &data[0], 1);
-  std::cout << "Read - Return " << ret << std::endl;
-  std::cout << std::hex; for(uint8_t i=0;i<ret;i++) { std::cout << " " << (uint32_t)data[i]; } std::cout << std::endl;
-
+  // Disable 5x clock divisor
   data={0x8A};
   ftdi_write_data(m_ftdi, &data[0], data.size());
 
+  // Set clock to 30MHz (max)
   data={0x86, 0x00, 0x00};
   ftdi_write_data(m_ftdi, &data[0], data.size());
 }
@@ -144,7 +137,7 @@ bool EndeavourRawFTDI::isError()
 { return false; }
 
 bool EndeavourRawFTDI::isDataValid()
-{ return false; }
+{ return m_readSize>0; }
 
 void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
 {
@@ -184,32 +177,73 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
     }
 
   // Pad rest of the bits
-  if(bytecounter>0)
-    {
-      byte<<=(8-bytecounter);
-      ftdidata.push_back(byte);
-    }
+  //ftdidata.resize(1024-3,0);
 
   // Prepare send package
   uint16_t Length=ftdidata.size()-1;
-  ftdidata.insert(ftdidata.begin(),0x10);
+  ftdidata.insert(ftdidata.begin(),0x31);
   ftdidata.insert(ftdidata.begin()+1,(Length>>0)&0xFF);
   ftdidata.insert(ftdidata.begin()+2,(Length>>8)&0xFF);
+  //std::cout << "Command header: " << std::hex << (uint32_t)ftdidata[0] << " " << (uint32_t)ftdidata[1] << " " << (uint32_t)ftdidata[2] << std::dec << std::endl;
 
-  std::cout << "sending" << std::hex << std::endl;
+  //
+  // Start dealing with the FTDI
+
+  // Make sure all buffers are clean
+  ftdi_usb_purge_buffers(m_ftdi);
+
+  // Send the data
+  ftdi_write_data(m_ftdi, &ftdidata[0], ftdidata.size());
+  // std::cout << "writing" << std::hex << std::endl;
+  // for(const auto& x : ftdidata)
+  // std::cout << (uint32_t)x << std::endl;
+  // std::cout << std::dec;
+
+  // Read back any response
+  uint32_t ret=ftdi_read_data(m_ftdi, &ftdidata[0], ftdidata.size());
+  // std::cout << "ftdi_read_data = " << ret << std::endl;
+  ftdidata.resize(ret);
+  // std::cout << "reading" << std::hex << std::endl;
+  // for(const auto& x : ftdidata)
+  // std::cout << (uint32_t)x << std::endl;
+  // std::cout << std::dec;
+
+  m_readData=0;
+  m_readSize=0;
+  uint32_t countbit=0;
+  bool lastBit=0;
   for(const auto& x : ftdidata)
-    std::cout << (uint32_t)x << std::endl;
-  std::cout << std::dec;
-
-  // Set the data
-  std::cout << ftdi_write_data(m_ftdi, &ftdidata[0], ftdidata.size()) << std::endl;
-  usleep(500e3);
-  //std::cout << ftdi_read_data(m_ftdi, &ftdidata[0], ftdidata.size()) << std::endl;
-  //std::cout << "reading" << std::hex << std::endl;
-  //for(const auto& x : ftdidata)
-  //std::cout << (uint32_t)x << std::endl;
-  //std::cout << std::dec;
+    {
+      for(uint8_t i=8;i>0;i--)
+	{
+	  bool bit=(x>>(i-1))&0x1;
+	  if(bit!=lastBit) // something new is happening
+	    {
+	      if(lastBit==1) // Finished an endeavour bit
+		{
+		  if(m_DIT_MIN<countbit && countbit<m_DIT_MAX)
+		    {
+		      m_readData<<=1;
+		      m_readData|=0;
+		      m_readSize++;
+		    }
+		  else if(m_DAH_MIN<countbit && countbit<m_DAH_MAX)
+		    {
+		      m_readData<<=1;
+		      m_readData|=1;
+		      m_readSize++;
+		    }
+		}
+	      countbit=0;
+	    }
+	  countbit++;
+	  lastBit=bit;
+	}
+    }
 }
 
 void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size)
-{ }
+{
+  data=m_readData;
+  size=m_readSize;
+}
