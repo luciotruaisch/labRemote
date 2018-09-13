@@ -159,20 +159,6 @@ public slots:
         }
     }
 
-//    void edit_z_txt(QString message){
-//        if(message.contains("0.01")){
-//            emit tenMicron();
-//        } else if(message.contains("0.02")){
-//            emit twentyMicron();
-//        } else if(message.contains("0.03")){
-//            emit thirtyMicron();
-//        } else if(message.contains("0.05")){
-//            emit fiftyMicron();
-//        } else if(message.contains("0.1")){
-//            emit hundredMicron();
-//        }
-//    }
-
 signals:
     void xyDeviceNameChanged();
     void deviceConnected();
@@ -193,11 +179,6 @@ signals:
     void speedYSet();
     void speedZSet();
 
-//    void tenMicron();
-//    void twentyMicron();
-//    void thirtyMicron();
-//    void fiftyMicron();
-//    void hundredMicron();
 
 private:
     QString m_xyDeviceName;
