@@ -23,8 +23,13 @@ void AMACv2::init()
       usleep(10);
     }
 
-  // Set ideal settings
-  wrField(&AMACv2Reg::VDDbg, 13); // Set VDD to 1.2V
+  // Setting which has given us 1 mV / count
+  //write_reg(52, 0x898D); // VDD = 1.206 for AMAC #10 (value from the spec)
+  //write_reg(52, 0x898B); // VDD = 1.255 for AMAC #10 (1.277 for AMAC #9)
+  wrField(&AMACv2Reg::VDDbg  , 0xE);
+  wrField(&AMACv2Reg::VDDbgen, 1);
+  wrField(&AMACv2Reg::AMbg   , 0xE);
+  wrField(&AMACv2Reg::AMbgen , 1);
 
   // for (auto const& p : regMap)
   //   { //set all amac registers according to default values
