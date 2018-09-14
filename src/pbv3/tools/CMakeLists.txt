@@ -1,6 +1,7 @@
 # add global dependencies
 include_directories( ../../libDevCom )
 include_directories( ../../pbv3 )
+include_directories( ../../libGPIB/include )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 # add executables
@@ -11,7 +12,7 @@ foreach(target ${tools})
   get_filename_component(srcfile ${target} NAME)
 
   add_executable(${execname} ${srcfile})
-  target_link_libraries(${execname} -lDevCom -lpbv3)
+  target_link_libraries(${execname} -lDevCom -lpbv3 -lGPIB)
   # target_link_libraries(${execname} -lGPIB)
   # if ( ${ENABLE_SCOPE} )
   #   target_link_libraries(${execname} -lScope)
