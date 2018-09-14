@@ -1,4 +1,4 @@
-#include "AMACreg.h"
+#include "AMACv2Reg.h"
 
 AMACv2Field::AMACv2Field()
 { }

@@ -1,4 +1,4 @@
-#include "AMAC.h"
+#include "AMACv2.h"
 #include "EndeavourRawFTDI.h"
 
 #include "ComIOException.h"
@@ -12,7 +12,7 @@
 
 int main()
 {
-  AMAC amac(0xF,std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI()));
+  AMACv2 amac(0xF,std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI()));
 
   uint trails=1000;
   uint good=0;

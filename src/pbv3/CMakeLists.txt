@@ -10,8 +10,8 @@ set(SrcFiles
   EndeavourCom.cpp
   EndeavourComException.cpp
 
-  AMAC.cpp
-  AMACreg.cpp
+  AMACv2.cpp
+  AMACv2Reg.cpp
   )
 
 if ( ${LIBFTDI_FOUND} )
