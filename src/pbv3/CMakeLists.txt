@@ -12,6 +12,8 @@ set(SrcFiles
 
   AMACv2.cpp
   AMACv2Reg.cpp
+
+  PBv3TestTools.cpp
   )
 
 if ( ${LIBFTDI_FOUND} )
@@ -23,5 +25,6 @@ add_library(pbv3 SHARED ${SrcFiles})
 if ( ${LIBFTDI_FOUND} )
   target_link_libraries(pbv3 ${LIBFTDI_LIBRARIES})
 endif()
+target_link_libraries(pbv3 -lGPIB)
 
 add_subdirectory(tools)

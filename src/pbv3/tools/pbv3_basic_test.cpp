@@ -16,6 +16,8 @@
 #include "Bk85xx.h"
 #include "AgilentPs.h"
 
+#include "PBv3TestTools.h"
+
 loglevel_e loglevel = logINFO;
 
 
@@ -74,26 +76,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Test DCDC enable
-    double lv_off = dc.getValues().vol;//mV
-
-    log(logINFO) << "Trying to turn on DCDC ...";
-    try {
-        amac->wrField(&AMACv2::DCDCen, 1);
-        amac->wrField(&AMACv2::DCDCenC, 1);
-    } catch(EndeavourComException &e) {
-        log(logERROR) << e.what();
-        return 1;
-    }
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    double lv_on = dc.getValues().vol;//mV
-
-    if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
-        log(logERROR) << " ++ LV enable not working! " << lv_on << " " << lv_off;
-        return -1;
-    } else {
-        log(logINFO) << " ++ LV enable good!";
-    }
-
+    // Start testing
+    PBv3TestTools::testLvEnable(amac.get(), &ps, &dc);
 }
