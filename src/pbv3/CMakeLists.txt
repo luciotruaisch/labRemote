@@ -9,6 +9,9 @@ set(SrcFiles
 
   EndeavourCom.cpp
   EndeavourComException.cpp
+
+  AMAC.cpp
+  AMACreg.cpp
   )
 
 if ( ${LIBFTDI_FOUND} )
