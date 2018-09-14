@@ -212,10 +212,10 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
   m_readSize=0;
   uint32_t countbit=0;
   bool lastBit=0;
-  std::cout << "reading" << std::hex << std::endl;
+  //std::cout << "reading" << std::hex << std::endl;
   for(const auto& x : ftdidata)
     {
-      std::cout << (uint32_t)x << std::endl;
+      //std::cout << (uint32_t)x << std::endl;
       for(uint8_t i=8;i>0;i--)
 	{
 	  bool bit=(x>>(i-1))&0x1;
@@ -242,7 +242,7 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
 	  lastBit=bit;
 	}
     }
-  std::cout << std::endl;
+  //std::cout << std::endl;
 }
 
 void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size)

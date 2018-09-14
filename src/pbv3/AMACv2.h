@@ -1,15 +1,15 @@
-#ifndef AMAC_H_
-#define AMAC_H_
+#ifndef AMACv2_H_
+#define AMACv2_H_
 
-#include "AMACreg.h"
+#include "AMACv2Reg.h"
 #include "EndeavourCom.h"
 #include "EndeavourRaw.h"
 
-class AMAC : public EndeavourCom, public AMACv2Reg
+class AMACv2 : public EndeavourCom, public AMACv2Reg
 {
 public:
-  AMAC(unsigned short amacid, std::unique_ptr<EndeavourRaw> raw); // with hardware	
-  ~AMAC();
+  AMACv2(unsigned short amacid, std::unique_ptr<EndeavourRaw> raw); // with hardware	
+  ~AMACv2();
 
   void init();
 
@@ -23,4 +23,4 @@ private:
 
 };
 
-#endif // AMAC_H_
+#endif // AMACv2_H_
