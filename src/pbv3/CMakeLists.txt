@@ -1,5 +1,5 @@
 # add global dependencies
-include_directories( ../libDevCom )
+include_directories( ../libDevCom ../libGPIB/include )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 set(SrcFiles
@@ -19,9 +19,9 @@ if ( ${LIBFTDI_FOUND} )
     EndeavourRawFTDI.cpp)
 endif()
 
-add_library(pbv3 SHARED ${SrcFiles}) 
+add_library(pbv3 SHARED ${SrcFiles})
 if ( ${LIBFTDI_FOUND} )
-  target_link_libraries(pbv3 ${LIBFTDI_LIBRARIES})  
+  target_link_libraries(pbv3 ${LIBFTDI_LIBRARIES})
 endif()
 
 add_subdirectory(tools)
