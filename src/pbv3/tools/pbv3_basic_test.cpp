@@ -68,8 +68,9 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<AMACv2> amac;
     try {
         amac.reset(new AMACv2(amacid, std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI())));
-    } catch(std::string e) {
-        log(logERROR) << e;
+        amac->init();
+    } catch(EndeavourComException &e) {
+        log(logERROR) << e.what();
         return 1;
     }
 
@@ -80,8 +81,8 @@ int main(int argc, char* argv[]) {
     try {
         amac->wrField(&AMACv2::DCDCen, 1);
         amac->wrField(&AMACv2::DCDCenC, 1);
-    } catch(std::string e) {
-        log(logERROR) << e;
+    } catch(EndeavourComException &e) {
+        log(logERROR) << e.what();
         return 1;
     }
     

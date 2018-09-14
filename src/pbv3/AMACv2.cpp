@@ -11,7 +11,7 @@ AMACv2::~AMACv2(){}
 void AMACv2::init()
 {
   // Set AMAC ID
-  //EndeavourCom::setid(EndeavourCom::REFMODE::IDPads, 0x0);
+  EndeavourCom::setid(EndeavourCom::REFMODE::IDPads, 0x0);
   usleep(10);
 
   // Read AMAC registers into memory
