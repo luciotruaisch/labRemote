@@ -16,8 +16,7 @@ int main()
     {
       EndeavourCom end(0xF,std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI()));
 
-      sleep(3);
-      end.setid(EndeavourCom::REFMODE::IDPads, 0x1F);
+      end.setid(EndeavourCom::REFMODE::IDPads, 0x0);
     }
   catch(const EndeavourComException& e)
     {
