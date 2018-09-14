@@ -33,10 +33,7 @@ void EndeavourCom::setid(REFMODE mode, unsigned int refid)
   // where the voltages on the n and p sides of CMDIN are swapped.
   // With ~15 foot cables, we needed ~500 1's for this to work
   // properly, so let's send 1000 of them to be safe!
-  for(unsigned int iter = 0; iter < 20; ++iter){
-    m_raw->sendData(0x3ffffffffffff,50);
-    usleep(1);
-  }
+  m_raw->sendData(0,1);
 
   // to give space between our hysteresis 1's and the actual SETID
   usleep(10);
