@@ -14,6 +14,7 @@
 namespace PBv3TestTools {
     // All helper functions expects all hardware to be on and initialised
     int testLvEnable(AMACv2 *amac, AgilentPs *ps, Bk85xx *load);
+    int measureEfficiency(AMACv2 *amac, AgilentPs *ps, Bk85xx *load, int step, int min, int max);
 
 }
 

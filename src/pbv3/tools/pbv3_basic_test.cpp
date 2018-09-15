@@ -78,4 +78,6 @@ int main(int argc, char* argv[]) {
 
     // Start testing
     PBv3TestTools::testLvEnable(amac.get(), &ps, &dc);
+    PBv3TestTools::measureEfficiency(amac.get(), &ps, &dc, 100, 0, 3500);
+    
 }
