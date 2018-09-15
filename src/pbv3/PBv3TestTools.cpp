@@ -78,8 +78,8 @@ namespace PBv3TestTools {
             << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
         
         // Set sub-channel
+        amac->wrField(&AMACv2::Ch12Mux, 0); //a
         amac->wrField(&AMACv2::Ch13Mux, 0); //a
-        amac->wrField(&AMACv2::Ch15Mux, 0); //a
         
         // Loop over currents
         for (int iout=min;iout<=max;iout+=step) {
