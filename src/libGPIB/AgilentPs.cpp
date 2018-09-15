@@ -71,7 +71,7 @@ void AgilentPs::setVoltage(double volt) {
 
 std::string AgilentPs::getVoltage() {
     std::string result=this->receive("MEAS:VOLT?");
-    return result.substr(0, result.length()-2);
+    return result.substr(0, result.length()-1);
 }
 
 void AgilentPs::setCurrent(double cur) {
