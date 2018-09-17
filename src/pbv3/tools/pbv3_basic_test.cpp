@@ -77,7 +77,12 @@ int main(int argc, char* argv[]) {
     }
 
     // Start testing
-    PBv3TestTools::testLvEnable(amac.get(), &ps, &dc);
-    PBv3TestTools::measureEfficiency(amac.get(), &ps, &dc, 100, 0, 3500);
+    //PBv3TestTools::testLvEnable(amac.get(), &ps, &dc);
+    //PBv3TestTools::measureEfficiency(amac.get(), &ps, &dc, 100, 0, 3500);
+    
+    amac->wrField(&AMACv2::CntSetHV0frq, 0xFFF);
+    amac->wrField(&AMACv2::CntSetHV0en, 0);
+    amac->wrField(&AMACv2::CntSetCHV0frq, 0xFFF);
+    amac->wrField(&AMACv2::CntSetCHV0en, 0);
     
 }
