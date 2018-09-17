@@ -22,8 +22,8 @@ int main(int argc, char* argv[]) {
   //
   // Get settings from the command line
   if (argc < 4) {
-    log(logERROR) << "Not enough parameters!";
-    log(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <GPIB>";
+    logger(logERROR) << "Not enough parameters!";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <GPIB>";
     return -1;
   }
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 #ifndef FTDI
   if(mojoDev=="FTDI")
     {
-      log(logERROR) << "FTDI support not enabled.";
+      logger(logERROR) << "FTDI support not enabled.";
       return -1;
     }
 #endif
@@ -56,9 +56,9 @@ int main(int argc, char* argv[]) {
 
   //
   // Run tests
-  log(logINFO) << "Initialising ...";
+  logger(logINFO) << "Initialising ...";
 
-  log(logINFO) << " ... Agilent PS:";
+  logger(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
   try
     {
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     }
   catch(std::string e)
     {
-      log(logERROR) << e;
+      logger(logERROR) << e;
       return 1;
     }
 
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
 #endif
   for(uint amacid=0;amacid<16;amacid++)
     {
-      log(logINFO) << " Testing AMAC ID" << amacid;
+      logger(logINFO) << " Testing AMAC ID" << amacid;
       AMAC amac(amacid, i2c);
 
       int error_ctr = 0, num_attempts_per_val=100;

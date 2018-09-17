@@ -27,13 +27,13 @@ void SerialCom::init() {
 }
 
 void SerialCom::config() {
-    log(logDEBUG3) << __PRETTY_FUNCTION__;
+    logger(logDEBUG3) << __PRETTY_FUNCTION__;
     
     //Asynchronous read
 	fcntl(m_dev, F_SETFL, O_NONBLOCK);
     
 	if (tcgetattr(m_dev, &tty)){
-		log(logERROR) << __PRETTY_FUNCTION__ << " -> Could not get tty attributes!";
+		logger(logERROR) << __PRETTY_FUNCTION__ << " -> Could not get tty attributes!";
         m_good = false;
 	}
 
@@ -55,7 +55,7 @@ void SerialCom::config() {
 	tcflush(m_dev, TCIFLUSH);		// Empty buffers
 
 	if (tcsetattr(m_dev, TCSANOW, &tty)){
-		log(logERROR) << __PRETTY_FUNCTION__ << " -> Could not set tty attributes!";
+		logger(logERROR) << __PRETTY_FUNCTION__ << " -> Could not set tty attributes!";
         m_good = false;
 	}
 }

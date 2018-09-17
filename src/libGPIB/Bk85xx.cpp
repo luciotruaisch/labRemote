@@ -5,7 +5,7 @@ Bk85xx::Bk85xx(std::string dev) {
     m_address = 0;
     m_com = new SerialCom(dev);
     if (!m_com->is_open()) {
-        log(logERROR) << __PRETTY_FUNCTION__ << " -> Could not open com port: " << dev;
+        logger(logERROR) << __PRETTY_FUNCTION__ << " -> Could not open com port: " << dev;
     }
 }
 
@@ -14,24 +14,24 @@ Bk85xx::~Bk85xx() {
 }
 
 void Bk85xx::send(union u_packet packet) {
-    log(logDEBUG3) << __PRETTY_FUNCTION__ << " -> Writing packet! " << sizeof(packet);
+    logger(logDEBUG3) << __PRETTY_FUNCTION__ << " -> Writing packet! " << sizeof(packet);
     for (unsigned i=0; i<sizeof(packet); i++)
-        log(logDEBUG4) << std::hex << "0x" << (unsigned)packet.bytes[i] << std::dec;
+        logger(logDEBUG4) << std::hex << "0x" << (unsigned)packet.bytes[i] << std::dec;
     m_com->write((char*)packet.bytes, sizeof(packet.bytes));
 }
 
 union u_packet Bk85xx::receive() {
     union u_packet answer;
     m_com->read((char*)answer.bytes, sizeof(answer.bytes));
-    log(logDEBUG3) << __PRETTY_FUNCTION__ << " -> Read packet! " << sizeof(answer);
+    logger(logDEBUG3) << __PRETTY_FUNCTION__ << " -> Read packet! " << sizeof(answer);
     for (unsigned i=0; i<sizeof(answer); i++)
-        log(logDEBUG4) << std::hex << "0x" << (unsigned)answer.bytes[i] << std::dec;
+        logger(logDEBUG4) << std::hex << "0x" << (unsigned)answer.bytes[i] << std::dec;
     return answer;
 }
 
 void Bk85xx::checkStatus(struct s_packet packet) {
     if (packet.command != CMD_STATUS) {
-        log(logERROR) << __PRETTY_FUNCTION__ << " -> Was asked to interpret status, but packet is not a status packet!";
+        logger(logERROR) << __PRETTY_FUNCTION__ << " -> Was asked to interpret status, but packet is not a status packet!";
     }
     
     std::string msg;
@@ -57,9 +57,9 @@ void Bk85xx::checkStatus(struct s_packet packet) {
     }
     
     if (packet.data[0] != 0x80) {
-        log(logERROR) << __PRETTY_FUNCTION__ << " -> " << msg;
+        logger(logERROR) << __PRETTY_FUNCTION__ << " -> " << msg;
     } else {
-        log(logDEBUG) << __PRETTY_FUNCTION__ << " -> " << msg;
+        logger(logDEBUG) << __PRETTY_FUNCTION__ << " -> " << msg;
     }
 }
 
@@ -81,7 +81,7 @@ void Bk85xx::setChecksum(union u_packet &packet) {
         sum += packet.bytes[i];
     sum = sum%256;
     packet.var.checksum = sum;
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> " << sum;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> " << sum;
 }
 
 struct s_packet Bk85xx::sendCommand(uint8_t cmd, uint8_t data[22]) {
@@ -107,56 +107,56 @@ struct s_packet Bk85xx::sendCommand(uint8_t cmd) {
 }
 
 void Bk85xx::setRemote() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 1;
     this->checkStatus(this->sendCommand(CMD_REMOTE, data));
 }
 
 void Bk85xx::turnOn() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 1;
     this->checkStatus(this->sendCommand(CMD_ON_OFF, data));
 }
     
 void Bk85xx::turnOff() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 0;
     this->checkStatus(this->sendCommand(CMD_ON_OFF, data));
 }
 
 void Bk85xx::setModeCC() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 0;
     this->checkStatus(this->sendCommand(CMD_SET_MODE, data));
 }
 
 void Bk85xx::setModeCV() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 1;
     this->checkStatus(this->sendCommand(CMD_SET_MODE, data));
 }
 
 void Bk85xx::setModeCW() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 2;
     this->checkStatus(this->sendCommand(CMD_SET_MODE, data));
 }
 
 void Bk85xx::setModeCR() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = 3;
     this->checkStatus(this->sendCommand(CMD_SET_MODE, data));
 }
 
 void Bk85xx::setCurrent(double current) {
-    log(logDEBUG) << __PRETTY_FUNCTION__ << " -> " << current;
+    logger(logDEBUG) << __PRETTY_FUNCTION__ << " -> " << current;
     uint32_t cur = current*10; // 0.1mA  = 0x1
     uint8_t data[22] = {0};
     data[0] = (cur & 0xFF);
@@ -167,7 +167,7 @@ void Bk85xx::setCurrent(double current) {
 }
  
 double Bk85xx::getCurrent() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     struct s_packet ans = this->sendCommand(CMD_GET_CC_CURRENT);
     uint32_t cur = 0; // 0.1mA  = 0x1
     cur += (ans.data[0] & 0xFF);
@@ -178,7 +178,7 @@ double Bk85xx::getCurrent() {
 }
 
 struct values Bk85xx::getValues() {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     struct s_packet ans = this->sendCommand(CMD_READ_VALUES);
     struct values val = {0, 0, 0};
     // 1mV  = 0x1
@@ -197,12 +197,12 @@ struct values Bk85xx::getValues() {
     val.pow += ((ans.data[9] & 0xFF) << 8);
     val.pow += ((ans.data[10] & 0xFF) << 16);
     val.pow += ((ans.data[11] & 0xFF) << 24);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> " << val.vol << " " << val.cur << " " << val.pow;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> " << val.vol << " " << val.cur << " " << val.pow;
     return val;
 }
 
 void Bk85xx::setRemoteSense(bool enableRemoteSense) {
-    log(logDEBUG) << __PRETTY_FUNCTION__;
+    logger(logDEBUG) << __PRETTY_FUNCTION__;
     uint8_t data[22] = {0};
     data[0] = enableRemoteSense;
     this->checkStatus(this->sendCommand(CMD_SET_REMOTE_SENSE, data));

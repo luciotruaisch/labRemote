@@ -13,23 +13,23 @@ loglevel_e loglevel = logDEBUG3;
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
-        log(logERROR) << "Not enough parameters!";
-        log(logERROR) << "Usegae: " << argv[0] << " <DC LOAD device> <PS device> <outfile>";
+        logger(logERROR) << "Not enough parameters!";
+        logger(logERROR) << "Usegae: " << argv[0] << " <DC LOAD device> <PS device> <outfile>";
         return 1;
     }
 
-    log(logINFO) << "Initialising ... ";
+    logger(logINFO) << "Initialising ... ";
     Bk85xx dc(argv[1]);
     AgilentPs ps(argv[2], 10);
 
-    log(logINFO) << "Setting up BK8500 .. ";
+    logger(logINFO) << "Setting up BK8500 .. ";
     dc.setRemote();
     dc.setModeCC();
     dc.setCurrent(300.0);
     dc.getCurrent();
     dc.setRemoteSense();
 
-    log(logINFO) << "Setting up Agilent PS .. ";
+    logger(logINFO) << "Setting up Agilent PS .. ";
     ps.init();
     //ps.setCh(1);
     ps.setRange(20);
@@ -50,17 +50,17 @@ int main(int argc, char* argv[]) {
 
     // Outer loop over VIN
     for (double vin = vin_min; vin<=vin_max; vin+=vin_step) {
-        log(logINFO) << "#########################";
+        logger(logINFO) << "#########################";
         ps.setVoltage(vin);
         for (double iout = iout_min; iout<=iout_max; iout+=iout_step) {
             dc.setCurrent(iout);
-            log(logDEBUG) << "Turning on!";
+            logger(logDEBUG) << "Turning on!";
             ps.turnOn();
             dc.turnOn();
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             double iin = stof(ps.getCurrent());
             struct values val = dc.getValues();
-            log(logINFO) << vin << " " << iin << " " << (vin*iin) << " " << val.vol/1000.0 << " " << val.cur/1000.0 << " " << val.pow/1000.0;
+            logger(logINFO) << vin << " " << iin << " " << (vin*iin) << " " << val.vol/1000.0 << " " << val.cur/1000.0 << " " << val.pow/1000.0;
             file << vin << " " << iin << " " << (vin*iin) << " " << val.vol/1000.0 << " " << val.cur/1000.0 << " " << val.pow/1000.0 << std::endl;
         }
         file << std::endl << std::endl;
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         dc.turnOff();
     }
     
-    log(logINFO) << "Done!";
+    logger(logINFO) << "Done!";
 
     return 0;
 }

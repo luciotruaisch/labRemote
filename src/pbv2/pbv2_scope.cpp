@@ -25,13 +25,13 @@ loglevel_e loglevel = logINFO;
 int main(int argc, char* argv[])
 {
 #ifndef SCOPE
-  log(logERROR) << "Missing libScope";
+  logger(logERROR) << "Missing libScope";
 #else // SCOPE
   //
   // Get settings from the command line
   if (argc < 4) {
-    log(logERROR) << "Not enough parameters!";
-    log(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <GPIB>";
+    logger(logERROR) << "Not enough parameters!";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <GPIB>";
     return -1;
   }
 
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 #ifndef FTDI
   if(mojoDev=="FTDI")
     {
-      log(logERROR) << "FTDI support not enabled.";
+      logger(logERROR) << "FTDI support not enabled.";
       return -1;
     }
 #endif
@@ -67,9 +67,9 @@ int main(int argc, char* argv[])
   std::string logpath;
   std::fstream logfile;
 
-  log(logINFO) << "Initialising ...";
+  logger(logINFO) << "Initialising ...";
 
-  log(logINFO) << " ... Agilent PS:";
+  logger(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
   try
     {
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
     }
   catch(std::string &e)
     {
-      log(logERROR) << e;
+      logger(logERROR) << e;
       return 1;
     }
 
@@ -96,16 +96,16 @@ int main(int argc, char* argv[])
 #endif
   AMAC amac(0, i2c);
 
-  log(logINFO) << "  ++Init";
+  logger(logINFO) << "  ++Init";
   amac.init();
 
-  log(logINFO) << "  ++Disable LV";
+  logger(logINFO) << "  ++Disable LV";
   amac.write(AMACreg::LV_ENABLE, 0x0);
-  log(logINFO) << "  ++Disable HV";
+  logger(logINFO) << "  ++Disable HV";
   amac.write(AMACreg::HV_ENABLE, 0x0);
 
 
-  log(logINFO) << "  ++ Const ADC values:";
+  logger(logINFO) << "  ++ Const ADC values:";
   unsigned ota_l, ota_r, bgo, dvdd2;
   amac.read(AMACreg::VALUE_LEFT_CH5, ota_l);
   std::cout << "OTA LEFT : \t" << ota_l << std::endl;

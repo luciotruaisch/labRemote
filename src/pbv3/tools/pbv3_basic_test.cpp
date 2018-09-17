@@ -24,8 +24,8 @@ loglevel_e loglevel = logINFO;
 int main(int argc, char* argv[]) {
     
     if (argc < 3) {
-        log(logERROR) << "Not enough arguments!";
-        log(logERROR) << "Usage: " << argv[0] << " <BK85XX> <GPIB>";
+        logger(logERROR) << "Not enough arguments!";
+        logger(logERROR) << "Usage: " << argv[0] << " <BK85XX> <GPIB>";
         return -1;
     }
     
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     unsigned short int amacid=0x0;
 
     // Init Agilent
-    log(logINFO) << "Init Agilent PS";
+    logger(logINFO) << "Init Agilent PS";
     AgilentPs ps(agiDev, 10);
     try
     {
@@ -47,12 +47,12 @@ int main(int argc, char* argv[]) {
     }
     catch(std::string e)
     {
-        log(logERROR) << e;
+        logger(logERROR) << e;
         return 1;
     }
     
     // Init DCDC
-    log(logINFO) << "Init BK DCDC Load";
+    logger(logINFO) << "Init BK DCDC Load";
     Bk85xx dc(bkDev);
     dc.setRemote();
     dc.setRemoteSense(false);
@@ -61,18 +61,18 @@ int main(int argc, char* argv[]) {
     dc.turnOn();
 
     // Turn on power
-    log(logINFO) << "Turn on PS";
+    logger(logINFO) << "Turn on PS";
     ps.turnOn();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Init com
-    log(logINFO) << "Init AMAC";
+    logger(logINFO) << "Init AMAC";
     std::unique_ptr<AMACv2> amac;
     try {
         amac.reset(new AMACv2(amacid, std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI())));
         amac->init();
     } catch(EndeavourComException &e) {
-        log(logERROR) << e.what();
+        logger(logERROR) << e.what();
         return 1;
     }
 

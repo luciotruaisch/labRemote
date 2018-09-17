@@ -17,7 +17,7 @@ int main(int argc, char*argv[]) {
   meter.turnOn();
 
   for (unsigned i=0; i<10; i++) {
-    log(logINFO) << meter.sense(KeithleyMode::VOLTAGE);
+    logger(logINFO) << meter.sense(KeithleyMode::VOLTAGE);
     sleep(1);
   }
 

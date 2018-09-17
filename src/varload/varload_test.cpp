@@ -18,7 +18,7 @@ loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[]) {
 #ifndef FTDI
-  log(logERROR) << "FTDI support not enabled.";
+  logger(logERROR) << "FTDI support not enabled.";
   return -1;
 #else 
   // Output log

@@ -27,8 +27,8 @@ int main(int argc, char* argv[]) {
   //
   // Get settings from the command line
   if (argc < 5) {
-    log(logERROR) << "Not enough parameters!";
-    log(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <BK85XX> <GPIB>";
+    logger(logERROR) << "Not enough parameters!";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <BK85XX> <GPIB>";
     return -1;
   }
 
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 #ifndef FTDI
   if(mojoDev=="FTDI")
     {
-      log(logERROR) << "FTDI support not enabled.";
+      logger(logERROR) << "FTDI support not enabled.";
       return -1;
     }
 #endif
@@ -65,9 +65,9 @@ int main(int argc, char* argv[]) {
   std::string logpath;
   std::fstream logfile;
 
-  log(logINFO) << "Initialising ...";
+  logger(logINFO) << "Initialising ...";
     
-  log(logINFO) << " ... Agilent PS:";
+  logger(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
   try
     {
@@ -79,11 +79,11 @@ int main(int argc, char* argv[]) {
     }
   catch(std::string e)
     {
-      log(logERROR) << e;
+      logger(logERROR) << e;
       return 1;
     }
 
-  log(logINFO) << " ... Keithley 2410:";
+  logger(logINFO) << " ... Keithley 2410:";
   Keithley24XX sm(gpibDev, 9);
   try
     {
@@ -93,11 +93,11 @@ int main(int argc, char* argv[]) {
     }
   catch(std::string e)
     {
-      log(logERROR) << e;
+      logger(logERROR) << e;
       return 1;
     }
 
-  log(logINFO) << " ... DC Load:";
+  logger(logINFO) << " ... DC Load:";
   Bk85xx dc(bkDev);
   dc.setRemote();
   dc.setRemoteSense(false);
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
   dc.turnOn();
 
   // Configure pico scope
-  log(logINFO) << " ... PicoScope Load:";
+  logger(logINFO) << " ... PicoScope Load:";
 #ifdef SCOPE
   PS6000 pico;
   pico.open();
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
   float period=pico.getPeriod();
   std::vector<std::vector<float>> picodata;
 #else // SCOPE
-  log(logINFO) << "\tSkipping noise measurement due to missing libScope";
+  logger(logINFO) << "\tSkipping noise measurement due to missing libScope";
 #endif // SCOPE
 
   std::shared_ptr<I2CCom> i2c;
@@ -133,16 +133,16 @@ int main(int argc, char* argv[]) {
 #endif
   AMAC amac(0, i2c);
 
-  log(logINFO) << "  ++Init";
+  logger(logINFO) << "  ++Init";
   amac.init();
 
-  log(logINFO) << "  ++Disable LV";
+  logger(logINFO) << "  ++Disable LV";
   amac.write(AMACreg::LV_ENABLE, 0x0);
-  log(logINFO) << "  ++Disable HV";
+  logger(logINFO) << "  ++Disable HV";
   amac.write(AMACreg::HV_ENABLE, 0x0);
 
 
-  log(logINFO) << "  ++ Const ADC values:";
+  logger(logINFO) << "  ++ Const ADC values:";
   unsigned ota_l, ota_r, bgo, dvdd2;
   amac.read(AMACreg::VALUE_LEFT_CH5, ota_l);
   std::cout << "OTA LEFT : \t" << ota_l << std::endl;
@@ -153,7 +153,7 @@ int main(int argc, char* argv[]) {
   amac.read(AMACreg::VALUE_LEFT_CH2, bgo);
   std::cout << "BGO : \t" << bgo << std::endl;
 
-  log(logINFO) << "  ++ Baseline values:";
+  logger(logINFO) << "  ++ Baseline values:";
   std::cout << "Input LV Current : " << ps.getCurrent() << std::endl;
 
   logpath = "log/" + TestName + "_General.log";
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
   logfile << ota_l << " " << ota_r << " " << dvdd2 << " " << bgo << " " << ps.getCurrent() << std::endl;
   logfile.close();
 
-  log(logINFO) << "Test LV enable: ";
+  logger(logINFO) << "Test LV enable: ";
   dc.setCurrent(0);
   dc.turnOn();
 
@@ -176,10 +176,10 @@ int main(int argc, char* argv[]) {
 
   bool lv_enable_works=false;
   if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
-    log(logERROR) << " ++ LV enable not working! " << lv_on << " " << lv_off;
+    logger(logERROR) << " ++ LV enable not working! " << lv_on << " " << lv_off;
     lv_enable_works=false;
   } else {
-    log(logINFO) << " ++ LV enable good!";
+    logger(logINFO) << " ++ LV enable good!";
     lv_enable_works=true;
   }
 
@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
 
   //
   // Testing Current Sense Amp & Efficiency...
-  log(logINFO) << "Testing Current Sense Amp & Efficiency...";
+  logger(logINFO) << "Testing Current Sense Amp & Efficiency...";
 
   logpath = "log/" + TestName + "_DCDCEfficiency.log";
   logfile.open(logpath, std::fstream::out);
@@ -216,7 +216,7 @@ int main(int argc, char* argv[]) {
 
   //
   // Testing Current Sense Amp & Efficiency...
-  log(logINFO) << "Testing current usage as a funciton of input voltage...";
+  logger(logINFO) << "Testing current usage as a funciton of input voltage...";
 
   logpath = "log/" + TestName + "_VinIin.log";
   logfile.open(logpath, std::fstream::out);
@@ -247,7 +247,7 @@ int main(int argc, char* argv[]) {
 
   //
   // Testing VIN measurement
-  log(logINFO) << "Testing VIN measurement ...";
+  logger(logINFO) << "Testing VIN measurement ...";
 
   logpath = "log/" + TestName + "_VIN.log";
   logfile.open(logpath, std::fstream::out);
@@ -271,7 +271,7 @@ int main(int argc, char* argv[]) {
 
   //
   // Testing Ileak measurement
-  log(logINFO) << "Testing Ileak measurement ...";
+  logger(logINFO) << "Testing Ileak measurement ...";
 
   logpath = "log/" + TestName + "_Ileak.log";
   logfile.open(logpath, std::fstream::out);
@@ -311,7 +311,7 @@ int main(int argc, char* argv[]) {
   //
   // Testing shieldbox leakage
 #ifdef SCOPE
-  log(logINFO) << "Testing shield box leakage ...";
+  logger(logINFO) << "Testing shield box leakage ...";
 
   // Run test with LV on
   logpath = "log/" + TestName + "_CoilLVON.log";
@@ -352,37 +352,37 @@ int main(int argc, char* argv[]) {
   dc.turnOff();
     
   /*
-    log(logINFO) << "  ++ADC Values";
+    logger(logINFO) << "  ++ADC Values";
     unsigned val = 0;
     amac.read(AMACreg::VALUE_RIGHT_CH0, val);
-    log(logINFO) << "[VIN] : \t" << val ;
+    logger(logINFO) << "[VIN] : \t" << val ;
     amac.read(AMACreg::VALUE_RIGHT_CH1, val);
-    log(logINFO) << "[IOUT] : \t" << val ;
+    logger(logINFO) << "[IOUT] : \t" << val ;
     amac.read(AMACreg::VALUE_RIGHT_CH2, val);
-    log(logINFO) << "[NTC_Temp] : \t" << val ;
+    logger(logINFO) << "[NTC_Temp] : \t" << val ;
     amac.read(AMACreg::VALUE_RIGHT_CH3, val);
-    log(logINFO) << "[3R] : \t\t" << val ;
+    logger(logINFO) << "[3R] : \t\t" << val ;
     amac.read(AMACreg::VALUE_RIGHT_CH4, val);
-    log(logINFO) << "[VDD_H/4] : \t" << val ;
+    logger(logINFO) << "[VDD_H/4] : \t" << val ;
     amac.read(AMACreg::VALUE_RIGHT_CH5, val);
-    log(logINFO) << "[OTA] : \t" << val ;
+    logger(logINFO) << "[OTA] : \t" << val ;
     amac.read(AMACreg::VALUE_RIGHT_CH6, val);
-    log(logINFO) << "[ICHANR] : \t" << val ;
+    logger(logINFO) << "[ICHANR] : \t" << val ;
     
     amac.read(AMACreg::VALUE_LEFT_CH0, val);
-    log(logINFO) << "[0L] : \t\t" << val ;
+    logger(logINFO) << "[0L] : \t\t" << val ;
     amac.read(AMACreg::VALUE_LEFT_CH1, val);
-    log(logINFO) << "[DVDD/2] : \t" << val ;
+    logger(logINFO) << "[DVDD/2] : \t" << val ;
     amac.read(AMACreg::VALUE_LEFT_CH2, val);
-    log(logINFO) << "[BGO] : \t" << val ;
+    logger(logINFO) << "[BGO] : \t" << val ;
     amac.read(AMACreg::VALUE_LEFT_CH3, val);
-    log(logINFO) << "[3L] : \t\t" << val ;
+    logger(logINFO) << "[3L] : \t\t" << val ;
     amac.read(AMACreg::VALUE_LEFT_CH4, val);
-    log(logINFO) << "[TEMP] : \t" << val ;
+    logger(logINFO) << "[TEMP] : \t" << val ;
     amac.read(AMACreg::VALUE_LEFT_CH5, val);
-    log(logINFO) << "[OTA] : \t" << val ;
+    logger(logINFO) << "[OTA] : \t" << val ;
     amac.read(AMACreg::VALUE_LEFT_CH6, val);
-    log(logINFO) << "[ICHANL] : \t" << val ;
+    logger(logINFO) << "[ICHANL] : \t" << val ;
 
     */
 

@@ -17,7 +17,7 @@ Keithley24XX::~Keithley24XX() {
 // TODO send/receive should be in prologix class
 void Keithley24XX::send(std::string cmd) {
   m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-  log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+  logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
   cmd += "\r\n";
   m_com->write(cmd);
   std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
@@ -25,14 +25,14 @@ void Keithley24XX::send(std::string cmd) {
 
 std::string Keithley24XX::receive(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     m_com->write("++read eoi\n\r");
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
     std::string buf;
     m_com->read(buf);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
     return buf;
 }
 
@@ -74,7 +74,7 @@ void Keithley24XX::setSource(enum KeithleyMode mode, double range, double value)
             this->send(":SOURCE:CURR " + std::to_string(value));
             break;
         default:
-            log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+            logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
             break;
     }
 }
@@ -94,7 +94,7 @@ void Keithley24XX::setSense(enum KeithleyMode mode, double range, double protect
             this->send(":FORMAT:ELEMENTS CURR");
             break;
         default:
-            log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+            logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
             break;
     }
 }
@@ -110,7 +110,7 @@ std::string Keithley24XX::sense(enum KeithleyMode mode) {
     this->send(":FORMAT:ELEMENTS CURR");
     break;
   default:
-    log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+    logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
     break;
   }
 

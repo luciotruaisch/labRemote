@@ -25,8 +25,8 @@ int main(int argc, char* argv[]) {
   //
   // Get settings from the command line
   if (argc < 5) {
-    log(logERROR) << "Not enough parameters!";
-    log(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <BK85XX> <GPIB>";
+    logger(logERROR) << "Not enough parameters!";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <BK85XX> <GPIB>";
     return -1;
   }
 
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 #ifndef FTDI
   if(mojoDev=="FTDI")
     {
-      log(logERROR) << "FTDI support not enabled.";
+      logger(logERROR) << "FTDI support not enabled.";
       return -1;
     }
 #endif
@@ -60,9 +60,9 @@ int main(int argc, char* argv[]) {
 
   //
   // Run tests
-  log(logINFO) << "Initialising ...";
+  logger(logINFO) << "Initialising ...";
     
-  log(logINFO) << " ... Agilent PS:";
+  logger(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
   ps.init();
   ps.setRange(20);
@@ -70,13 +70,13 @@ int main(int argc, char* argv[]) {
   ps.setCurrent(2.00);
   ps.turnOn();
 
-  log(logINFO) << " ... Keithley 2410:";
+  logger(logINFO) << " ... Keithley 2410:";
   Keithley24XX sm(gpibDev, 9);
   sm.init();
   sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
   sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
 
-  log(logINFO) << " ... DC Load:";
+  logger(logINFO) << " ... DC Load:";
   Bk85xx dc(bkDev);
   dc.setRemote();
   dc.setRemoteSense(false);
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
   dc.setCurrent(0);
   //dc.turnOn();
 
-  log(logINFO) << " ... AMAC:";
+  logger(logINFO) << " ... AMAC:";
   std::shared_ptr<I2CCom> i2c;
 #ifdef FTDI
   if(mojoDev=="FTDI")
@@ -96,21 +96,21 @@ int main(int argc, char* argv[]) {
 #endif
   AMAC amac(0, i2c);
 
-  log(logINFO) << "  ++Init";
+  logger(logINFO) << "  ++Init";
   amac.init();
 
-  log(logINFO) << "  ++Disable LV";
+  logger(logINFO) << "  ++Disable LV";
   amac.write(AMACreg::LV_ENABLE, 0x0);
-  log(logINFO) << "  ++Disable HV";
+  logger(logINFO) << "  ++Disable HV";
   amac.write(AMACreg::HV_ENABLE, 0x0);
 
-  log(logINFO) << "  ++Enable load";
+  logger(logINFO) << "  ++Enable load";
   amac.write(AMACreg::LV_ENABLE, 0x1);
   dc.setCurrent(1000);
   dc.turnOn();
 
 
-  log(logINFO) << "  ++ Const ADC values:";
+  logger(logINFO) << "  ++ Const ADC values:";
   unsigned ota_l=0, ota_r=0, bgo=0, dvdd2=0;
   amac.read(AMACreg::VALUE_LEFT_CH5, ota_l);
   std::cout << "OTA_LEFT : \t" << ota_l << std::endl;
@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
   std::fstream logfile(logpath, std::fstream::out);
   logfile << "time bgo rtch3gain ltch3gain rtrg ltrg rtog ltog hvfreq ch0la ch0lb ch1l ch2l ch3l ch4l ch5l ch6l ch0ra ch0rb ch1r ch2r ch3r ch4r ch5r ch6r" << std::endl;
 
-  log(logINFO) << "Start monitoring...";
+  logger(logINFO) << "Start monitoring...";
 
   unsigned ch0la,ch0lb,ch1l,ch2l,ch3l,ch4l,ch5l,ch6l;
   unsigned ch0ra,ch0rb,ch1r,ch2r,ch3r,ch4r,ch5r,ch6r;

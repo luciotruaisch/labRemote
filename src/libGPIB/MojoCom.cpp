@@ -14,7 +14,7 @@ MojoCom::MojoCom(std::string dev) {
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
     if (ibuf[1] != '\n') {
-      log(logERROR) << __PRETTY_FUNCTION__ << " : Reset failed!";
+      logger(logERROR) << __PRETTY_FUNCTION__ << " : Reset failed!";
     } else {
       break;
     }
@@ -26,7 +26,7 @@ MojoCom::~MojoCom() {
 }
 
 int MojoCom::writeReg(unsigned reg, char val) {
-  log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ") val(" << val << ")";
+  logger(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ") val(" << val << ")";
   char outbuf[7];
 
   // Prepare buffer
@@ -40,7 +40,7 @@ int MojoCom::writeReg(unsigned reg, char val) {
 
   // Write buffer
   if (m_com->write(outbuf, 7) < 7) {
-    log(logERROR) << __PRETTY_FUNCTION__ << " : Failed writing all bytes!";
+    logger(logERROR) << __PRETTY_FUNCTION__ << " : Failed writing all bytes!";
     return -1;
   }
 
@@ -48,7 +48,7 @@ int MojoCom::writeReg(unsigned reg, char val) {
 }
 
 int MojoCom::readReg(unsigned reg, char &val) {
-  log(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ")";
+  logger(logDEBUG1) << __PRETTY_FUNCTION__ << " : reg(" << reg << ")";
   char outbuf[3], inbuf[6];
 
   // Prepare output
@@ -59,7 +59,7 @@ int MojoCom::readReg(unsigned reg, char &val) {
   // Write output
   if (m_com->write(outbuf, 3) < 3) 
     {
-      log(logERROR) << __PRETTY_FUNCTION__ << " : Failed writing all bytes!";
+      logger(logERROR) << __PRETTY_FUNCTION__ << " : Failed writing all bytes!";
       return -1;
     }
 
@@ -70,18 +70,18 @@ int MojoCom::readReg(unsigned reg, char &val) {
   // Check status
   if (inbuf[5] != '\n')
     {
-      log(logERROR) << __PRETTY_FUNCTION__ << " : Wrong read response!";
+      logger(logERROR) << __PRETTY_FUNCTION__ << " : Wrong read response!";
       return -1;
     }
 
   // Trasnfer data
   for(int i = 1; i < 5; i++) val = (val<<8) + (unsigned char)inbuf[i];
-  log(logDEBUG1) << __PRETTY_FUNCTION__ << " : val(" << val << ")";
+  logger(logDEBUG1) << __PRETTY_FUNCTION__ << " : val(" << val << ")";
   return 0;
 }
 
 int MojoCom::enableI2C() {
-    log(logINFO) << __PRETTY_FUNCTION__ << " : Enabling I2C!";
+    logger(logINFO) << __PRETTY_FUNCTION__ << " : Enabling I2C!";
     // Reset I2C
     if (this->writeReg(0x4c, 0x00))  return -1;
     if (this->writeReg(0x4c, 0x01)) return -1; // unreset I2C + drive SCL active

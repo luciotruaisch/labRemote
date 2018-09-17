@@ -19,7 +19,7 @@ int FTDICom::enableI2C()
   if(m_i2cdev!=0) return 0;
   if((m_i2cdev=MPSSE(I2C, ONE_HUNDRED_KHZ, MSB)) == NULL || !m_i2cdev->open) return 1;
   
-  log(logDEBUG2) << __PRETTY_FUNCTION__ << "I2C device "<< GetDescription(m_i2cdev) << " initialized at " << GetClock(m_i2cdev) << "Hz";
+  logger(logDEBUG2) << __PRETTY_FUNCTION__ << "I2C device "<< GetDescription(m_i2cdev) << " initialized at " << GetClock(m_i2cdev) << "Hz";
 
   Tristate(m_i2cdev);
       
