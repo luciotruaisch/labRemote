@@ -1,0 +1,12 @@
+-D__STDC_CONSTANT_MACROS
+-D__STDC_LIMIT_MACROS
+-std=c++11
+-Isrc/libDevCom
+-Isrc/libGalil/include
+-Isrc/libGPIB/include
+-Isrc/libImageRec/include
+-Isrc/libScope/include
+-Isrc/libWaferProb/include
+-Isrc/libZaber/include
+-Isrc/pbv3
+-Isrc/pbv2active
