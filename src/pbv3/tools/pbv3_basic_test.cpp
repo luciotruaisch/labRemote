@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
 
     // Init Agilent
     logger(logINFO) << "Init Agilent PS";
-    TTITSX1820PPs ps(agiDev, 10);
+    TTITSX1820PPs ps(agiDev, 11);
     try
     {
         ps.init();
