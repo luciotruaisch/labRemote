@@ -2,7 +2,7 @@
 
 #include "EndeavourComException.h"
 
-#include <libftdi1/ftdi.h>
+#include <ftdi.h>
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
