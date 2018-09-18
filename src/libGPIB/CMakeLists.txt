@@ -16,6 +16,8 @@ set(SrcFiles AgilentPs.cpp
   Bk85xx.cpp
   Keithley24XX.cpp
   RigolDP832.cpp
+  TTIMX180TPPs.cpp
+  TTITSX1820PPs.cpp
   MojoCom.cpp
   SerialCom.cpp)
 

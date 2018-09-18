@@ -7,7 +7,7 @@ set(SrcFiles DeviceCom.cpp
   I2CCom.cpp
   I2CDevCom.cpp
   PCA9548ACom.cpp
-  
+
   #FreqMeas.cpp
 
   ComIOException.cpp
@@ -31,4 +31,5 @@ set(SrcFiles DeviceCom.cpp
   LinearCalibration.cpp
 )
 
-add_library(DevCom SHARED ${SrcFiles}) 
+add_library(DevCom SHARED ${SrcFiles})
+add_compile_options(-std=c++11)

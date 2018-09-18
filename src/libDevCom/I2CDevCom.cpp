@@ -7,8 +7,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifndef __APPLE__
 #include <linux/i2c.h>
-#include <linux/i2c-dev.h>
+#include <i2c-dev.h>
 
 #include <cstring>
 #include <string>
@@ -322,3 +323,41 @@ void I2CDevCom::read_block(std::vector<uint8_t>& data)
   if (ioctl(m_fh, I2C_RDWR, &msgset) < 0)
     throw ComIOException(std::string("I2CDev read_block failed: ")+std::strerror(errno));
 }
+#else
+// Just don't run on mac
+I2CDevCom::I2CDevCom(uint8_t deviceAddr, const std::string& i2cdev) : I2CCom(deviceAddr) {}
+
+I2CDevCom::~I2CDevCom() {}
+
+void I2CDevCom::write_reg32(uint32_t address, uint32_t data) {}
+
+void I2CDevCom::write_reg16(uint32_t address, uint16_t data) {}
+
+void I2CDevCom::write_reg8 (uint32_t address, uint8_t  data) {}
+
+void I2CDevCom::write_reg32(uint32_t data) {}
+
+void I2CDevCom::write_reg16(uint16_t data) {}
+
+void I2CDevCom::write_reg8 (uint8_t  data) {}
+
+void I2CDevCom::write_block(uint32_t address, const std::vector<uint8_t>& data) {}
+
+void I2CDevCom::write_block(const std::vector<uint8_t>& data) {}
+
+uint32_t I2CDevCom::read_reg32(uint32_t address) {return 0;}
+
+uint16_t I2CDevCom::read_reg16(uint32_t address) {return 0;}
+
+uint8_t  I2CDevCom::read_reg8 (uint32_t address) {return 0;}
+
+uint32_t I2CDevCom::read_reg32() {return 0;}
+
+uint16_t I2CDevCom::read_reg16() {return 0;}
+
+uint8_t  I2CDevCom::read_reg8 () {return 0;}
+
+void I2CDevCom::read_block(uint32_t address, std::vector<uint8_t>& data) {}
+
+void I2CDevCom::read_block(std::vector<uint8_t>& data) {}
+#endif

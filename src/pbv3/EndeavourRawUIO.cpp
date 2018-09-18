@@ -18,94 +18,94 @@ EndeavourRawUIO::EndeavourRawUIO(std::shared_ptr<DeviceCom> fpgaCom)
   
 }
 
-void EndeavourRawUIO::setDitMin(uint DIT_MIN)
+void EndeavourRawUIO::setDitMin(uint32_t DIT_MIN)
 {
-  uint val=m_fpgaCom->read_reg32(7);
+  uint32_t val=m_fpgaCom->read_reg32(7);
   val=(val&0xFFFFFF00)|((DIT_MIN&0x0FF)<< 0);
   m_fpgaCom->write_reg32(7, val);
 }
 
-uint EndeavourRawUIO::getDitMin()
+uint32_t EndeavourRawUIO::getDitMin()
 { return (m_fpgaCom->read_reg32(7)>> 0)&0x0FF; }
 
-void EndeavourRawUIO::setDitMid(uint DIT_MID)
+void EndeavourRawUIO::setDitMid(uint32_t DIT_MID)
 {
-  uint val=m_fpgaCom->read_reg32(7);
+  uint32_t val=m_fpgaCom->read_reg32(7);
   val=(val&0xFFF000FF)|((DIT_MID&0xFFF)<< 8);
   m_fpgaCom->write_reg32(7, val);
 }
 
-uint EndeavourRawUIO::getDitMid()
+uint32_t EndeavourRawUIO::getDitMid()
 { return (m_fpgaCom->read_reg32(7)>> 8)&0xFFF; }
 
-void EndeavourRawUIO::setDitMax(uint DIT_MAX)
+void EndeavourRawUIO::setDitMax(uint32_t DIT_MAX)
 {
-  uint val=m_fpgaCom->read_reg32(7);
+  uint32_t val=m_fpgaCom->read_reg32(7);
   val=(val&0x000FFFFF)|((DIT_MAX&0xFFF)<<20);
   m_fpgaCom->write_reg32(7, val);
 }
 
-uint EndeavourRawUIO::getDitMax()
+uint32_t EndeavourRawUIO::getDitMax()
 { return (m_fpgaCom->read_reg32(7)>>16)&0xFFF; }
 
-void EndeavourRawUIO::setDahMin(uint DAH_MIN)
+void EndeavourRawUIO::setDahMin(uint32_t DAH_MIN)
 {
-  uint val=m_fpgaCom->read_reg32(8);
+  uint32_t val=m_fpgaCom->read_reg32(8);
   val=(val&0xFFFFFF00)|((DAH_MIN&0x0FF)<< 0);
   m_fpgaCom->write_reg32(8, val);
 }
 
-uint EndeavourRawUIO::getDahMin()
+uint32_t EndeavourRawUIO::getDahMin()
 { return (m_fpgaCom->read_reg32(8)>> 0)&0x0FF; }
 
-void EndeavourRawUIO::setDahMid(uint DAH_MID)
+void EndeavourRawUIO::setDahMid(uint32_t DAH_MID)
 {
-  uint val=m_fpgaCom->read_reg32(8);
+  uint32_t val=m_fpgaCom->read_reg32(8);
   val=(val&0xFFF000FF)|((DAH_MID&0xFFF)<< 8);
   m_fpgaCom->write_reg32(8, val);
 }
 
-uint EndeavourRawUIO::getDahMid()
+uint32_t EndeavourRawUIO::getDahMid()
 { return (m_fpgaCom->read_reg32(8)>> 8)&0xFFF; }
 
-void EndeavourRawUIO::setDahMax(uint DAH_MAX)
+void EndeavourRawUIO::setDahMax(uint32_t DAH_MAX)
 {
-  uint val=m_fpgaCom->read_reg32(8);
+  uint32_t val=m_fpgaCom->read_reg32(8);
   val=(val&0x000FFFFF)|((DAH_MAX&0xFFF)<<20);
   m_fpgaCom->write_reg32(8, val);
 }
 
-uint EndeavourRawUIO::getDahMax()
+uint32_t EndeavourRawUIO::getDahMax()
 { return (m_fpgaCom->read_reg32(8)>>16)&0xFFF; }
 
-void EndeavourRawUIO::setBitGapMin(uint BITGAP_MIN)
+void EndeavourRawUIO::setBitGapMin(uint32_t BITGAP_MIN)
 {
-  uint val=m_fpgaCom->read_reg32(9);
+  uint32_t val=m_fpgaCom->read_reg32(9);
   val=(val&0xFFFFFF00)|((BITGAP_MIN&0x0FF)<< 0);
   m_fpgaCom->write_reg32(9, val);
 }
 
-uint EndeavourRawUIO::getBitGapMin()
+uint32_t EndeavourRawUIO::getBitGapMin()
 { return (m_fpgaCom->read_reg32(9)>> 0)&0x0FF; }
 
-void EndeavourRawUIO::setBitGapMid(uint BITGAP_MID)
+void EndeavourRawUIO::setBitGapMid(uint32_t BITGAP_MID)
 {
-  uint val=m_fpgaCom->read_reg32(9);
+  uint32_t val=m_fpgaCom->read_reg32(9);
   val=(val&0xFFF000FF)|((BITGAP_MID&0xFFF)<< 8);
   m_fpgaCom->write_reg32(9, val);
 }
 
-uint EndeavourRawUIO::getBitGapMid()
+uint32_t EndeavourRawUIO::getBitGapMid()
 { return (m_fpgaCom->read_reg32(9)>> 8)&0xFFF; }
 
-void EndeavourRawUIO::setBitGapMax(uint BITGAP_MAX)
+void EndeavourRawUIO::setBitGapMax(uint32_t BITGAP_MAX)
 {
-  uint val=m_fpgaCom->read_reg32(9);
+  uint32_t val=m_fpgaCom->read_reg32(9);
   val=(val&0x000FFFFF)|((BITGAP_MAX&0xFFF)<<20);
   m_fpgaCom->write_reg32(9, val);
 }
 
-uint EndeavourRawUIO::getBitGapMax()
+uint32_t EndeavourRawUIO::getBitGapMax()
 { return (m_fpgaCom->read_reg32(9)>>16)&0xFFF; }
 
 void EndeavourRawUIO::reset()

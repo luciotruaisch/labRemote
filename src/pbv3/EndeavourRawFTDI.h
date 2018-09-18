@@ -12,32 +12,32 @@ public:
   EndeavourRawFTDI();
   ~EndeavourRawFTDI();
 
-  void setDitMin(uint DIT_MIN);
-  uint getDitMin();
+  void setDitMin(uint32_t DIT_MIN);
+  uint32_t getDitMin();
 
-  void setDitMid(uint DIT_MID);
-  uint getDitMid();
+  void setDitMid(uint32_t DIT_MID);
+  uint32_t getDitMid();
 
-  void setDitMax(uint DIT_MAX);  
-  uint getDitMax();
+  void setDitMax(uint32_t DIT_MAX);  
+  uint32_t getDitMax();
 
-  void setDahMin(uint DAH_MIN);
-  uint getDahMin();
+  void setDahMin(uint32_t DAH_MIN);
+  uint32_t getDahMin();
 
-  void setDahMid(uint DAH_MID);
-  uint getDahMid();
+  void setDahMid(uint32_t DAH_MID);
+  uint32_t getDahMid();
 
-  void setDahMax(uint DAH_MAX);  
-  uint getDahMax();
+  void setDahMax(uint32_t DAH_MAX);  
+  uint32_t getDahMax();
 
-  void setBitGapMin(uint BITGAP_MIN);
-  uint getBitGapMin();
+  void setBitGapMin(uint32_t BITGAP_MIN);
+  uint32_t getBitGapMin();
 
-  void setBitGapMid(uint BITGAP_MID);
-  uint getBitGapMid();
+  void setBitGapMid(uint32_t BITGAP_MID);
+  uint32_t getBitGapMid();
 
-  void setBitGapMax(uint BITGAP_MAX);  
-  uint getBitGapMax();
+  void setBitGapMax(uint32_t BITGAP_MAX);  
+  uint32_t getBitGapMax();
   
   void reset();
 
@@ -48,9 +48,9 @@ public:
   void readData(unsigned long long int& data, unsigned int& size);
 
 private:
-  uint m_DIT_MIN   =  6*30/40,m_DIT_MID   = 14*30/40,m_DIT_MAX   = 22*30/40;
-  uint m_DAH_MIN   = 29*30/40,m_DAH_MID   = 76*30/40,m_DAH_MAX   =124*30/40;
-  uint m_BITGAP_MIN= 11*30/40,m_BITGAP_MID= 43*30/40,m_BITGAP_MAX= 75*30/40;
+  uint32_t m_DIT_MIN   =  6*30/40,m_DIT_MID   = 14*30/40,m_DIT_MAX   = 22*30/40;
+  uint32_t m_DAH_MIN   = 29*30/40,m_DAH_MID   = 76*30/40,m_DAH_MAX   =124*30/40;
+  uint32_t m_BITGAP_MIN= 11*30/40,m_BITGAP_MID= 43*30/40,m_BITGAP_MAX= 75*30/40;
 
   struct ftdi_context *m_ftdi;
 
