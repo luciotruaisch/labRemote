@@ -11,6 +11,7 @@ before_script:
 - yum -y install opencv-devel
 - yum -y install autoconf git swig
 - yum -y install picoscope
+- yum -y install json-devel
 - pushd $(mktemp -d)
 - git clone https://github.com/l29ah/libmpsse.git
 - cd libmpsse/src
