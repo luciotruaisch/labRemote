@@ -11,32 +11,32 @@ class EndeavourRawUIO : public EndeavourRaw
 public:
   EndeavourRawUIO(std::shared_ptr<DeviceCom> fpgaCom);
 
-  void setDitMin(uint DIT_MIN);
-  uint getDitMin();
+  void setDitMin(uint32_t DIT_MIN);
+  uint32_t getDitMin();
 
-  void setDitMid(uint DIT_MID);
-  uint getDitMid();
+  void setDitMid(uint32_t DIT_MID);
+  uint32_t getDitMid();
 
-  void setDitMax(uint DIT_MAX);  
-  uint getDitMax();
+  void setDitMax(uint32_t DIT_MAX);  
+  uint32_t getDitMax();
 
-  void setDahMin(uint DAH_MIN);
-  uint getDahMin();
+  void setDahMin(uint32_t DAH_MIN);
+  uint32_t getDahMin();
 
-  void setDahMid(uint DAH_MID);
-  uint getDahMid();
+  void setDahMid(uint32_t DAH_MID);
+  uint32_t getDahMid();
 
-  void setDahMax(uint DAH_MAX);  
-  uint getDahMax();
+  void setDahMax(uint32_t DAH_MAX);  
+  uint32_t getDahMax();
 
-  void setBitGapMin(uint BITGAP_MIN);
-  uint getBitGapMin();
+  void setBitGapMin(uint32_t BITGAP_MIN);
+  uint32_t getBitGapMin();
 
-  void setBitGapMid(uint BITGAP_MID);
-  uint getBitGapMid();
+  void setBitGapMid(uint32_t BITGAP_MID);
+  uint32_t getBitGapMid();
 
-  void setBitGapMax(uint BITGAP_MAX);  
-  uint getBitGapMax();
+  void setBitGapMax(uint32_t BITGAP_MAX);  
+  uint32_t getBitGapMax();
   
   void reset();
 

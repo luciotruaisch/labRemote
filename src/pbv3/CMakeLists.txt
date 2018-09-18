@@ -1,5 +1,5 @@
 # add global dependencies
-include_directories( ../libDevCom ../libGPIB/include )
+include_directories( ../libDevCom ../libGPIB/include /usr/local/Cellar/nlohmann_json/3.1.2/include/nlohmann)
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 set(SrcFiles

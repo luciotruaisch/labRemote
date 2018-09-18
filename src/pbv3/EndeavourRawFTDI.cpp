@@ -76,58 +76,58 @@ EndeavourRawFTDI::~EndeavourRawFTDI()
   ftdi_free(m_ftdi);
 }
 
-void EndeavourRawFTDI::setDitMin(uint DIT_MIN)
+void EndeavourRawFTDI::setDitMin(uint32_t DIT_MIN)
 { m_DIT_MIN=DIT_MIN; }
 
-uint EndeavourRawFTDI::getDitMin()
+uint32_t EndeavourRawFTDI::getDitMin()
 { return m_DIT_MIN; }
 
-void EndeavourRawFTDI::setDitMid(uint DIT_MID)
+void EndeavourRawFTDI::setDitMid(uint32_t DIT_MID)
 { m_DIT_MID=DIT_MID; }
 
-uint EndeavourRawFTDI::getDitMid()
+uint32_t EndeavourRawFTDI::getDitMid()
 { return m_DIT_MID; }
 
-void EndeavourRawFTDI::setDitMax(uint DIT_MAX)
+void EndeavourRawFTDI::setDitMax(uint32_t DIT_MAX)
 { m_DIT_MAX=DIT_MAX; }
 
-uint EndeavourRawFTDI::getDitMax()
+uint32_t EndeavourRawFTDI::getDitMax()
 { return m_DIT_MAX; }
 
-void EndeavourRawFTDI::setDahMin(uint DAH_MIN)
+void EndeavourRawFTDI::setDahMin(uint32_t DAH_MIN)
 { m_DAH_MIN=DAH_MIN; }
 
-uint EndeavourRawFTDI::getDahMin()
+uint32_t EndeavourRawFTDI::getDahMin()
 { return m_DAH_MIN; }
 
-void EndeavourRawFTDI::setDahMid(uint DAH_MID)
+void EndeavourRawFTDI::setDahMid(uint32_t DAH_MID)
 { m_DAH_MID=DAH_MID; }
 
-uint EndeavourRawFTDI::getDahMid()
+uint32_t EndeavourRawFTDI::getDahMid()
 { return m_DAH_MID; }
 
-void EndeavourRawFTDI::setDahMax(uint DAH_MAX)
+void EndeavourRawFTDI::setDahMax(uint32_t DAH_MAX)
 { m_DAH_MAX=DAH_MAX; }
 
-uint EndeavourRawFTDI::getDahMax()
+uint32_t EndeavourRawFTDI::getDahMax()
 { return m_DAH_MAX; }
 
-void EndeavourRawFTDI::setBitGapMin(uint BITGAP_MIN)
+void EndeavourRawFTDI::setBitGapMin(uint32_t BITGAP_MIN)
 { m_BITGAP_MIN=BITGAP_MIN; }
 
-uint EndeavourRawFTDI::getBitGapMin()
+uint32_t EndeavourRawFTDI::getBitGapMin()
 { return m_BITGAP_MIN; }
 
-void EndeavourRawFTDI::setBitGapMid(uint BITGAP_MID)
+void EndeavourRawFTDI::setBitGapMid(uint32_t BITGAP_MID)
 { m_BITGAP_MID=BITGAP_MID; }
 
-uint EndeavourRawFTDI::getBitGapMid()
+uint32_t EndeavourRawFTDI::getBitGapMid()
 { return m_BITGAP_MID; }
 
-void EndeavourRawFTDI::setBitGapMax(uint BITGAP_MAX)
+void EndeavourRawFTDI::setBitGapMax(uint32_t BITGAP_MAX)
 { m_BITGAP_MAX=BITGAP_MAX; }
 
-uint EndeavourRawFTDI::getBitGapMax()
+uint32_t EndeavourRawFTDI::getBitGapMax()
 { return m_BITGAP_MAX; }
 
 void EndeavourRawFTDI::reset()

@@ -2,6 +2,7 @@
 #define PBV2TB_H
 
 #include <memory>
+#include <string>
 
 #include "ADCDevice.h"
 
