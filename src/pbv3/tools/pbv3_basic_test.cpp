@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
+#include <json.hpp>
+#include <fstream>
 
 #include "Logger.h"
 
@@ -15,7 +17,7 @@
 
 #include "Bk85xx.h"
 #include "AgilentPs.h"
-
+#include "TTITSX1820PPs.h"
 #include "PBv3TestTools.h"
 
 loglevel_e loglevel = logINFO;
@@ -32,12 +34,16 @@ int main(int argc, char* argv[]) {
     std::string bkDev = argv[1];
     std::string agiDev = argv[2];
 
+    // Output file
+    std::string fileName = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-test.json";
+    std::fstream outfile(fileName, std::ios::out);
+
     // Prog ID set during init (require power-up to be set)
     unsigned short int amacid=0x0;
 
     // Init Agilent
     logger(logINFO) << "Init Agilent PS";
-    AgilentPs ps(agiDev, 10);
+    TTITSX1820PPs ps(agiDev, 10);
     try
     {
         ps.init();
@@ -75,14 +81,13 @@ int main(int argc, char* argv[]) {
         logger(logERROR) << e.what();
         return 1;
     }
+    
+    json testSum;
 
     // Start testing
-    //PBv3TestTools::testLvEnable(amac.get(), &ps, &dc);
-    //PBv3TestTools::measureEfficiency(amac.get(), &ps, &dc, 100, 0, 3500);
-    
-    amac->wrField(&AMACv2::CntSetHV0frq, 0xFFF);
-    amac->wrField(&AMACv2::CntSetHV0en, 0);
-    amac->wrField(&AMACv2::CntSetCHV0frq, 0xFFF);
-    amac->wrField(&AMACv2::CntSetCHV0en, 0);
-    
+    testSum[0] = PBv3TestTools::testLvEnable(amac.get(), (GenericPs*) &ps, &dc);
+    testSum[1] = PBv3TestTools::measureEfficiency(amac.get(), (GenericPs*) &ps, &dc, 100, 0, 3500);
+      
+    outfile << std::setw(4) << testSum << std::endl;
+
 }

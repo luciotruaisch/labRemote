@@ -3,7 +3,7 @@
 #include "EndeavourComException.h"
 
 namespace PBv3TestTools {
-    json testLvEnable(AMACv2 *amac, AgilentPs *ps, Bk85xx *load) {
+    json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
         logger(logINFO) << "## LV Enable test ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
         json testSum;
@@ -55,7 +55,7 @@ namespace PBv3TestTools {
     }
 
     // Range is iout in mA
-    json measureEfficiency(AMACv2 *amac, AgilentPs *ps, Bk85xx *load, int step, int min, int max) {
+    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max) {
         logger(logINFO) << "## Measuring DCDC efficiency ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         json testSum;
         testSum["name"] = "measure_efficiency";
@@ -190,7 +190,7 @@ namespace PBv3TestTools {
         return testSum;
     }
 
-    json readStatus(AMACv2 *amac, AgilentPs *ps, Bk85xx *load, Keithley24XX *sm) {
+    json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm) {
         logger(logINFO) << "## Reading current status ##";
         json testSum;
         testSum["name"] = "amac_status";
