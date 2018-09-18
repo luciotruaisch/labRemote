@@ -22,6 +22,7 @@ namespace PBv3TestTools {
     json testLvEnable(AMACv2 *amac, AgilentPs *ps, Bk85xx *load);
     json testHvEnable(AMACv2 *amac, Keithley24XX *sm, unsigned frequency=0x3);
     json measureEfficiency(AMACv2 *amac, AgilentPs *ps, Bk85xx *load, int step, int min, int max);
+    json readStatus(AMACv2 *amac, AgilentPs *ps, Bk85xx *load, Keithley24XX *sm);
 
     std::string getTimeAsString(std::chrono::system_clock::time_point t) {
         auto as_time_t = std::chrono::system_clock::to_time_t(t);
