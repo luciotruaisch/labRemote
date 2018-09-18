@@ -18,7 +18,7 @@ TTITSX1820PPs::~TTITSX1820PPs() {
 
 void TTITSX1820PPs::send(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
@@ -27,14 +27,14 @@ void TTITSX1820PPs::send(std::string cmd) {
 std::string TTITSX1820PPs::receive(std::string cmd) 
 {
   m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-  log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+  logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
   cmd += "\r\n";
   m_com->write(cmd);
   m_com->write("++read eoi\n\r");
   std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
   std::string buf;
   m_com->read(buf);
-  log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+  logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
   return buf;
 }
 
