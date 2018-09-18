@@ -6,10 +6,10 @@
 #  LIBLIBFTDI_DEFINITIONS - Compiler switches required for using libftdi1
 
 FIND_PATH(LIBFTDI_INCLUDE_DIR ftdi.h
-  HINTS /usr/include/libftdi1 )
+  HINTS /usr/include/libftdi1 /usr/local/include/libftdi1 )
 
 FIND_LIBRARY(LIBFTDI_LIBRARY NAMES ftdi1 libftdi1
-  HINTS /usr/lib64 )
+  HINTS /usr/lib64 /usr/local/lib )
 
 INCLUDE(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LIBFTDI_FOUND to TRUE
