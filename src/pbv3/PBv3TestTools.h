@@ -24,6 +24,7 @@ namespace PBv3TestTools {
     json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max);
     json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
     json runBER(AMACv2 *amac);
+    json calibrateAMAC(AMACv2 *amac, double step);
 
     std::string getTimeAsString(std::chrono::system_clock::time_point t);
 }

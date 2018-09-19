@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
 
     // Output file
     std::string fileName = outDir + "/" + PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-test.json";
+    logger(logINFO) << "Results stored in " << fileName;
     std::fstream outfile(fileName, std::ios::out);
 
     // Prog ID set during init (require power-up to be set)
@@ -109,9 +110,12 @@ int main(int argc, char* argv[]) {
     testSum["tests"][1] = PBv3TestTools::testHvEnable(amac.get(), &sm);
     testSum["tests"][2] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
     testSum["tests"][3] = PBv3TestTools::runBER(amac.get());
+    testSum["tests"][4] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
 
     testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
     outfile << std::setw(4) << testSum << std::endl;
+
+    outfile.close();
 
     logger(logINFO) << "Power off";
     ps.turnOff();

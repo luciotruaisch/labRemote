@@ -1,6 +1,9 @@
 #include "PBv3TestTools.h"
 
 #include "EndeavourComException.h"
+#include "EndeavourRawFTDI.h"
+
+#include <memory>
 
 namespace PBv3TestTools {
     json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
@@ -306,6 +309,33 @@ namespace PBv3TestTools {
 
         return testSum;
     }
+
+  json calibrateAMAC(AMACv2 *amac, double step)
+  {
+    logger(logINFO) << "## Calibrating AMAC ##";
+    json testSum;
+    testSum["name"] = "amac_calibrate";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    // Run the test
+    int index=0;
+    for(double CALin=0; CALin<1.01; CALin+=step,index++)
+      {
+	double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+	amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+	usleep(5e3);
+	uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+	testSum["data"][index] = {CALact, CALamac};
+      }
+
+    // Store the results
+    testSum["header"] = {"CAL","Counts"};
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["success"] = true;
+
+    return testSum;
+  }
 
     std::string getTimeAsString(std::chrono::system_clock::time_point t) {
         auto as_time_t = std::chrono::system_clock::to_time_t(t);
