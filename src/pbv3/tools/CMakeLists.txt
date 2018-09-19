@@ -13,6 +13,8 @@ foreach(target ${tools})
 
   add_executable(${execname} ${srcfile})
   target_link_libraries(${execname} -lDevCom -lpbv3 -lGPIB)
+
+  add_dependencies(${execname} pbv3 DevCom GPIB)
   # target_link_libraries(${execname} -lGPIB)
   # if ( ${ENABLE_SCOPE} )
   #   target_link_libraries(${execname} -lScope)
