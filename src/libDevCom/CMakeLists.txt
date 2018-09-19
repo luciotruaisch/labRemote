@@ -23,6 +23,7 @@ set(SrcFiles DeviceCom.cpp
 
   ADCDevice.cpp
   AD799X.cpp
+  MAX11619.cpp
   #LTC2333.cpp
 
   #AD5160.cpp

@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "DACDevice.h"
+#include "ADCDevice.h"
 
 #include "EndeavourRaw.h"
 #include "PBv3CommPatchSPICom.h"
@@ -58,6 +59,7 @@ public:
   //
   // SPI devices
   std::shared_ptr<DACDevice> getDAC() const;
+  std::shared_ptr<ADCDevice> getADC() const;
 
 private:
   uint32_t m_DIT_MIN   =  6*30/40,m_DIT_MID   = 14*30/40,m_DIT_MAX   = 22*30/40;
@@ -75,6 +77,7 @@ private:
   std::shared_ptr<PBv3CommPatchSPICom> m_spiDAC;
 
   std::shared_ptr<DACDevice> m_dac;
+  std::shared_ptr<ADCDevice> m_adc;
 };
 
 #endif //ENDEAVOURRAWFTDI_H
