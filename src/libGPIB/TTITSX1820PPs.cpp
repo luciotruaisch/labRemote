@@ -49,7 +49,7 @@ void TTITSX1820PPs::init() {
     throw "Unknown power supply: "+idn;
 
   // Prepare everything else
-  this->send("OP OFF");
+  this->send("OP 0");
   this->send("*RST");
   //  this->send("TRIGGER:SOURCE IMM");
   //this->send("VOLT:PROT MAX");
@@ -78,7 +78,8 @@ void TTITSX1820PPs::setCurrent(double cur) {
 }
 
 std::string TTITSX1820PPs::getCurrent() {
-    return this->receive("IO?").substr(0, 15);
+    std::string result=this->receive("IO?");
+    return result.substr(0, result.length()-2);
 }
 
 void TTITSX1820PPs::turnOn() {
@@ -87,7 +88,7 @@ void TTITSX1820PPs::turnOn() {
 
 
 void TTITSX1820PPs::turnOff() {
-    this->send("OP OFF");
+    this->send("OP 0");
 }
 
 
