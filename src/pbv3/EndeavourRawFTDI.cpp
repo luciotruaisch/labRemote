@@ -2,6 +2,8 @@
 
 #include "EndeavourComException.h"
 
+#include "ftdihelp.h"
+
 #include <libftdi1/ftdi.h>
 #include <cstdint>
 #include <iostream>
@@ -68,6 +70,32 @@ EndeavourRawFTDI::EndeavourRawFTDI()
   // Set clock to 30MHz (max)
   data={0x86, 0x00, 0x00};
   ftdi_write_data(m_ftdi, &data[0], data.size());
+
+  // initialize high bytes values
+  data={0x82, 0x0C, 0xDF};
+  ftdi_write_data(m_ftdi, &data[0], data.size());
+
+  // SPI devices
+  m_spiADC=std::make_shared<PBv3CommPatchSPICom>(m_ftdi, 2);
+  m_spiDAC=std::make_shared<PBv3CommPatchSPICom>(m_ftdi, 3);
+
+  // setOF(true);
+  
+  // std::vector<uint8_t> spidata={0x3F,0xF0};
+  // m_spiDAC->write_block(spidata);
+
+  // //
+  // // Run something related to SPI ADC
+  // //
+  // m_spiADC->write_block({0x18, 0xF9});
+    
+  // data.resize(2*4);  
+  // m_spiADC->read_block(data);
+  // for(uint8_t i=0; i<4;i++)
+  //   {
+  //     uint16_t reading=(data[2*i+0]<<8)|(data[2*i+1]<<0);
+  //     std::cout << "CH" << i << ": " << ((reading>>2)&0x3FF) << std::endl;
+  //   }
 }
 
 EndeavourRawFTDI::~EndeavourRawFTDI()
@@ -200,7 +228,7 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
   // std::cout << std::dec;
 
   // Read back any response
-  ftdi_read_alldata(ftdidata, 1021);
+  ftdi_read_alldata(m_ftdi, ftdidata, 1021);
   // std::cout << "reading" << std::hex << std::endl;
   // for(const auto& x : ftdidata)
   //   std::cout << (uint32_t)x << std::endl;
@@ -249,19 +277,17 @@ void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size
   size=m_readSize;
 }
 
-void EndeavourRawFTDI::ftdi_read_alldata(std::vector<uint8_t>& data, uint32_t requested)
+void EndeavourRawFTDI::setOF(bool value)
 {
-  data.resize(requested);
-  uint32_t cnt=0;
-  for(uint8_t tryIdx=0;tryIdx<10;tryIdx++)
-    { 
-      int32_t ret=ftdi_read_data(m_ftdi, &data[cnt], data.size()-cnt);
-      if(ret<0)
-	throw EndeavourComException("Error in ftdi_read_data: "+ret);
-      cnt+=ret;
-      if(cnt==requested) return;
-    }
+  std::vector<uint8_t> data;
 
-  // Did not read all data
-  throw EndeavourComException("Recieved only "+std::to_string(cnt)+" / "+std::to_string(requested)+" bytes in ftdi_read_data");
+  data={0x83};
+  ftdi_write_data(m_ftdi, &data[0], data.size());
+  ftdi_read_alldata(m_ftdi, data, 1);
+  uint8_t hbyte=data[0];
+  
+  hbyte=(value)?(hbyte|(1<<0)):(hbyte&~(1<<0));
+
+  data={0x82, hbyte, 0xDF};  
+  ftdi_write_data(m_ftdi, &data[0], data.size());
 }

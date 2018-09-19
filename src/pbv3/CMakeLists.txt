@@ -3,12 +3,16 @@ include_directories( ../libDevCom ../libGPIB/include /usr/local/Cellar/nlohmann_
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 set(SrcFiles
+  ftdihelp.cpp
+
   EndeavourRaw.cpp
   EndeavourRawUIO.cpp
   EndeavourRawFTDI.cpp
 
   EndeavourCom.cpp
   EndeavourComException.cpp
+
+  PBv3CommPatchSPICom.cpp
 
   AMACv2.cpp
   AMACv2Reg.cpp

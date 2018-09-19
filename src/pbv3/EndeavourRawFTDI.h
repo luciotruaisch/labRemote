@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "DeviceCom.h"
 #include "EndeavourRaw.h"
+#include "PBv3CommPatchSPICom.h"
 
 class EndeavourRawFTDI : public EndeavourRaw
 {
@@ -12,6 +12,8 @@ public:
   EndeavourRawFTDI();
   ~EndeavourRawFTDI();
 
+  //
+  // Endeavour communication
   void setDitMin(uint32_t DIT_MIN);
   uint32_t getDitMin();
 
@@ -47,6 +49,10 @@ public:
   bool isDataValid();
   void readData(unsigned long long int& data, unsigned int& size);
 
+  //
+  // GPIO pins
+  void setOF(bool value);
+
 private:
   uint32_t m_DIT_MIN   =  6*30/40,m_DIT_MID   = 14*30/40,m_DIT_MAX   = 22*30/40;
   uint32_t m_DAH_MIN   = 29*30/40,m_DAH_MID   = 76*30/40,m_DAH_MAX   =124*30/40;
@@ -58,8 +64,9 @@ private:
   unsigned long long int m_readData;
   unsigned int m_readSize;
 
-  // read all requested data
-  void ftdi_read_alldata(std::vector<uint8_t>& data, uint32_t requested);
+  // SPI com stuff
+  std::shared_ptr<PBv3CommPatchSPICom> m_spiADC;
+  std::shared_ptr<PBv3CommPatchSPICom> m_spiDAC;
 };
 
 #endif //ENDEAVOURRAWFTDI_H
