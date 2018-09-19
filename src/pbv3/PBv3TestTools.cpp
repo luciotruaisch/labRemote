@@ -164,13 +164,13 @@ namespace PBv3TestTools {
         // Configure sourcemeter
         sm->turnOff();
         sm->setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+        sm->setSense(KeithleyMode::VOLTAGE, 400, 400);
 
         testSum["header"] = {"HV Enable", "Voltage [V]", "Current [A]"};
         // See what we see
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         sm->turnOn();
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         double hv_v_off = std::stod(sm->sense(KeithleyMode::VOLTAGE));
         double hv_i_off = std::stod(sm->sense(KeithleyMode::CURRENT));
         logger(logINFO) << " Seeing " << hv_v_off << "V and " << hv_i_off << "A in off state.";
@@ -180,6 +180,7 @@ namespace PBv3TestTools {
         logger(logINFO) << " --> Turn on HV enable.";
         amac->wrField(&AMACv2::CntSetHV0en, 1);
         amac->wrField(&AMACv2::CntSetCHV0en, 1);
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         double hv_v_on = std::stod(sm->sense(KeithleyMode::VOLTAGE));
         double hv_i_on = std::stod(sm->sense(KeithleyMode::CURRENT));
@@ -196,6 +197,8 @@ namespace PBv3TestTools {
         }
 
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+        sm->turnOff();
         return testSum;
     }
 

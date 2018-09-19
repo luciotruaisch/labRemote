@@ -43,7 +43,7 @@ void Keithley24XX::init() {
         return !std::isspace(ch);
       }).base(), idn.end());
 
-  if(idn.find("KEITHLEY INSTRUMENTS INC.,MODEL 2410,0692306,C12")==std::string::npos)
+  if(idn.find("KEITHLEY INSTRUMENTS INC.,MODEL 2410")==std::string::npos)
     throw "Unknown power supply: "+idn;
   return;
   // Prepare everything else
