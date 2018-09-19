@@ -108,12 +108,15 @@ int main(int argc, char* argv[]) {
     testSum["tests"][0] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
     testSum["tests"][1] = PBv3TestTools::testHvEnable(amac.get(), &sm);
     testSum["tests"][2] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
-      
+    testSum["tests"][3] = PBv3TestTools::runBER(amac.get());
+
     testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
     outfile << std::setw(4) << testSum << std::endl;
 
+    logger(logINFO) << "Power off";
     ps.turnOff();
     dc.turnOff();
+    sm.turnOff();
 
     return 0;
 }
