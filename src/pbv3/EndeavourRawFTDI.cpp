@@ -200,12 +200,10 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
   // std::cout << std::dec;
 
   // Read back any response
-  uint32_t ret=ftdi_read_data(m_ftdi, &ftdidata[0], ftdidata.size());
-  // std::cout << "ftdi_read_data = " << ret << std::endl;
-  ftdidata.resize(ret);
+  ftdi_read_alldata(ftdidata, 1021);
   // std::cout << "reading" << std::hex << std::endl;
   // for(const auto& x : ftdidata)
-  // std::cout << (uint32_t)x << std::endl;
+  //   std::cout << (uint32_t)x << std::endl;
   // std::cout << std::dec;
 
   m_readData=0;
@@ -249,4 +247,21 @@ void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size
 {
   data=m_readData;
   size=m_readSize;
+}
+
+void EndeavourRawFTDI::ftdi_read_alldata(std::vector<uint8_t>& data, uint32_t requested)
+{
+  data.resize(requested);
+  uint32_t cnt=0;
+  for(uint8_t tryIdx=0;tryIdx<10;tryIdx++)
+    { 
+      int32_t ret=ftdi_read_data(m_ftdi, &data[cnt], data.size()-cnt);
+      if(ret<0)
+	throw EndeavourComException("Error in ftdi_read_data: "+ret);
+      cnt+=ret;
+      if(cnt==requested) return;
+    }
+
+  // Did not read all data
+  throw EndeavourComException("Recieved only "+std::to_string(cnt)+" / "+std::to_string(requested)+" bytes in ftdi_read_data");
 }
