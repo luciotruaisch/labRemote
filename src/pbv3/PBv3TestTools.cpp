@@ -202,73 +202,78 @@ namespace PBv3TestTools {
         return testSum;
     }
 
-    json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm) {
-        logger(logINFO) << "## Reading current status ##";
-        json testSum;
-        testSum["name"] = "amac_status";
-        testSum["success"] = false;
-        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm) {
+    logger(logINFO) << "## Reading current status ##";
+    json testSum;
+    testSum["name"] = "amac_status";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    // Control reg status
+    int HVcurGain = amac->rdField(&AMACv2::HVcurGain);
+    int RingOscFrq = amac->rdField(&AMACv2::RingOscFrq);
+    int VDDbg = amac->rdField(&AMACv2::VDDbg);
+    int AMbg = amac->rdField(&AMACv2::AMbg);
+    int AMintCalib = amac->rdField(&AMACv2::AMintCalib);
+
+    testSum["config"]["HvcurGain"] = HVcurGain;
+    testSum["config"]["RingOscFrq"] = RingOscFrq;
+    testSum["config"]["VDDbg"] = VDDbg;
+    testSum["config"]["AMbg"] = AMbg;
+    testSum["config"]["AMinCalib"] = AMintCalib;
         
-        // Control reg status
-        int HVcurGain = amac->rdField(&AMACv2::HVcurGain);
-        int RingOscFrq = amac->rdField(&AMACv2::RingOscFrq);
-        int VDDbg = amac->rdField(&AMACv2::VDDbg);
-        int AMbg = amac->rdField(&AMACv2::AMbg);
-        int AMintCalib = amac->rdField(&AMACv2::AMintCalib);
+    // ADCs
+    int Vdcdc = amac->rdField(&AMACv2::Ch0Value);
+    int VddLr = amac->rdField(&AMACv2::Ch1Value);
+    int DCDCin = amac->rdField(&AMACv2::Ch2Value);
+    amac->wrField(&AMACv2::Ch3Mux, 0); //a
+    int VDDREG = amac->rdField(&AMACv2::Ch3Value);
+    amac->wrField(&AMACv2::Ch3Mux, 2); //c
+    int AM900BG = amac->rdField(&AMACv2::Ch3Value);
+    amac->wrField(&AMACv2::Ch4Mux, 0); //a
+    int AM600BG = amac->rdField(&AMACv2::Ch4Value);
+    amac->wrField(&AMACv2::Ch4Mux, 1); //b
+    int CALin = amac->rdField(&AMACv2::Ch4Value);
+    int NTC = amac->rdField(&AMACv2::Ch9Value);
+    int Cur10V = amac->rdField(&AMACv2::Ch12Value);
+    int Cur1V = amac->rdField(&AMACv2::Ch13Value);
+    int HVret = amac->rdField(&AMACv2::Ch14Value);
+    int PTAT = amac->rdField(&AMACv2::Ch15Value);
 
-        testSum["config"]["HvcurGain"] = HVcurGain;
-        testSum["config"]["RingOscFrq"] = RingOscFrq;
-        testSum["config"]["VDDbg"] = VDDbg;
-        testSum["config"]["AMbg"] = AMbg;
-        testSum["config"]["AMinCalib"] = AMintCalib;
-        
-        // ADCs
-        int Vdcdc = amac->rdField(&AMACv2::Ch0Value);
-        int VddLr = amac->rdField(&AMACv2::Ch1Value);
-        int DCDCin = amac->rdField(&AMACv2::Ch2Value);
-        amac->wrField(&AMACv2::Ch3Mux, 0); //a
-        int VDDREG = amac->rdField(&AMACv2::Ch3Value);
-        amac->wrField(&AMACv2::Ch3Mux, 2); //c
-        int AM900BG = amac->rdField(&AMACv2::Ch3Value);
-        amac->wrField(&AMACv2::Ch4Mux, 0); //a
-        int AM600BG = amac->rdField(&AMACv2::Ch4Value);
-        amac->wrField(&AMACv2::Ch4Mux, 1); //b
-        int CALin = amac->rdField(&AMACv2::Ch4Value);
-        int NTC = amac->rdField(&AMACv2::Ch9Value);
-        int Cur10V = amac->rdField(&AMACv2::Ch12Value);
-        int Cur1V = amac->rdField(&AMACv2::Ch13Value);
-        int HVret = amac->rdField(&AMACv2::Ch14Value);
-        int PTAT = amac->rdField(&AMACv2::Ch15Value);
+    double Vin = std::stod(ps->getVoltage());
+    double Iin = std::stod(ps->getCurrent());
 
-        double Vin = std::stod(ps->getVoltage());
-        double Iin = std::stod(ps->getCurrent());
+    double Vout = load->getValues().vol;
+    double Iout = load->getValues().cur;
 
-        double Vout = load->getValues().vol;
-        double Iout = load->getValues().cur;
+    double HV_Vin = std::stod(sm->sense(KeithleyMode::VOLTAGE));
+    double HV_Iin = std::stod(sm->sense(KeithleyMode::CURRENT));
 
-        double HV_Vin = std::stod(sm->sense(KeithleyMode::VOLTAGE));
-        double HV_Iin = std::stod(sm->sense(KeithleyMode::CURRENT));
-        
-        std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
-            "Am900Bg [counts]]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
-            "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
-            "HV_Vin [V]\tHV_Iin [A]" << std::endl;
-        std::cout << Vdcdc << "\t" << VddLr << "\t" << DCDCin << "\t" << VDDREG << "\t" << AM900BG <<
-            "\t" << AM600BG << "\t" << CALin << "\t" << NTC << "\t" << Cur10V << "\t" << Cur1V << 
-            "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
-            Iout << "\t" << HV_Vin << "\t" << HV_Iin << std::endl;
-        
-        testSum["header"] = {"Vdcdc [counts]", "VddLr [counts]", "DCDCin [counts]", "VddReg [counts]",
-            "Am900Bg [counts]", "Am600Bg [counts]", "Cal [counts]", "NTC [counts]", "Cur10V [counts]",
-            "Cur1V [counts]", "HVret [counts]", "PTAT [counts]", "Vin [V]", "Iin [A]", "Vout [mV]", "Iout [mA]",
-            "HV_Vin [V]", "HV_Iin [A]"};
-        testSum["data"][0] = {Vdcdc, VddLr, DCDCin, VDDREG, AM900BG, AM600BG, CALin, NTC, Cur10V, Cur1V, HVret, PTAT,
-            Vin, Iin, Vout, Iout, HV_Vin, HV_Iin};
-        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        testSum["success"] = true;
+    double ADC0 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(0);
+    double ADC1 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(1);
+    double ADC2 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(2);
+    double ADC3 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(3);
 
-        return testSum;
-    }
+    std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
+      "Am900Bg [counts]]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
+      "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
+      "HV_Vin [V]\tHV_Iin [A]" << std::endl;
+    std::cout << Vdcdc << "\t" << VddLr << "\t" << DCDCin << "\t" << VDDREG << "\t" << AM900BG <<
+      "\t" << AM600BG << "\t" << CALin << "\t" << NTC << "\t" << Cur10V << "\t" << Cur1V << 
+      "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
+      Iout << "\t" << HV_Vin << "\t" << HV_Iin << std::endl;
+
+    testSum["header"] = {"Vdcdc [counts]", "VddLr [counts]", "DCDCin [counts]", "VddReg [counts]",
+			 "Am900Bg [counts]", "Am600Bg [counts]", "Cal [counts]", "NTC [counts]", "Cur10V [counts]",
+			 "Cur1V [counts]", "HVret [counts]", "PTAT [counts]", "Vin [V]", "Iin [A]", "Vout [mV]", "Iout [mA]",
+			 "HV_Vin [V]", "HV_Iin [A]", "ADC0 [V]", "ADC1 [V]", "ADC2 [V]", "ADC3 [V]"};
+    testSum["data"][0] = {Vdcdc, VddLr, DCDCin, VDDREG, AM900BG, AM600BG, CALin, NTC, Cur10V, Cur1V, HVret, PTAT,
+			  Vin, Iin, Vout, Iout, HV_Vin, HV_Iin, ADC0, ADC1, ADC2, ADC3};
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["success"] = true;
+
+    return testSum;
+  }
 
     json runBER(AMACv2 *amac) {
         logger(logINFO) << "## Running Bit Error Rate Test ##";
@@ -306,6 +311,8 @@ namespace PBv3TestTools {
         testSum["data"][0] = {reliability};
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["success"] = reliability==1;
+
+	if(reliability!=1) { logger(logERROR) << "Reliability = " << reliability; }
 
         return testSum;
     }
