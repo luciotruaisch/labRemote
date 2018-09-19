@@ -30,8 +30,8 @@ int main(int argc, char* argv[]) {
 
     while (1) {
         sleep(1);
-        logger(logINFO) << "PS Current: " << ps.getCurrent();
-	logger(logINFO) << "PS Voltage: " << ps.getVoltage();
+        logger(logINFO) << "PS Current: (" << ps.getCurrent() << ")";
+	logger(logINFO) << "PS Voltage: (" << ps.getVoltage() << ")";
 	
     }
 

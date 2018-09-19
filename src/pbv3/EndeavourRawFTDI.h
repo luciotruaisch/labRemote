@@ -57,6 +57,9 @@ private:
   // Last returned data
   unsigned long long int m_readData;
   unsigned int m_readSize;
+
+  // read all requested data
+  void ftdi_read_alldata(std::vector<uint8_t>& data, uint32_t requested);
 };
 
 #endif //ENDEAVOURRAWFTDI_H
