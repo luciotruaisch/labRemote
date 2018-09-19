@@ -1,6 +1,9 @@
 #include "PBv3TestTools.h"
 
 #include "EndeavourComException.h"
+#include "EndeavourRawFTDI.h"
+
+#include <memory>
 
 namespace PBv3TestTools {
     json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
@@ -268,6 +271,83 @@ namespace PBv3TestTools {
         testSum["success"] = true;
 
         return testSum;
+    }
+
+    json runBER(AMACv2 *amac) {
+        logger(logINFO) << "## Running Bit Error Rate Test ##";
+        json testSum;
+        testSum["name"] = "amac_ber";
+        testSum["success"] = false;
+        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        
+	// Run the test
+	uint trails=100;
+	uint good=0;
+	for(uint i=0; i<trails; i++)
+	  {
+	    try
+	      {      
+		uint valin=rand()*0xFFFFFFFF;
+		amac->write_reg(166,valin);
+		usleep(50);
+		uint valout=amac->read_reg(166);
+		usleep(50);
+		if(valin==valout)
+		  good++;
+		else
+		  logger(logERROR) << "Write: 0x" << std::hex << valin << ", Read: " << valout << std::dec;
+	      }
+	    catch(EndeavourComException &e)
+	      {
+		//std::cout << e.what() << std::endl;
+	      }
+	  }
+	float reliability=((float)good)/trails;
+
+	// Store the results
+        testSum["header"] = {"Reliability"};
+        testSum["data"][0] = {reliability};
+        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = reliability==1;
+
+        return testSum;
+    }
+
+  json calibrateAMAC(AMACv2 *amac, double step)
+  {
+    logger(logINFO) << "## Calibrating AMAC ##";
+    json testSum;
+    testSum["name"] = "amac_calibrate";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    // Run the test
+    int index=0;
+    for(double CALin=0; CALin<1.01; CALin+=step,index++)
+      {
+	double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+	amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+	usleep(5e3);
+	uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+	testSum["data"][index] = {CALact, CALamac};
+      }
+
+    // Store the results
+    testSum["header"] = {"CAL","Counts"};
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["success"] = true;
+
+    return testSum;
+  }
+
+    std::string getTimeAsString(std::chrono::system_clock::time_point t) {
+        auto as_time_t = std::chrono::system_clock::to_time_t(t);
+        struct tm tm;
+        char some_buffer[128];
+        if (::gmtime_r(&as_time_t, &tm))
+            if (std::strftime(some_buffer, sizeof(some_buffer), "%X-%d_%m_%Y", &tm))
+                return std::string(some_buffer);
+        throw std::runtime_error("Failed to get current date as string");
     }
 
 }

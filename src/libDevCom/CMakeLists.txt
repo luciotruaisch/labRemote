@@ -8,7 +8,7 @@ set(SrcFiles DeviceCom.cpp
   I2CDevCom.cpp
   PCA9548ACom.cpp
 
-  #FreqMeas.cpp
+  SPICom.cpp
 
   ComIOException.cpp
   NotSupportedException.cpp
@@ -18,10 +18,12 @@ set(SrcFiles DeviceCom.cpp
 
   DACDevice.cpp
   DAC5574.cpp
+  MCP4801.cpp
   #LTC2666.cpp
 
   ADCDevice.cpp
   AD799X.cpp
+  MAX11619.cpp
   #LTC2333.cpp
 
   #AD5160.cpp

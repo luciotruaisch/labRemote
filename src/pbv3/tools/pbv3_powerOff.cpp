@@ -51,9 +51,29 @@ int main(int argc, char* argv[]) {
     logger(logINFO) << "Init BK DCDC Load";
     Bk85xx dc(bkDev);
 
+    // Init Keithley2410
+    logger(logINFO) << "Init Keithley 2410";
+    Keithley24XX sm(agiDev, 23);
+    try
+    {
+        sm.init();
+        sm.setSource(KeithleyMode::CURRENT, 0.5e-6, 0.5e-6);
+        sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+    }
+    catch(std::string e)
+    {
+        logger(logERROR) << e;
+        return 1;
+    }
+
+    //
+    // Power off
     logger(logINFO) << "Turn everything off!";
     ps.turnOff();
     dc.turnOff();
+    sm.turnOff();
+
+
 
    return 0;
 }
