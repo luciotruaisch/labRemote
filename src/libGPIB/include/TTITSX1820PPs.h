@@ -14,8 +14,9 @@
 #include <chrono>
 
 #include "SerialCom.h"
+#include "GenericPs.h"
 
-class TTITSX1820PPs {
+class TTITSX1820PPs : public GenericPs {
     public:
         TTITSX1820PPs(std::string dev, unsigned addr);
         ~TTITSX1820PPs();

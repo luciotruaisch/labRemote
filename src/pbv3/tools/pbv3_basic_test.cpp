@@ -25,17 +25,21 @@ loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[]) {
     
-    if (argc < 3) {
+    if (argc < 4) {
         logger(logERROR) << "Not enough arguments!";
-        logger(logERROR) << "Usage: " << argv[0] << " <BK85XX> <GPIB>";
+        logger(logERROR) << "Usage: " << argv[0] << " <data folder> <BK85XX> <GPIB>";
         return -1;
     }
     
-    std::string bkDev = argv[1];
-    std::string agiDev = argv[2];
+    json testSum;
+    testSum["program"] = argv[0];
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
+    std::string outDir = argv[1];
+    std::string bkDev = argv[2];
+    std::string agiDev = argv[3];
 
     // Output file
-    std::string fileName = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-test.json";
+    std::string fileName = outDir + "/" + PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-test.json";
     std::fstream outfile(fileName, std::ios::out);
 
     // Prog ID set during init (require power-up to be set)
@@ -82,12 +86,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
-    json testSum;
 
     // Start testing
-    testSum[0] = PBv3TestTools::testLvEnable(amac.get(), (GenericPs*) &ps, &dc);
-    testSum[1] = PBv3TestTools::measureEfficiency(amac.get(), (GenericPs*) &ps, &dc, 100, 0, 3500);
+    testSum["tests"][0] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
+    testSum["tests"][1] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
       
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
     outfile << std::setw(4) << testSum << std::endl;
 
+    ps.turnOff();
+    dc.turnOff();
+
+    return 0;
 }

@@ -57,11 +57,9 @@ void TTITSX1820PPs::init() {
 
 
 void TTITSX1820PPs::setCh(unsigned ch) {
-    this->send("INST:SEL OUT" + std::to_string(ch));
 }
 
 void TTITSX1820PPs::setRange(unsigned range) {
-    this->send("VOLTAGE:RANGE P" + std::to_string(range) + "V");
 }
 
 void TTITSX1820PPs::setVoltage(double volt) {

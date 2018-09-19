@@ -63,7 +63,8 @@ namespace PBv3TestTools {
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         load->setCurrent(0);
         load->turnOn();
-        try {
+        logger(logINFO) << " --> Turn off DCDC ..";
+	try {
             amac->wrField(&AMACv2::DCDCen, 0);
             amac->wrField(&AMACv2::DCDCenC, 0);
         } catch(EndeavourComException &e) {
@@ -72,8 +73,8 @@ namespace PBv3TestTools {
             return testSum;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        logger(logINFO) << " --> Get baseline current: (" << ps->getCurrent() << ")A";
         double Iin_offset = std::stod(ps->getCurrent());
-        logger(logINFO) << " --> Get baseline current: " << Iin_offset << "A";
         testSum["Iin_offset"] = Iin_offset;
         
         logger(logINFO) << " --> Turn on DCDC ...";
@@ -90,7 +91,7 @@ namespace PBv3TestTools {
         testSum["dwellTime"] = dwell_time;
 
         logger(logINFO) << " --> Starting measurement ...";
-        std::cout << "Vin" << "\t" << "Iin" << "\t\t" << "Vout" << "\t" << "Iout" << "\t" << "Vdcdc"
+        std::cout << "Vin" << "\t" << "Iin" << "\t" << "Vout" << "\t" << "Iout" << "\t" << "Vdcdc"
             << "\t" << "VddLr" << "\t" << "DCDCin" << "\t" << "NTC" << "\t"
             << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
         testSum["header"] = {"Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]",
@@ -129,6 +130,9 @@ namespace PBv3TestTools {
             testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency};
 
         }
+
+	logger(logINFO) << " --> Done!! Turng off load!";
+	load->setCurrent(0);
         
         testSum["success"] = true;
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
