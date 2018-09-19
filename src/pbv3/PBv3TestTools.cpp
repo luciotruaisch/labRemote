@@ -97,8 +97,13 @@ namespace PBv3TestTools {
             "VddLR [counts]", "DCDCin [counts]", "NTC [counts]",
             "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]", "Efficiency"};
         // Set sub-channel
-        amac->wrField(&AMACv2::Ch12Mux, 0); //a
-        amac->wrField(&AMACv2::Ch13Mux, 0); //a
+        try {
+            amac->wrField(&AMACv2::Ch12Mux, 0); //a
+            amac->wrField(&AMACv2::Ch13Mux, 0); //a
+        } catch(EndeavourComException &e) {
+            logger(logERROR) << e.what();
+            return testSum;
+        }
         
         // Loop over currents
         int index = 0;

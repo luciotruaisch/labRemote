@@ -19,6 +19,7 @@
 #include "AgilentPs.h"
 #include "TTITSX1820PPs.h"
 #include "PBv3TestTools.h"
+#include "Keithley24XX.h"
 
 loglevel_e loglevel = logINFO;
 
@@ -66,6 +67,22 @@ int main(int argc, char* argv[]) {
     dc.setCurrent(0);
     dc.turnOn();
 
+    // Init Keithley2410
+    logger(logINFO) << "Init Keithley 2410";
+    Keithley24XX sm(agiDev, 23);
+    try
+    {
+        sm.init();
+        sm.setSource(KeithleyMode::CURRENT, 0.5e-6, 0.5e-6);
+        sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+    }
+    catch(std::string e)
+    {
+        logger(logERROR) << e;
+        return 1;
+    }
+
+
     // Turn on power
     logger(logINFO) << "Turn on PS";
     ps.turnOn();
@@ -86,7 +103,8 @@ int main(int argc, char* argv[]) {
 
     // Start testing
     testSum[0] = PBv3TestTools::testLvEnable(amac.get(), (GenericPs*) &ps, &dc);
-    testSum[1] = PBv3TestTools::measureEfficiency(amac.get(), (GenericPs*) &ps, &dc, 100, 0, 3500);
+    //testSum[1] = PBv3TestTools::measureEfficiency(amac.get(), (GenericPs*) &ps, &dc, 100, 0, 3500);
+    testSum[1] = PBv3TestTools::testHvEnable(amac.get(), &sm);
       
     outfile << std::setw(4) << testSum << std::endl;
 
