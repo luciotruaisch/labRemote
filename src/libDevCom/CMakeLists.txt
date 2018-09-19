@@ -18,6 +18,7 @@ set(SrcFiles DeviceCom.cpp
 
   DACDevice.cpp
   DAC5574.cpp
+  MCP4801.cpp
   #LTC2666.cpp
 
   ADCDevice.cpp

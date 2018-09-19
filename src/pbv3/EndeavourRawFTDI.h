@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "DACDevice.h"
+
 #include "EndeavourRaw.h"
 #include "PBv3CommPatchSPICom.h"
 
@@ -53,6 +55,10 @@ public:
   // GPIO pins
   void setOF(bool value);
 
+  //
+  // SPI devices
+  std::shared_ptr<DACDevice> getDAC() const;
+
 private:
   uint32_t m_DIT_MIN   =  6*30/40,m_DIT_MID   = 14*30/40,m_DIT_MAX   = 22*30/40;
   uint32_t m_DAH_MIN   = 29*30/40,m_DAH_MID   = 76*30/40,m_DAH_MAX   =124*30/40;
@@ -64,9 +70,11 @@ private:
   unsigned long long int m_readData;
   unsigned int m_readSize;
 
-  // SPI com stuff
+  // SPI devices
   std::shared_ptr<PBv3CommPatchSPICom> m_spiADC;
   std::shared_ptr<PBv3CommPatchSPICom> m_spiDAC;
+
+  std::shared_ptr<DACDevice> m_dac;
 };
 
 #endif //ENDEAVOURRAWFTDI_H

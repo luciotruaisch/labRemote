@@ -2,6 +2,8 @@
 
 #include "EndeavourComException.h"
 
+#include "MCP4801.h"
+
 #include "ftdihelp.h"
 
 #include <libftdi1/ftdi.h>
@@ -79,6 +81,7 @@ EndeavourRawFTDI::EndeavourRawFTDI()
   m_spiADC=std::make_shared<PBv3CommPatchSPICom>(m_ftdi, 2);
   m_spiDAC=std::make_shared<PBv3CommPatchSPICom>(m_ftdi, 3);
 
+  m_dac=std::make_shared<MCP4801>(m_spiDAC);
   // setOF(true);
   
   // std::vector<uint8_t> spidata={0x3F,0xF0};
@@ -291,3 +294,7 @@ void EndeavourRawFTDI::setOF(bool value)
   data={0x82, hbyte, 0xDF};  
   ftdi_write_data(m_ftdi, &data[0], data.size());
 }
+
+std::shared_ptr<DACDevice> EndeavourRawFTDI::getDAC() const
+{ return m_dac; }
+  
