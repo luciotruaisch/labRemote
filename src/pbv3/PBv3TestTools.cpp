@@ -99,7 +99,7 @@ namespace PBv3TestTools {
             << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
         testSum["header"] = {"Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]",
             "VddLR [counts]", "DCDCin [counts]", "NTC [counts]",
-            "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]", "Efficiency"};
+            "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"};
         // Set sub-channel
         try {
             amac->wrField(&AMACv2::Ch12Mux, 0); //a
@@ -135,7 +135,7 @@ namespace PBv3TestTools {
             std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
                 << "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
                 << Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
-            testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency};
+            testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT};
 
         }
 
