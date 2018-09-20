@@ -18,6 +18,7 @@
 #include "Bk85xx.h"
 #include "AgilentPs.h"
 #include "TTITSX1820PPs.h"
+#include "TTIMX180TPPs.h"
 #include "PBv3TestTools.h"
 
 loglevel_e loglevel = logINFO;
@@ -36,10 +37,12 @@ int main(int argc, char* argv[]) {
 
     // Init Agilent
     logger(logINFO) << "Init Agilent PS";
-    TTITSX1820PPs ps(agiDev, 11);
+    //TTITSX1820PPs ps(agiDev, 11);
+    TTIMX180TPPs ps(agiDev, 10);
     try
     {
         ps.init();
+        ps.setCh(1);
     }
     catch(std::string e)
     {

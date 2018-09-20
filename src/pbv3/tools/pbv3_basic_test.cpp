@@ -18,6 +18,7 @@
 #include "Bk85xx.h"
 #include "AgilentPs.h"
 #include "TTITSX1820PPs.h"
+#include "TTIMX180TPPs.h"
 #include "PBv3TestTools.h"
 #include "Keithley24XX.h"
 
@@ -49,10 +50,11 @@ int main(int argc, char* argv[]) {
 
     // Init Agilent
     logger(logINFO) << "Init Agilent PS";
-    TTITSX1820PPs ps(agiDev, 11);
+    TTIMX180TPPs ps(agiDev, 10);
     try
     {
         ps.init();
+        ps.setCh(1);
         ps.setRange(20);
         ps.setVoltage(11.0);
         ps.setCurrent(2.00);

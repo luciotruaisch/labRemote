@@ -12,27 +12,29 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include "GenericPs.h"
 
 #include "SerialCom.h"
 
-class TTIMX180TPPs {
+class TTIMX180TPPs : public GenericPs{
     public:
         TTIMX180TPPs(std::string dev, unsigned addr);
         ~TTIMX180TPPs();
 
         void init();
         void setCh(unsigned ch);
-        void setRange(unsigned number,unsigned range);
-        void setVoltage(unsigned number,double volt);
-        std::string getVoltage(unsigned number);
-        void setCurrent(unsigned number,double cur);
-        std::string getCurrent(unsigned number);
-        void turnOn(unsigned number);
-        void turnOff(unsigned number);
+        void setRange(unsigned range);
+        void setVoltage(double volt);
+        std::string getVoltage();
+        void setCurrent(double cur);
+        std::string getCurrent();
+        void turnOn();
+        void turnOff();
 
     private:
         SerialCom *m_com;
         unsigned m_addr;
+        unsigned m_channel;
 
         void send(std::string cmd);
         std::string receive(std::string cmd);
