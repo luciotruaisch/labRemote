@@ -393,7 +393,7 @@ namespace PBv3TestTools {
         struct tm tm;
         char some_buffer[128];
         if (::gmtime_r(&as_time_t, &tm))
-            if (std::strftime(some_buffer, sizeof(some_buffer), "%d_%m_%Y-%X", &tm))
+            if (std::strftime(some_buffer, sizeof(some_buffer), "%Y_%m_%d-%X", &tm))
                 return std::string(some_buffer);
         throw std::runtime_error("Failed to get current date as string");
     }
