@@ -19,7 +19,6 @@
 #include "AgilentPs.h"
 #include "TTITSX1820PPs.h"
 #include "PBv3TestTools.h"
-#include "PBv3Monitor.h"
 #include "Keithley24XX.h"
 
 loglevel_e loglevel = logINFO;
