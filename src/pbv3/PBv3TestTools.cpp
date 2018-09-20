@@ -487,5 +487,49 @@ namespace PBv3TestTools {
         return testSum;
     }
 
+    json calibVinResponse(AMACv2 *amac, GenericPs *ps) {
+        logger(logINFO) << "## Measure LV IV ##";
+        json testSum;
+        testSum["name"] = "calib_vin_response";
+        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = false;
+
+
+        double v_start = 6.0;
+        double v_end = 11.0;
+        double v_step = 0.1;
+        logger(logINFO) << " --> Running from " << v_start << "V to " << v_end << "V in steps of " << v_step << "V";
+        ps->setVoltage(v_start);
+        ps->turnOn();
+
+        testSum["header"] = {"Vset [V]", "Vread [V]", "Iread [A]", "DCDCin [counts]"};
+        std::cout << "Vset\tVread\tIread" << std::endl;
+        int index = 0;
+        for (double vset = v_start; vset<=v_end; vset+=v_step) {
+            ps->setVoltage(vset);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                
+            int DCDCin;
+            try {
+                DCDCin = amac->rdField(&AMACv2::Ch2Value);
+            } catch(EndeavourComException &e) {
+                logger(logERROR) << e.what();
+                testSum["error"] = e.what();
+                return testSum;
+            }
+            double v_read = std::stod(ps->getVoltage());
+            double i_read = std::stod(ps->getCurrent());
+                
+            std::cout << vset << "\t" << v_read << "\t" << i_read << "\t" << DCDCin <<  std::endl;
+            testSum["data"][index++] = {vset, v_read, i_read, DCDCin};
+        }
+
+        ps->setVoltage(11.0);
+
+        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = true;
+        return testSum;
+    }
+
 }
 

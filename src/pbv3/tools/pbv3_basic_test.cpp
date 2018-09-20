@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
     Keithley24XX sm(agiDev, 23);
     try
     {
+        sm.turnOff();
         sm.init();
         sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
         sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
@@ -113,6 +114,7 @@ int main(int argc, char* argv[]) {
     // Start testing
     testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
     testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
+    testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
     testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
     testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
