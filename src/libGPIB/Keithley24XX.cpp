@@ -65,13 +65,13 @@ void Keithley24XX::setSource(enum KeithleyMode mode, double range, double value)
     switch (mode) {
         case KeithleyMode::VOLTAGE:
             this->send(":SOURCE:FUNC VOLT");
-            this->send(":SOURCE:VOLT:RANGE " + std::to_string(range));
-            this->send(":SOURCE:VOLT " + std::to_string(value));
+            this->send(":SOURCE:VOLT:RANGE " + to_string_with_precision<double>(range, 8));
+            this->send(":SOURCE:VOLT " + to_string_with_precision<double>(value, 8));
             break;
         case KeithleyMode::CURRENT:
             this->send(":SOURCE:FUNC CURR");
-            this->send(":SOURCE:CURR:RANGE " + std::to_string(range));
-            this->send(":SOURCE:CURR " + std::to_string(value));
+            this->send(":SOURCE:CURR:RANGE " + to_string_with_precision<double>(range, 8));
+            this->send(":SOURCE:CURR " + to_string_with_precision<double>(value, 8));
             break;
         default:
             logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
@@ -118,7 +118,6 @@ std::string Keithley24XX::sense(enum KeithleyMode mode)
       break;
     }
 
-  std::cout << this->receive(":READ?") << std::endl;
   return this->receive(":READ?").substr(0, 13);
 }
 

@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     try
     {
         sm.init();
-        sm.setSource(KeithleyMode::CURRENT, 0.5e-6, 0.5e-6);
+        sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
         sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
     }
     catch(std::string e)
@@ -87,11 +87,17 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // Measure LV IV
+    uint32_t test=0;
+    testSum["tests"][test++] = PBv3TestTools::measureLvIV(dynamic_cast<GenericPs*>(&ps));
+    
     // Turn on power
-    logger(logINFO) << "Turn on PS";
+    logger(logINFO) << "Turn on PS fully";
+    ps.setVoltage(11.0);
+    ps.setCurrent(2.00);
     ps.turnOn();
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
+    
     // Init com
     logger(logINFO) << "Init AMAC";
     std::unique_ptr<AMACv2> amac;
@@ -105,7 +111,6 @@ int main(int argc, char* argv[]) {
     
 
     // Start testing
-    uint32_t test=0;
     testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
     testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);

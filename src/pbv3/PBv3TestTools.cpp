@@ -202,8 +202,8 @@ namespace PBv3TestTools {
 
         // Configure sourcemeter
         sm->turnOff();
-        sm->setSource(KeithleyMode::CURRENT, 1e-3, 0.5e-3);
-        sm->setSense(KeithleyMode::VOLTAGE, 400, 400);
+        sm->setSource(KeithleyMode::CURRENT, 1e-3, 1e-3);
+        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
 
         testSum["header"] = {"HV Enable", "Voltage [V]", "Current [A]"};
         // See what we see
@@ -233,7 +233,7 @@ namespace PBv3TestTools {
         testSum["data"][1] = {1, hv_v_on, hv_i_on};
 
         // TODO interpret
-        if (hv_v_off > 10.0 && hv_v_on > 200 && hv_i_on > 0.4e-3) {
+        if (hv_v_off > 350.0 && hv_i_off < 1e-6 && hv_v_on > 250 && hv_i_on > 0.4e-3) {
             logger(logINFO) << " --> Test successful!";
         } else {
             logger(logERROR) << " --> Something wrong with HV enable!";
@@ -400,9 +400,9 @@ namespace PBv3TestTools {
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["success"] = false;
 
-        double ileak_min = 1e-7;
-        double ileak_max = 1e-3;
-        double ileak_step = 1e-7;
+        double ileak_min = 0;
+        double ileak_max = 1.0e-3;
+        double ileak_step = 1.0e-8;
 
         logger(logINFO) << " --> Turn on SourceMeter";
         sm->turnOff();
@@ -417,7 +417,7 @@ namespace PBv3TestTools {
         amac->wrField(&AMACv2::HVcurGain, 0);
 
         logger(logINFO) << " --> Starting measurement";
-        std::cout << "HV_i_set\tHV_v\t\tHV_i\t\tGain 0\tGain 1\tGain 2\tGain 4\tGain 8" << std::endl;
+        std::cout << "HV_i_set\tHV_v\t\tHV_i\t\t\tGain 0\tGain 1\tGain 2\tGain 4\tGain 8" << std::endl;
 
         int counter = 0;
         for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step) {
@@ -439,12 +439,48 @@ namespace PBv3TestTools {
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
                 val[i] = amac->rdField(&AMACv2::Ch14Value);
             }
-            std::cout << ileak << "\t" << hv_v << "\t" << hv_i << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
+            std::cout << ileak << "\t\t" << hv_v << "\t" << hv_i << "\t\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
         }
 
         sm->setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
         sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
         sm->turnOff();
+
+        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = true;
+        return testSum;
+    }
+
+    json measureLvIV(GenericPs *ps) {
+        logger(logINFO) << "## Measure LV IV ##";
+        json testSum;
+        testSum["name"] = "measure_lv_iv";
+        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = false;
+        
+        double v_start = 2.0;
+        double v_end = 6.0;
+        double v_step = 0.1;
+        logger(logINFO) << " --> Running from " << v_start << "V to " << v_end << "V in steps of " << v_step << "V";
+        ps->turnOff();
+        ps->setVoltage(v_start);
+        ps->setCurrent(1.0);
+        ps->turnOn();
+
+        testSum["header"] = {"Vset [V]", "Vread [V]", "Iread [A]"};
+        std::cout << "Vset\tVread\tIread" << std::endl;
+        int index = 0;
+        for (double vset = v_start; vset<=v_end; vset+=v_step) {
+            ps->setVoltage(vset);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            double v_read = std::stod(ps->getVoltage());
+            double i_read = std::stod(ps->getCurrent());
+
+            std::cout << vset << "\t" << v_read << "\t" << i_read << std::endl;
+            testSum["data"][index++] = {vset, v_read, i_read};
+        }
+
+        logger(logINFO) << " --> Done!";
 
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["success"] = true;

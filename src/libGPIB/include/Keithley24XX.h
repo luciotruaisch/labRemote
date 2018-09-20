@@ -12,6 +12,8 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include <iomanip>
+#include <sstream>
 
 #include "SerialCom.h"
 
@@ -44,6 +46,15 @@ class Keithley24XX {
         std::string receive(std::string cmd);
 
         std::chrono::milliseconds m_wait{200};
+        
+        template <typename T>
+            std::string to_string_with_precision(const T a_value, const int n = 6)
+            {
+                std::ostringstream out;
+                out << std::setprecision(n) << a_value;
+                return out.str();
+
+            }
 };
 
 #endif
