@@ -298,21 +298,27 @@ namespace PBv3TestTools {
         double HV_Vin = std::stod(sm->sense(KeithleyMode::VOLTAGE));
         double HV_Iin = std::stod(sm->sense(KeithleyMode::CURRENT));
 
+	double ADC0 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(0);
+	double ADC1 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(1);
+	double ADC2 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(2);
+	double ADC3 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(3);
+
         std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
             "Am900Bg [counts]]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
             "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
-            "HV_Vin [V]\tHV_Iin [A]" << std::endl;
+            "HV_Vin [V]\tHV_Iin [A]\tADC0 [V]\tADC1 [V]\tADC2 [V]\tADC3 [V]" << std::endl;
         std::cout << Vdcdc << "\t" << VddLr << "\t" << DCDCin << "\t" << VDDREG << "\t" << AM900BG <<
             "\t" << AM600BG << "\t" << CALin << "\t" << NTC << "\t" << Cur10V << "\t" << Cur1V << 
             "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
-            Iout << "\t" << HV_Vin << "\t" << HV_Iin << std::endl;
+	    Iout << "\t" << HV_Vin << "\t" << HV_Iin << "\t" << ADC0 << "\t" << ADC1 << "\t" << ADC2 << "\t" << ADC3 << std::endl;
 
-        testSum["header"] = {"Vdcdc [counts]", "VddLr [counts]", "DCDCin [counts]", "VddReg [counts]",
-            "Am900Bg [counts]", "Am600Bg [counts]", "Cal [counts]", "NTC [counts]", "Cur10V [counts]",
-            "Cur1V [counts]", "HVret [counts]", "PTAT [counts]", "Vin [V]", "Iin [A]", "Vout [mV]", "Iout [mA]",
-            "HV_Vin [V]", "HV_Iin [A]"};
-        testSum["data"][0] = {Vdcdc, VddLr, DCDCin, VDDREG, AM900BG, AM600BG, CALin, NTC, Cur10V, Cur1V, HVret, PTAT,
-            Vin, Iin, Vout, Iout, HV_Vin, HV_Iin};
+	testSum["header"] = {"Vdcdc [counts]", "VddLr [counts]", "DCDCin [counts]", "VddReg [counts]",
+			     "Am900Bg [counts]", "Am600Bg [counts]", "Cal [counts]", "NTC [counts]", "Cur10V [counts]",
+			     "Cur1V [counts]", "HVret [counts]", "PTAT [counts]", "Vin [V]", "Iin [A]", "Vout [mV]", "Iout [mA]",
+			     "HV_Vin [V]", "HV_Iin [A]", "ADC0 [V]", "ADC1 [V]", "ADC2 [V]", "ADC3 [V]"};
+	testSum["data"][0] = {Vdcdc, VddLr, DCDCin, VDDREG, AM900BG, AM600BG, CALin, NTC, Cur10V, Cur1V, HVret, PTAT,
+			      Vin, Iin, Vout, Iout, HV_Vin, HV_Iin, ADC0, ADC1, ADC2, ADC3};
+
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["success"] = true;
 
