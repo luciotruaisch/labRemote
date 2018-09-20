@@ -1,6 +1,10 @@
 #include "SerialCom.h"
 #include "Logger.h"
 
+#include <cerrno>
+#include <cstring>
+
+
 SerialCom::SerialCom(std::string name) {
 	m_dev = 0;
     m_deviceName = name;
@@ -79,8 +83,12 @@ int SerialCom::write(std::string buf) {
 int SerialCom::read(std::string &buf) 
 {
   char *tmp = new char[MAX_READ];
-  unsigned n_read = ::read(m_dev, tmp, MAX_READ);
-  buf = std::string(tmp, n_read);
+  int n_read = ::read(m_dev, tmp, MAX_READ);
+  if(n_read>=0)
+    buf = std::string(tmp, n_read);
+  else
+    logger(logERROR) << std::strerror(errno);
+
   return n_read;
 }
 

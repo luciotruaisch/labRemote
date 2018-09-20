@@ -87,7 +87,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-
     // Turn on power
     logger(logINFO) << "Turn on PS";
     ps.turnOn();
@@ -106,12 +105,14 @@ int main(int argc, char* argv[]) {
     
 
     // Start testing
-    testSum["tests"][0] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
-    testSum["tests"][1] = PBv3TestTools::testHvEnable(amac.get(), &sm);
-    testSum["tests"][2] = PBv3TestTools::measureHvSense(amac.get(), &sm);
-    testSum["tests"][3] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
-    testSum["tests"][4] = PBv3TestTools::runBER(amac.get());
-    testSum["tests"][5] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
+    uint32_t test=0;
+    testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
+    testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
+    testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
+    testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
+    testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
+    testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
+    testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
 
     testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
     outfile << std::setw(4) << testSum << std::endl;

@@ -31,6 +31,8 @@ class Keithley24XX {
         void setSource(enum KeithleyMode, double range, double value);
         void setSense(enum KeithleyMode, double range, double protection);
 
+	bool isOn();
+
         std::string sense(enum KeithleyMode);
 
 
