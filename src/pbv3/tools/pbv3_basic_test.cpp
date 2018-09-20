@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     logger(logINFO) << "Init BK DCDC Load";
     Bk85xx dc(bkDev);
     dc.setRemote();
-    dc.setRemoteSense(false);
+    dc.setRemoteSense(true);
     dc.setModeCC();
     dc.setCurrent(0);
     dc.turnOn();
