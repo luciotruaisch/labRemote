@@ -21,7 +21,7 @@ namespace PBv3TestTools {
     // All helper functions expects all hardware to be on and initialised
     json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load);
     json testHvEnable(AMACv2 *amac, Keithley24XX *sm, unsigned frequency=0x3);
-    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max);
+    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max, double VinSet=11.0);
     json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
     json runBER(AMACv2 *amac);
     json calibrateAMAC(AMACv2 *amac, double step);

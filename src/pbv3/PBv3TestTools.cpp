@@ -67,7 +67,7 @@ namespace PBv3TestTools {
     }
 
     // Range is iout in mA
-    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max) {
+    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max, double VinSet) {
         logger(logINFO) << "## Measuring DCDC efficiency ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         json testSum;
         testSum["name"] = "measure_efficiency";
@@ -81,6 +81,9 @@ namespace PBv3TestTools {
             testSum["error"] = s;
             return testSum;
         }
+        
+        logger(logINFO) << " --> Vin = " << VinSet << "V";
+        ps->setVoltage(VinSet);
 
         logger(logINFO) << " --> Turn off DCDC ..";
         try {
@@ -124,6 +127,7 @@ namespace PBv3TestTools {
             logger(logERROR) << e.what();
             return testSum;
         }
+        
 
         // Loop over currents
         int index = 0;
@@ -253,6 +257,7 @@ namespace PBv3TestTools {
         testSum["success"] = false;
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
+            
         // Control reg status
         int HVcurGain = amac->rdField(&AMACv2::HVcurGain);
         int RingOscFrq = amac->rdField(&AMACv2::RingOscFrq);
