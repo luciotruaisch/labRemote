@@ -8,13 +8,13 @@ loglevel_e loglevel;
 
 
 AgilentPs::AgilentPs(std::string dev, unsigned addr) {
-  m_com = new SerialCom(dev, B115200);
-  m_addr = addr;
-  m_com->write("++auto 0\n\r");
+    m_com = new SerialCom(dev, B115200);
+    m_addr = addr;
+    m_com->write("++auto 0\n\r");
 }
 
 AgilentPs::~AgilentPs() {
-  delete m_com;
+    delete m_com;
 }
 
 void AgilentPs::send(std::string cmd) {
@@ -27,33 +27,33 @@ void AgilentPs::send(std::string cmd) {
 
 std::string AgilentPs::receive(std::string cmd) 
 {
-  m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-  logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
-  cmd += "\r\n";
-  m_com->write(cmd);
-  m_com->write("++read eoi\n\r");
-  std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
-  std::string buf;
-  m_com->read(buf);
-  logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
-  return buf;
+    m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    cmd += "\r\n";
+    m_com->write(cmd);
+    m_com->write("++read eoi\n\r");
+    std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
+    std::string buf;
+    m_com->read(buf);
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+    return buf;
 }
 
 void AgilentPs::init() {
-  // Check if the PS is connected
-  std::string idn=this->receive("*idn?");
-  idn.erase(std::find_if(idn.rbegin(), idn.rend(), [](int ch) {
-        return !std::isspace(ch);
-      }).base(), idn.end());
+    // Check if the PS is connected
+    std::string idn=this->receive("*idn?");
+    idn.erase(std::find_if(idn.rbegin(), idn.rend(), [](int ch) {
+                return !std::isspace(ch);
+                }).base(), idn.end());
 
-  if(idn!="HEWLETT-PACKARD,E3633A,0,2.4-6.1-2.1")
-    throw "Unknown power supply: "+idn;
+    if(idn!="HEWLETT-PACKARD,E3633A,0,2.4-6.1-2.1")
+        throw "Unknown power supply: "+idn;
 
-  // Prepare everything else
-  this->send("OUTPUT OFF");
-  this->send("*RST");
-  this->send("TRIGGER:SOURCE IMM");
-  this->send("VOLT:PROT MAX");
+    // Prepare everything else
+    this->send("OUTPUT OFF");
+    this->send("*RST");
+    this->send("TRIGGER:SOURCE IMM");
+    this->send("VOLT:PROT MAX");
 }
 
 

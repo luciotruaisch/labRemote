@@ -29,6 +29,6 @@ add_library(pbv3 SHARED ${SrcFiles})
 if ( ${LIBFTDI_FOUND} )
   target_link_libraries(pbv3 ${LIBFTDI_LIBRARIES})
 endif()
-target_link_libraries(pbv3 -lGPIB)
+target_link_libraries(pbv3 -lGPIB -lDevCom)
 
 add_subdirectory(tools)

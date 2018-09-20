@@ -32,6 +32,7 @@ union u_packet Bk85xx::receive() {
 void Bk85xx::checkStatus(struct s_packet packet) {
     if (packet.command != CMD_STATUS) {
         logger(logERROR) << __PRETTY_FUNCTION__ << " -> Was asked to interpret status, but packet is not a status packet!";
+        throw "Received malformed status!";
     }
     
     std::string msg;
@@ -58,6 +59,7 @@ void Bk85xx::checkStatus(struct s_packet packet) {
     
     if (packet.data[0] != 0x80) {
         logger(logERROR) << __PRETTY_FUNCTION__ << " -> " << msg;
+        throw msg;
     } else {
         logger(logDEBUG) << __PRETTY_FUNCTION__ << " -> " << msg;
     }
