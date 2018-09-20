@@ -23,9 +23,9 @@ namespace PBv3TestTools {
             logger(logERROR) << e.what();
             return testSum;
         }
-    
+
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        
+
         testSum["header"] = {"DCDC Enable", "Vout [V]"};
 
         double lv_off = load->getValues().vol;//mV
@@ -67,7 +67,7 @@ namespace PBv3TestTools {
         load->setCurrent(0);
         load->turnOn();
         logger(logINFO) << " --> Turn off DCDC ..";
-	try {
+        try {
             amac->wrField(&AMACv2::DCDCen, 0);
             amac->wrField(&AMACv2::DCDCenC, 0);
         } catch(EndeavourComException &e) {
@@ -79,7 +79,7 @@ namespace PBv3TestTools {
         logger(logINFO) << " --> Get baseline current: (" << ps->getCurrent() << ")A";
         double Iin_offset = std::stod(ps->getCurrent());
         testSum["Iin_offset"] = Iin_offset;
-        
+
         logger(logINFO) << " --> Turn on DCDC ...";
         try {
             amac->wrField(&AMACv2::DCDCen, 1);
@@ -108,7 +108,7 @@ namespace PBv3TestTools {
             logger(logERROR) << e.what();
             return testSum;
         }
-        
+
         // Loop over currents
         int index = 0;
         for (int iout=min;iout<=max;iout+=step,index++) {
@@ -139,9 +139,9 @@ namespace PBv3TestTools {
 
         }
 
-	logger(logINFO) << " --> Done!! Turng off load!";
-	load->setCurrent(0);
-        
+        logger(logINFO) << " --> Done!! Turng off load!";
+        load->setCurrent(0);
+
         testSum["success"] = true;
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         return testSum;
@@ -151,13 +151,13 @@ namespace PBv3TestTools {
         logger(logINFO) << "## Testing HV Enable circuit ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) ;
         logger(logINFO) << " --> Frequency: " << frequency << " (0=high, 1=25kHz, 2=50kHz, 3=100kHz)";
         logger(logINFO) << " --> Turning everything off.";
-        
+
         json testSum;
         testSum["name"] = "hv_enable";
         testSum["success"] = false;
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["config"]["CntSetHV0frq"] = frequency;
-        
+
         // Turn off HV enable from AMAC
         amac->wrField(&AMACv2::CntSetHV0frq, frequency);
         amac->wrField(&AMACv2::CntSetCHV0frq, frequency);
@@ -191,7 +191,7 @@ namespace PBv3TestTools {
         testSum["data"][1] = {1, hv_v_on, hv_i_on};
 
         // TODO interpret
-        if (hv_v_off > 490.0 && hv_i_off < 1.0e-9 && hv_v_on > 400 && hv_i_on > 0.5e-6) {
+        if (hv_v_off > 10.0 && hv_i_off < 1.0e-8 && hv_v_on > 400 && hv_i_on > 0.9e-6) {
             logger(logINFO) << " --> Test successful!";
             testSum["success"] = true;
         } else {
@@ -211,7 +211,7 @@ namespace PBv3TestTools {
         testSum["name"] = "amac_status";
         testSum["success"] = false;
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        
+
         // Control reg status
         int HVcurGain = amac->rdField(&AMACv2::HVcurGain);
         int RingOscFrq = amac->rdField(&AMACv2::RingOscFrq);
@@ -224,7 +224,7 @@ namespace PBv3TestTools {
         testSum["config"]["VDDbg"] = VDDbg;
         testSum["config"]["AMbg"] = AMbg;
         testSum["config"]["AMinCalib"] = AMintCalib;
-        
+
         // ADCs
         int Vdcdc = amac->rdField(&AMACv2::Ch0Value);
         int VddLr = amac->rdField(&AMACv2::Ch1Value);
@@ -251,7 +251,7 @@ namespace PBv3TestTools {
 
         double HV_Vin = std::stod(sm->sense(KeithleyMode::VOLTAGE));
         double HV_Iin = std::stod(sm->sense(KeithleyMode::CURRENT));
-        
+
         std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
             "Am900Bg [counts]]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
             "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
@@ -260,7 +260,7 @@ namespace PBv3TestTools {
             "\t" << AM600BG << "\t" << CALin << "\t" << NTC << "\t" << Cur10V << "\t" << Cur1V << 
             "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
             Iout << "\t" << HV_Vin << "\t" << HV_Iin << std::endl;
-        
+
         testSum["header"] = {"Vdcdc [counts]", "VddLr [counts]", "DCDCin [counts]", "VddReg [counts]",
             "Am900Bg [counts]", "Am600Bg [counts]", "Cal [counts]", "NTC [counts]", "Cur10V [counts]",
             "Cur1V [counts]", "HVret [counts]", "PTAT [counts]", "Vin [V]", "Iin [A]", "Vout [mV]", "Iout [mA]",
@@ -279,32 +279,32 @@ namespace PBv3TestTools {
         testSum["name"] = "amac_ber";
         testSum["success"] = false;
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        
-	// Run the test
-	uint trails=100;
-	uint good=0;
-	for(uint i=0; i<trails; i++)
-	  {
-	    try
-	      {      
-		uint valin=rand()*0xFFFFFFFF;
-		amac->write_reg(166,valin);
-		usleep(50);
-		uint valout=amac->read_reg(166);
-		usleep(50);
-		if(valin==valout)
-		  good++;
-		else
-		  logger(logERROR) << "Write: 0x" << std::hex << valin << ", Read: " << valout << std::dec;
-	      }
-	    catch(EndeavourComException &e)
-	      {
-		//std::cout << e.what() << std::endl;
-	      }
-	  }
-	float reliability=((float)good)/trails;
 
-	// Store the results
+        // Run the test
+        uint trails=100;
+        uint good=0;
+        for(uint i=0; i<trails; i++)
+        {
+            try
+            {      
+                uint valin=rand()*0xFFFFFFFF;
+                amac->write_reg(166,valin);
+                usleep(50);
+                uint valout=amac->read_reg(166);
+                usleep(50);
+                if(valin==valout)
+                    good++;
+                else
+                    logger(logERROR) << "Write: 0x" << std::hex << valin << ", Read: " << valout << std::dec;
+            }
+            catch(EndeavourComException &e)
+            {
+                //std::cout << e.what() << std::endl;
+            }
+        }
+        float reliability=((float)good)/trails;
+
+        // Store the results
         testSum["header"] = {"Reliability"};
         testSum["data"][0] = {reliability};
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
@@ -313,32 +313,32 @@ namespace PBv3TestTools {
         return testSum;
     }
 
-  json calibrateAMAC(AMACv2 *amac, double step)
-  {
-    logger(logINFO) << "## Calibrating AMAC ##";
-    json testSum;
-    testSum["name"] = "amac_calibrate";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    json calibrateAMAC(AMACv2 *amac, double step)
+    {
+        logger(logINFO) << "## Calibrating AMAC ##";
+        json testSum;
+        testSum["name"] = "amac_calibrate";
+        testSum["success"] = false;
+        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
-    // Run the test
-    int index=0;
-    for(double CALin=0; CALin<1.01; CALin+=step,index++)
-      {
-	double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
-	amac->wrField(&AMACv2Reg::Ch4Mux , 1);
-	usleep(5e3);
-	uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
-	testSum["data"][index] = {CALact, CALamac};
-      }
+        // Run the test
+        int index=0;
+        for(double CALin=0; CALin<1.01; CALin+=step,index++)
+        {
+            double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+            amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+            usleep(5e3);
+            uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+            testSum["data"][index] = {CALact, CALamac};
+        }
 
-    // Store the results
-    testSum["header"] = {"CAL","Counts"};
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
+        // Store the results
+        testSum["header"] = {"CAL","Counts"};
+        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = true;
 
-    return testSum;
-  }
+        return testSum;
+    }
 
     std::string getTimeAsString(std::chrono::system_clock::time_point t) {
         auto as_time_t = std::chrono::system_clock::to_time_t(t);
@@ -350,4 +350,63 @@ namespace PBv3TestTools {
         throw std::runtime_error("Failed to get current date as string");
     }
 
+    json measureHvSense(AMACv2 *amac, Keithley24XX *sm) {
+        logger(logINFO) << "## Measure HV sense ##";
+        json testSum;
+        testSum["name"] = "measure_hv_sense";
+        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = false;
+
+        double ileak_min = 1e-7;
+        double ileak_max = 1e-3;
+        double ileak_step = 1e-7;
+
+        logger(logINFO) << " --> Turn on SourceMeter";
+        sm->turnOff();
+        sm->setSource(KeithleyMode::CURRENT, ileak_min, ileak_min);
+        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+        sm->turnOn();
+
+        logger(logINFO) << " --> Turn on HVmux";
+        amac->wrField(&AMACv2::CntSetHV0en, 1);
+        amac->wrField(&AMACv2::CntSetCHV0en, 1);
+
+        amac->wrField(&AMACv2::HVcurGain, 0);
+
+        logger(logINFO) << " --> Starting measurement";
+        std::cout << "HV_i_set\tHV_v\t\tHV_i\t\tGain 0\tGain 1\tGain 2\tGain 4\tGain 8" << std::endl;
+
+        int counter = 0;
+        for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step) {
+            counter++;
+            if (counter%10 == 0)
+                ileak_step = ileak_step*10;
+            sm->setSource(KeithleyMode::CURRENT, ileak, ileak);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            double hv_v = std::stod(sm->sense(KeithleyMode::VOLTAGE));
+            double hv_i = std::stod(sm->sense(KeithleyMode::CURRENT));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unsigned val[5];
+            for (unsigned i=0; i<5; i++) {
+                if (i == 0)
+                    amac->wrField(&AMACv2::HVcurGain, 0);
+                else
+                    amac->wrField(&AMACv2::HVcurGain, pow(2,i-1));
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                val[i] = amac->rdField(&AMACv2::Ch14Value);
+            }
+            std::cout << ileak << "\t" << hv_v << "\t" << hv_i << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
+        }
+
+        sm->setSource(KeithleyMode::CURRENT, ileak_min, ileak_min);
+        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+        sm->turnOff();
+
+        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+        testSum["success"] = true;
+        return testSum;
+    }
+
 }
+

@@ -25,6 +25,7 @@ namespace PBv3TestTools {
     json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
     json runBER(AMACv2 *amac);
     json calibrateAMAC(AMACv2 *amac, double step);
+    json measureHvSense(AMACv2 *amac, Keithley24XX *sm);
 
     std::string getTimeAsString(std::chrono::system_clock::time_point t);
 }
