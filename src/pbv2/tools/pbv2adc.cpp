@@ -15,6 +15,9 @@
 #include "ComIOException.h"
 
 #include "AD799X.h"
+#include "Logger.h"
+loglevel_e loglevel = logINFO;
+
 
 int main()
 {
