@@ -18,12 +18,13 @@
 
 int main(int argc, char* argv[])
 {
-  if(argc!=2)
+  if(argc!=3)
     {
-      std::cerr << "usage: " << argv[0] << " 1-9" << std::endl;
+      std::cerr << "usage: " << argv[0] << " 1-9 0/1" << std::endl;
       return 1;
     }
   uint pbidx=std::stoi(argv[1])-1;
+  bool state=std::stoi(argv[2]);
   
   try
     {
@@ -43,35 +44,7 @@ int main(int argc, char* argv[])
       pbs[8]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0, 7, mux0_com));
 
       std::shared_ptr<AMAC> pb=pbs[pbidx];
-
-      int error_ctr = 0, num_attempts_per_val=100;
-      for(int j = 0; j < num_attempts_per_val; j++)
-	{
-	  unsigned val_to_write = rand()%256;
-	  unsigned val_received = 0;
-	  //Write to any RW register
-	  if(pb->write(AMACreg::ILOCK_HV_THRESH_HI_L_CH0,val_to_write))
-	    {
-	      std::cout << "Write error" << std::endl;
-	      error_ctr++;
-	    }
-	  else
-	    {
-	      if(pb->read(AMACreg::ILOCK_HV_THRESH_HI_L_CH0,val_received))
-		{
-		  std::cout << "Read error" << std::endl;
-		  error_ctr++;
-		}
-	      else if(val_to_write != val_received)
-		{
-		  std::cout << "Data error: 0x" << std::hex << val_to_write << " != 0x" << val_received << std::dec << std::endl;
-		  error_ctr++;
-		}
-	    }
-	}
-      double result = 1.0 - (double)error_ctr / num_attempts_per_val;
-      std::cout << "reliability = " << result << std::endl;
-
+      pb->write(AMACreg::LV_ENABLE, state);
     }
   catch(ComIOException &e)
     {
