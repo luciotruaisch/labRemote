@@ -723,7 +723,11 @@ Item {
                                         color: "red"
                                     }
                                     onClicked: {
-                                        if(parseFloat(txt_speed_z.text.toString()) >= 0.1){
+                                        if (parseFloat(txt_speed_z.text.toString()) < 0) {
+                                            warning_negativeZ.open()
+                                        }
+
+                                        else if(parseFloat(txt_speed_z.text.toString()) >= 0.1){
                                              warning_closerZ.open()
                                         }
                                         else{
@@ -743,8 +747,13 @@ Item {
                                         color: "green"
                                     }
                                     onClicked: {
+                                        if(parseFloat(txt_speed_z.text.toString()) < 0){
+                                             warning_negativeZ.open()
+                                        }
+                                        else{
                                         var command = "MR Z " + (-1 * txt_speed_z.text).toString()
                                         backend.run_cmd(command)
+                                        }
                                     }
                                 }
 
@@ -903,6 +912,32 @@ Item {
 
         }
     }
+
+    Dialog {
+        id: warning_negativeZ
+        modal: true
+        focus: true
+        title: "Confirmation"
+        Label {
+            text: "Your input (" + txt_speed_z.text.toString() + ") is a negative value. This is will move the chuck in the opposite direction of what you chose. Do you wish to continue?"
+            //color: red
+        }
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted:{
+            if(parseFloat(txt_speed_z.text.toString()) <= -0.1){
+                 txt_speed_z.text = -1* txt_speed_z.text
+                 warning_closerZ.open()
+            }
+            else{
+                var command = "MR Z " + txt_speed_z.text.toString()
+                backend.run_cmd(command)
+            }
+        }
+        onRejected:{
+
+        }
+    }
+
 
     Dialog {
         id: z_is_calibrated

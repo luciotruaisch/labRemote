@@ -1,14 +1,14 @@
-# - Try to find libmpsse
+# - Try to find gclib
 # Once done this will define
-#  gclib_FOUND - System has libmpsse
-#  gclib_INCLUDE_DIRS - The libmpsse include directories
-#  gclib_LIBRARIES - The libraries needed to use libmpsse
-#  gclib_DEFINITIONS - Compiler switches required for using libmpsse
+#  gclib_FOUND - System has gclib
+#  gclib_INCLUDE_DIRS - The gclib include directories
+#  gclib_LIBRARIES - The libraries needed to use gclib
+#  gclib_DEFINITIONS - Compiler switches required for using gclib
 
 FIND_PATH(gclib_INCLUDE_DIR gclib.h
           HINTS /usr/include)
 
-FIND_LIBRARY(gclib_LIBRARY NAMES libgclib.so.0
+FIND_LIBRARY(gclib_LIBRARY NAMES gclib gclib.so.0 gclib.so gclib.so.0.422
               HINTS /usr/lib )
 
 INCLUDE(FindPackageHandleStandardArgs)

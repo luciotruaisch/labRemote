@@ -1,7 +1,7 @@
-find_package( gclib QUIET )
+find_package( libgclib QUIET)
 find_package( ZLIB )
 
-if ( ${gclib_FOUND} )
+if ( ${LIBGCLIB_FOUND} )
   # Add the headers
   include_directories( include )
 
@@ -18,7 +18,7 @@ if ( ${gclib_FOUND} )
   set(libGalil_FOUND TRUE PARENT_SCOPE)
 else()
   message("Disabling libGalil due to missing dependencies")
-  message(" gclib = ${gclib_FOUND}")
+  message(" libgclib = ${LIBGCLIB_FOUND}")
 
   set(libGalil_FOUND FALSE PARENT_SCOPE)
 endif()

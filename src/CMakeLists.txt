@@ -41,6 +41,8 @@ else()
   message(" libmpsse = ${LIBMPSSE_FOUND}")
 endif()
 
+# Find gclib
+find_package ( libgclib )
 
 #
 # Add libraries

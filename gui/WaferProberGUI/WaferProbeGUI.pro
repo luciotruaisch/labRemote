@@ -1,3 +1,7 @@
+PRE_TARGETDEPS += ../../build/lib/libWaferProb.so
+PRE_TARGETDEPS += ../../build/lib/libGalil.so
+PRE_TARGETDEPS += ../../build/lib/libZaber.so
+
 #QT_CONFIG -= no-pkg-config
 
 INCLUDEPATH += /usr/include/qt5/QtCore /usr/include/qt5/QtQml /usr/include/qt5/QtQuick /usr/include/qt5/QtMultimedia /usr/include/qt5/QtGui
@@ -51,9 +55,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+
 INCLUDEPATH += ../../src/libWaferProb/include
 INCLUDEPATH += ../../src/libGalil/include
 INCLUDEPATH += ../../src/libZaber/include
+
 
 unix:!macx{
     LIBS += -L/usr/lib -L../../build/lib -lWaferProb -lgclibo -lgclib

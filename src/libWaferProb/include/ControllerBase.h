@@ -55,8 +55,8 @@ class ControllerBase{
 		virtual void find_z_min(){ return; }
 		virtual void check_z_min() { return; }
 		virtual bool is_z_calibrated() {return m_z_calibrated; }
-		virtual int xy_park() = 0;
-		virtual int xy_unpark() = 0;
+		virtual int xy_park() {return -1;}
+		virtual int xy_unpark() {return -1;}
 
 };
 #endif
