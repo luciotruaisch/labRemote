@@ -1,7 +1,7 @@
 # - Try to find libmpsse
 # Once done this will define
 #  LIBMPSSE_FOUND - System has libmpsse
-#  LIBMPSSE_INCLUDE_DIRS - The libmpsse include directories
+#  LIBMPSSE_INCLUDE_DIR - The libmpsse include directories
 #  LIBMPSSE_LIBRARIES - The libraries needed to use libmpsse
 #  LIBMPSSE_DEFINITIONS - Compiler switches required for using libmpsse
 
