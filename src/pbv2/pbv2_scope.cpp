@@ -6,11 +6,10 @@
 #include <dirent.h>
 
 #ifdef FTDI
-#include "FTDICom.h"
+#include "I2CFTDICom.h"
 #endif
 
 #include "Logger.h"
-#include "MojoCom.h"
 #include "I2CCom.h"
 #include "AMAC.h"
 #include "AgilentPs.h"
@@ -24,28 +23,23 @@ loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[])
 {
+#ifndef FTDI
+  logger(logERROR) << "FTDI support not enabled.";
+  return -1;
+#else
 #ifndef SCOPE
   logger(logERROR) << "Missing libScope";
 #else // SCOPE
   //
   // Get settings from the command line
-  if (argc < 4) {
+  if (argc < 3) {
     logger(logERROR) << "Not enough parameters!";
-    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <GPIB>";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <GPIB>";
     return -1;
   }
 
   std::string TestName = argv[1];
-  std::string mojoDev = argv[2];
-  std::string gpibDev = argv[3];
-
-#ifndef FTDI
-  if(mojoDev=="FTDI")
-    {
-      logger(logERROR) << "FTDI support not enabled.";
-      return -1;
-    }
-#endif
+  std::string gpibDev = argv[2];
 
   //
   // Create log directory if it does not exist
@@ -85,16 +79,9 @@ int main(int argc, char* argv[])
       return 1;
     }
 
-  std::shared_ptr<I2CCom> i2c;
-#ifdef FTDI
-  if(mojoDev=="FTDI")
-    i2c.reset(new FTDICom());
-  else
-    i2c.reset(new MojoCom(mojoDev));
-#else
-  i2c.reset(new MojoCom(mojoDev));
-#endif
-  AMAC amac(0, i2c);
+  logger(logINFO) << " ... AMAC:";
+  std::shared_ptr<I2CCom> i2c=std::make_shared<I2CFTDICom>(0x0);
+  AMAC amac(i2c);
 
   logger(logINFO) << "  ++Init";
   amac.init();
@@ -167,6 +154,6 @@ int main(int argc, char* argv[])
   ps.turnOff();
 
 #endif // SCOPE
-  
+#endif // FTDI
   return 0;
 }

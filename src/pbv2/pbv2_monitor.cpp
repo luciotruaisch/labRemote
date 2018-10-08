@@ -1,4 +1,3 @@
-#include <memory>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -7,41 +6,35 @@
 #include <dirent.h>
 
 #ifdef FTDI
-#include "FTDICom.h"
+#include "I2CFTDICom.h"
 #endif
 
 #include "Logger.h"
-#include "MojoCom.h"
 #include "I2CCom.h"
 #include "AMAC.h"
 #include "Bk85xx.h"
 #include "AgilentPs.h"
 #include "Keithley24XX.h"
 
-
 loglevel_e loglevel = logINFO;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
+#ifndef FTDI
+  logger(logERROR) << "FTDI support not enabled.";
+  return -1;
+#else
   //
   // Get settings from the command line
-  if (argc < 5) {
+  if (argc < 4) {
     logger(logERROR) << "Not enough parameters!";
-    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <BK85XX> <GPIB>";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <BK85XX> <GPIB>";
     return -1;
   }
 
   std::string TestName = argv[1];
-  std::string mojoDev = argv[2];
-  std::string bkDev = argv[3];
-  std::string gpibDev = argv[4];
-
-#ifndef FTDI
-  if(mojoDev=="FTDI")
-    {
-      logger(logERROR) << "FTDI support not enabled.";
-      return -1;
-    }
-#endif
+  std::string bkDev = argv[2];
+  std::string gpibDev = argv[3];
 
   //
   // Create log directory if it does not exist
@@ -61,20 +54,36 @@ int main(int argc, char* argv[]) {
   //
   // Run tests
   logger(logINFO) << "Initialising ...";
-    
+
   logger(logINFO) << " ... Agilent PS:";
   AgilentPs ps(gpibDev, 10);
-  ps.init();
-  ps.setRange(20);
-  ps.setVoltage(11.0);
-  ps.setCurrent(2.00);
-  ps.turnOn();
+  try
+    {
+      ps.init();
+      ps.setRange(20);
+      ps.setVoltage(11.0);
+      ps.setCurrent(2.00);
+      ps.turnOn();
+    }
+  catch(std::string e)
+    {
+      logger(logERROR) << e;
+      return 1;
+    }
 
   logger(logINFO) << " ... Keithley 2410:";
   Keithley24XX sm(gpibDev, 9);
-  sm.init();
-  sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-  sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+  try
+    {
+      sm.init();
+      sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
+      sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+    }
+  catch(std::string e)
+    {
+      logger(logERROR) << e;
+      return 1;
+    }
 
   logger(logINFO) << " ... DC Load:";
   Bk85xx dc(bkDev);
@@ -85,16 +94,8 @@ int main(int argc, char* argv[]) {
   //dc.turnOn();
 
   logger(logINFO) << " ... AMAC:";
-  std::shared_ptr<I2CCom> i2c;
-#ifdef FTDI
-  if(mojoDev=="FTDI")
-    i2c.reset(new FTDICom());
-  else
-    i2c.reset(new MojoCom(mojoDev));
-#else
-  i2c.reset(new MojoCom(mojoDev));
-#endif
-  AMAC amac(0, i2c);
+  std::shared_ptr<I2CCom> i2c=std::make_shared<I2CFTDICom>(0x0);
+  AMAC amac(i2c);
 
   logger(logINFO) << "  ++Init";
   amac.init();
@@ -185,12 +186,11 @@ int main(int argc, char* argv[]) {
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-
   //
   // Poweroff
   sm.turnOff();
   ps.turnOff();
   dc.turnOff();
-
+#endif // FTDI
   return 0;
 }

@@ -29,6 +29,8 @@ set(SrcFiles DeviceCom.cpp
 
   #AD5160.cpp
 
+  AMAC.cpp
+
   DeviceCalibration.cpp
   DummyCalibration.cpp
   LinearCalibration.cpp

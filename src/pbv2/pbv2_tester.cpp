@@ -6,11 +6,10 @@
 #include <dirent.h>
 
 #ifdef FTDI
-#include "FTDICom.h"
+#include "I2CFTDICom.h"
 #endif
 
 #include "Logger.h"
-#include "MojoCom.h"
 #include "I2CCom.h"
 #include "AMAC.h"
 #include "Bk85xx.h"
@@ -23,27 +22,23 @@
 
 loglevel_e loglevel = logINFO;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
+#ifndef FTDI
+  logger(logERROR) << "FTDI support not enabled.";
+  return -1;
+#else  
   //
   // Get settings from the command line
-  if (argc < 5) {
+  if (argc < 4) {
     logger(logERROR) << "Not enough parameters!";
-    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <Mojo/FTDI> <BK85XX> <GPIB>";
+    logger(logERROR) << "Usage: " << argv[0] << " TESTNAME <BK85XX> <GPIB>";
     return -1;
   }
 
   std::string TestName = argv[1];
-  std::string mojoDev = argv[2];
-  std::string bkDev = argv[3];
-  std::string gpibDev = argv[4];
-
-#ifndef FTDI
-  if(mojoDev=="FTDI")
-    {
-      logger(logERROR) << "FTDI support not enabled.";
-      return -1;
-    }
-#endif
+  std::string bkDev = argv[2];
+  std::string gpibDev = argv[3];
 
   //
   // Create log directory if it does not exist
@@ -122,16 +117,9 @@ int main(int argc, char* argv[]) {
   logger(logINFO) << "\tSkipping noise measurement due to missing libScope";
 #endif // SCOPE
 
-  std::shared_ptr<I2CCom> i2c;
-#ifdef FTDI
-  if(mojoDev=="FTDI")
-    i2c.reset(new FTDICom());
-  else
-    i2c.reset(new MojoCom(mojoDev));
-#else
-  i2c.reset(new MojoCom(mojoDev));
-#endif
-  AMAC amac(0, i2c);
+  logger(logINFO) << " ... AMAC:";
+  std::shared_ptr<I2CCom> i2c=std::make_shared<I2CFTDICom>(0x0);
+  AMAC amac(i2c);
 
   logger(logINFO) << "  ++Init";
   amac.init();
@@ -385,6 +373,6 @@ int main(int argc, char* argv[]) {
     logger(logINFO) << "[ICHANL] : \t" << val ;
 
     */
-
-    return 0;
+#endif // FTDI
+  return 0;
 }
