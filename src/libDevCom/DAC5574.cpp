@@ -1,10 +1,12 @@
 #include "DAC5574.h"
 
+#include "LinearCalibration.h"
+
 #include <iostream>
 #include <iomanip>
 
 DAC5574::DAC5574(float reference, std::shared_ptr<I2CCom> com)
-  : DACDevice(reference, 0xFF), m_com(com)
+  : DACDevice(std::make_shared<LinearCalibration>(reference, 0xFF)), m_com(com)
 { }
 
 DAC5574::~DAC5574()

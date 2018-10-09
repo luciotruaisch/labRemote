@@ -1,10 +1,12 @@
 #include "MCP4801.h"
 
+#include "LinearCalibration.h"
+
 #include <iostream>
 #include <iomanip>
 
 MCP4801::MCP4801(std::shared_ptr<SPICom> com)
-  : DACDevice(2.048, 0xFF), m_com(com)
+  : DACDevice(std::make_shared<LinearCalibration>(2.048, 0xFF)), m_com(com)
 { }
 
 MCP4801::~MCP4801()

@@ -2,46 +2,51 @@
 
 #include <cmath>
 
-DACDevice::DACDevice(float reference, uint32_t max)
-  : m_reference(reference), m_max(max)
+DACDevice::DACDevice(std::shared_ptr<DeviceCalibration> calibration)
+  : m_calibration(calibration)
 { }
 
 DACDevice::~DACDevice()
 { }
 
-double DACDevice::counts2volts(uint32_t counts) const
-{ return (double)counts/m_max*m_reference; }
+void DACDevice::setCalibration(std::shared_ptr<DeviceCalibration> calibration)
+{ m_calibration=calibration; }
 
-uint32_t DACDevice::volts2counts(double value) const
-{ return round(value*m_max/m_reference); }
+void DACDevice::setCalibration(uint8_t ch, std::shared_ptr<DeviceCalibration> calibration)
+{ m_channelCalibration[ch]=calibration; }
+
+std::shared_ptr<DeviceCalibration> DACDevice::findCalibration(uint8_t ch) const
+{
+  return (m_channelCalibration.find(ch)==m_channelCalibration.end())?m_calibration:m_channelCalibration.at(ch);
+}
 
 double DACDevice::set(double value)
 {
-  uint32_t counts=volts2counts(value);
+  uint32_t counts=m_calibration->uncalibrate(value);
   setCount(counts);
-  return counts2volts(counts);
+  return m_calibration->calibrate(counts);
 }
 
 double DACDevice::set(uint8_t ch, double value)
 {
-  uint32_t counts=volts2counts(value);
+  uint32_t counts=findCalibration(ch)->uncalibrate(value);
   setCount(ch, counts);
-  return counts2volts(counts);
+  return findCalibration(ch)->calibrate(counts);
 }
 
 void DACDevice::set(const std::vector<uint8_t>& chs, const std::vector<double>& values)
 {
   std::vector<uint32_t> counts;
-  for(double value : values)
-    counts.push_back(volts2counts(value));
+  for(uint32_t i=0;i<chs.size();i++)
+    counts.push_back(findCalibration(chs[i])->uncalibrate(values[i]));
   setCount(chs, counts);
 }
 
 double DACDevice::read()
-{ return counts2volts(readCount()); }
+{ return m_calibration->calibrate(readCount()); }
 
 double DACDevice::read(uint8_t ch)
-{ return counts2volts(readCount(ch)); }
+{ return findCalibration(ch)->calibrate(readCount(ch)); }
 
 void DACDevice::read(const std::vector<uint8_t>& chs, std::vector<double>& data)
 {
@@ -49,6 +54,6 @@ void DACDevice::read(const std::vector<uint8_t>& chs, std::vector<double>& data)
   readCount(chs, counts);
 
   data.clear();
-  for(uint32_t count : counts)
-    data.push_back(counts2volts(count));
+  for(uint32_t i=0;i<chs.size();i++)
+    data.push_back(findCalibration(chs[i])->calibrate(counts[i]));
 }
