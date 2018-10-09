@@ -1,6 +1,6 @@
 # add global dependencies
 include_directories( ../../libGPIB/include )
-include_directories( ../../libDevCom/include )
+include_directories( ../../libDevCom )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 if( ${ENABLE_FTDI} )

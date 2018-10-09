@@ -3,8 +3,10 @@
 
 #include <memory>
 
+#include "I2CCom.h"
 #include "ADCDevice.h"
 #include "DACDevice.h"
+#include "AMAC.h"
 
 #define PBV2_ADC_CH_VIN 2
 #define PBV2_ADC_CH_VIN_CURR 0
@@ -29,6 +31,8 @@ public:
   PBv2TB(const std::string& i2cdev="/dev/i2c-0");
   ~PBv2TB();
 
+  std::shared_ptr<AMAC> getPB(uint8_t pb);
+  
   double getVin();
   double getVinCurrent();
   double getP5VCurrent();
@@ -41,6 +45,11 @@ public:
   double getVout(int pbNum);
   
 private:
+  //
+  // I2C multiplexers
+  std::shared_ptr<I2CCom> m_mux0;
+  std::shared_ptr<I2CCom> m_mux1;
+
   std::shared_ptr<ADCDevice> m_adc_pwr;
   std::shared_ptr<ADCDevice> m_adc_lv0;
   std::shared_ptr<ADCDevice> m_adc_lv1;
@@ -48,6 +57,8 @@ private:
   std::shared_ptr<DACDevice> m_dac_0;
   std::shared_ptr<DACDevice> m_dac_1;
   std::shared_ptr<DACDevice> m_dac_2;
+
+  std::vector<std::shared_ptr<AMAC>> m_pbs{9};
 };
 
 #endif // PBV2TB_H

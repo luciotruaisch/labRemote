@@ -9,34 +9,48 @@
 
 #include "LinearCalibration.h"
 #include "DeviceCalibration.h"
-#include "AdjustedCalibration.h"
 
 PBv2TB::PBv2TB(const std::string& i2cdev)
 {
+  //
   // Create the I2C mappings
-  std::shared_ptr<I2CCom> mux0_com=std::make_shared<I2CDevCom>(0x70, "/dev/i2c-0");
 
-  m_adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7993, std::make_shared<PCA9548ACom>(0x22, 2, mux0_com));
-  m_adc_lv0=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x21, 1, mux0_com));
-  m_adc_lv1=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x22, 1, mux0_com));
+  // Multiplexers
+  m_mux0=std::make_shared<I2CDevCom>(0x70, "/dev/i2c-0");
+  m_mux1=std::make_shared<I2CDevCom>(0x74, "/dev/i2c-0");
 
-  m_dac_0=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4C, 1, mux0_com));
-  m_dac_1=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4D, 1, mux0_com));
-  m_dac_2=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4E, 1, mux0_com));
+  // ADCs
+  m_adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7993, std::make_shared<PCA9548ACom>(0x22, 2, m_mux0));
+  m_adc_lv0=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x21, 1, m_mux0));
+  m_adc_lv1=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x22, 1, m_mux0));
+
+  // DACs
+  m_dac_0=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4C, 1, m_mux0));
+  m_dac_1=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4D, 1, m_mux0));
+  m_dac_2=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4E, 1, m_mux0));
+
+  // PBs
+  m_pbs[0]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,7, m_mux1));
+  m_pbs[1]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,6, m_mux1));
+  m_pbs[2]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,5, m_mux1));
+  m_pbs[3]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,4, m_mux1));
+  m_pbs[4]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,3, m_mux1));
+  m_pbs[5]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,2, m_mux1));
+  m_pbs[6]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,1, m_mux1));
+  m_pbs[7]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,0, m_mux1));
+  m_pbs[8]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,7, m_mux0));
 
   //
   // Load calibrations for the different channels
-  
   m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN     , std::make_shared<LinearCalibration>(3.3*(35+90.9)/35,0x3FF));
-  //m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN     , std::make_shared<AdjustedCalibration>(3.3*(35+90.9)/35,0x3FF, 0.));
-  //m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN     , std::make_shared<DummyCalibration>());
   m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.005)  ,0x3FF));
-  //m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN_CURR, std::make_shared<AdjustedCalibration>(3.3/(50*0.005)  ,0x3FF, 4.4));
-  //m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN_CURR, std::make_shared<DummyCalibration>());
   m_adc_pwr->setCalibration(PBV2_ADC_CH_P5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0x3FF));
   m_adc_pwr->setCalibration(PBV2_ADC_CH_M5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0x3FF));
 
-  
+
+  // Initialize the PBs
+  for(uint8_t i=0;i<9;i++)
+    m_pbs[i]->init();
 }
 
 PBv2TB::~PBv2TB()
@@ -60,6 +74,11 @@ double PBv2TB::getP5VCurrent()
 double PBv2TB::getM5VCurrent()
 {
   return m_adc_pwr->read(PBV2_ADC_CH_M5V_CURR);
+}
+
+std::shared_ptr<AMAC> PBv2TB::getPB(uint8_t pb)
+{
+  return m_pbs[pb];
 }
 
 double PBv2TB::setDac(int DACNum, int CHVALUE, double val)

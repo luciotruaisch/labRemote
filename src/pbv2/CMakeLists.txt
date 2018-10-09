@@ -1,20 +1,14 @@
 # add global dependencies
-#include_directories( ../libDevCom )
-include_directories(../libDevCom/include)
+include_directories( ../libDevCom )
+include_directories( ../libGPIB/include )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 set(SrcFiles PBv2TB.cpp
+  PBv2Test.cpp
 )
 
 add_library(pbv2 SHARED ${SrcFiles}) 
+target_link_libraries(pbv2 -lDevCom -lGPIB)
 
 add_subdirectory(tools)
 add_subdirectory(singleboard)
-
-foreach(target ${pbv2})
-  get_filename_component(execname ${target} NAME_WE)
-  get_filename_component(srcfile ${target} NAME)
-
-  add_executable(${execname} ${srcfile})
-  target_link_libraries(${execname} -lDevCom)
-endforeach()

@@ -9,6 +9,8 @@ AMAC::~AMAC()
 
 void AMAC::init()
 {
+  write(AMACreg::LV_ENABLE, 0x0); // ensure output is disabled
+
   write(AMACreg::BANDGAP_CONTROL, 10); //1.2V LDO output
   write(AMACreg::RT_CH3_GAIN_SEL, 0); // no attenuation
   write(AMACreg::LT_CH3_GAIN_SEL, 0); // no attentuation

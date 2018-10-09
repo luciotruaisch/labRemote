@@ -56,7 +56,6 @@ add_subdirectory(libScope)
 # Add binaries
 add_subdirectory(prober)
 add_subdirectory(pbv2)
-add_subdirectory(pbv2active)
 add_subdirectory(pbv3)
 add_subdirectory(varload)
 add_subdirectory(examples)
