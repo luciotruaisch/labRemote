@@ -9,6 +9,7 @@
 
 #include "LinearCalibration.h"
 #include "DeviceCalibration.h"
+#include "FileCalibration.h"
 
 PBv2TB::PBv2TB(const std::string& i2cdev)
 {
@@ -29,6 +30,16 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   m_dac_0=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4C, 1, m_mux0));
   m_dac_1=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4D, 1, m_mux0));
   m_dac_2=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4E, 1, m_mux0));
+
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB1, std::make_shared<FileCalibration>("load1.csv"));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB2, std::make_shared<FileCalibration>("load2.csv"));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB3, std::make_shared<FileCalibration>("load3.csv"));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB4, std::make_shared<FileCalibration>("load4.csv"));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB5, std::make_shared<FileCalibration>("load5.csv"));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB6, std::make_shared<FileCalibration>("load6.csv"));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB7, std::make_shared<FileCalibration>("load7.csv"));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB8, std::make_shared<FileCalibration>("load8.csv"));
+  m_dac_2->setCalibration(DAC_CH_LOAD_PB9, std::make_shared<FileCalibration>("load9.csv"));
 
   // PBs
   m_pbs[0]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,7, m_mux1));
@@ -51,7 +62,10 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
 
   // Initialize the PBs
   for(uint8_t i=0;i<9;i++)
-    m_pbs[i]->init();
+    {
+      m_pbs[i]->init();
+      setLoad(i,0);
+    }
 }
 
 PBv2TB::~PBv2TB()
@@ -125,7 +139,53 @@ double PBv2TB::setLoad(uint8_t pbNum, double load)
     default:
       // TODO throw exception
       return 0.;
-    }  
+    }
+}
+
+void PBv2TB::setLoadCounts(uint8_t pbNum, uint32_t counts)
+{
+  switch ( pbNum )
+    {
+    case 0 :
+      m_dac_0->setCount(DAC_CH_LOAD_PB1, counts);
+      break;
+
+    case 1 : 
+      m_dac_0->setCount(DAC_CH_LOAD_PB2, counts);
+      break;
+
+    case 2 : 
+      m_dac_0->setCount(DAC_CH_LOAD_PB3, counts);
+      break;
+
+    case 3 : 
+      m_dac_0->setCount(DAC_CH_LOAD_PB4, counts);
+      break;
+
+    case 4 : 
+      m_dac_1->setCount(DAC_CH_LOAD_PB5, counts);
+      break;
+
+    case 5 : 
+      m_dac_1->setCount(DAC_CH_LOAD_PB6, counts);
+      break;
+
+    case 6 :
+      m_dac_1->setCount(DAC_CH_LOAD_PB7, counts);
+      break;
+
+    case 7 :
+      m_dac_1->setCount(DAC_CH_LOAD_PB8, counts);
+      break;
+
+    case 8 : 
+      m_dac_2->setCount(DAC_CH_LOAD_PB9, counts);
+      break;
+
+    default:
+      // TODO throw exception
+      break;
+    }
 }
 
 double PBv2TB::getVout(uint8_t pbNum)
@@ -174,13 +234,3 @@ double PBv2TB::getVout(uint8_t pbNum)
     }
 }
 
-/*
-std::string getTestName(std::string TestName, int i){
-  switch (i)
-  {
-    case 1 : 
-      return TestName + pb1;
-      break;
-  }
-}
-*/

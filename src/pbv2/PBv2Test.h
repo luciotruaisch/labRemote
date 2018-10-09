@@ -16,6 +16,7 @@ public:
   bool runLVEnable();
   bool runDCDCEfficiency();
   bool runVin();
+  bool runVinIn();
   
 private:
   std::string m_name;

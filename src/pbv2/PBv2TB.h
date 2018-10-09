@@ -46,7 +46,9 @@ public:
   double getP5VCurrent();
   double getM5VCurrent();
 
-  double setLoad(uint8_t pbNum, double load);
+  double setLoad      (uint8_t pbNum, double   load);
+  void   setLoadCounts(uint8_t pbNum, uint32_t counts);
+
   double getVout(uint8_t pbNum);
   
 private:

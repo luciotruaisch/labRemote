@@ -78,7 +78,7 @@ bool PBv2Test::runDCDCEfficiency()
       unsigned ptat = 0;
       unsigned ntc = 0;
       double iout = m_tb->setLoad(m_pbidx, load)*1000;
-      std::this_thread::sleep_for(std::chrono::seconds(5));
+      std::this_thread::sleep_for(std::chrono::seconds(1));
 
       m_pb->read(AMACreg::VALUE_RIGHT_CH1, cur);
       m_pb->read(AMACreg::VALUE_RIGHT_CH3, ptat);
@@ -117,6 +117,43 @@ bool PBv2Test::runVin()
   }
   m_ps->setVoltage(11.0);
   m_ps->setCurrent(2.00);
+  logfile.close();
+
+  return true;
+}
+
+bool PBv2Test::runVinIn()
+{
+  logger(logINFO) << "Testing current usage as a function of input voltage...";
+
+  std::string logpath = "log/" + m_name + "_VinIin.log";
+  std::fstream logfile(logpath, std::fstream::out);
+  logfile << "Vin Iin Vout" << std::endl;
+
+  double vin_min = 4.0;
+  double vin_max = 5.0;
+  double vin_step = 0.05;
+
+  m_pb->write(AMACreg::LV_ENABLE, 0x1);  
+  m_tb->setLoad(m_pbidx,0.1);
+
+  for (double vin=vin_min; vin<=vin_max; vin+=vin_step)
+    {
+      m_ps->turnOff();
+      m_ps->setVoltage(vin);
+      m_ps->turnOn();
+      m_pb->init();
+      m_pb->write(AMACreg::LV_ENABLE, 0x1);  
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+
+      double lv = m_tb->getVout(m_pbidx);
+      std::cout << vin << " " << m_ps->getCurrent() << " " << lv << std::endl;
+      logfile   << vin << " " << m_ps->getCurrent() << " " << lv << std::endl;
+    }
+
+  m_tb->setLoad(m_pbidx,0);
+  m_pb->write(AMACreg::LV_ENABLE, 0x0);
+
   logfile.close();
 
   return true;
