@@ -17,13 +17,21 @@
 #define DAC_CH_LOAD_PB2 2
 #define DAC_CH_LOAD_PB3 0
 #define DAC_CH_LOAD_PB4 3
-
 #define DAC_CH_LOAD_PB5 1
 #define DAC_CH_LOAD_PB6 2 
 #define DAC_CH_LOAD_PB7 0
 #define DAC_CH_LOAD_PB8 3
-
 #define DAC_CH_LOAD_PB9 1
+
+#define ADC_VOUT_PB1 6
+#define ADC_VOUT_PB2 7
+#define ADC_VOUT_PB3 5
+#define ADC_VOUT_PB4 3
+#define ADC_VOUT_PB5 1
+#define ADC_VOUT_PB6 0
+#define ADC_VOUT_PB7 2
+#define ADC_VOUT_PB8 4
+#define ADC_VOUT_PB9 6
 
 class PBv2TB
 {
@@ -38,11 +46,8 @@ public:
   double getP5VCurrent();
   double getM5VCurrent();
 
-  double setDac(int DACNum, int CHVALUE, double val);
-  double readDac(int DACNum, int CHVALUE);
-  int getDAC_CH(int pbNum);
-  int getDAC_Num(int pbNum);
-  double getVout(int pbNum);
+  double setLoad(uint8_t pbNum, double load);
+  double getVout(uint8_t pbNum);
   
 private:
   //

@@ -25,9 +25,10 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   m_adc_lv1=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x22, 1, m_mux0));
 
   // DACs
-  m_dac_0=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4C, 1, m_mux0));
-  m_dac_1=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4D, 1, m_mux0));
-  m_dac_2=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4E, 1, m_mux0));
+  double maxcurr=3.3*4.02/(100+4.02)/25e-3;
+  m_dac_0=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4C, 1, m_mux0));
+  m_dac_1=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4D, 1, m_mux0));
+  m_dac_2=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4E, 1, m_mux0));
 
   // PBs
   m_pbs[0]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,7, m_mux1));
@@ -81,132 +82,96 @@ std::shared_ptr<AMAC> PBv2TB::getPB(uint8_t pb)
   return m_pbs[pb];
 }
 
-double PBv2TB::setDac(int DACNum, int CHVALUE, double val)
+double PBv2TB::setLoad(uint8_t pbNum, double load)
 {
-  if(DACNum == 0)
-  {
-    m_dac_0->set(CHVALUE, val);
-    return 1;
-  }
+  switch ( pbNum )
+    {
+    case 0 :
+      return m_dac_0->set(DAC_CH_LOAD_PB1, load);
+      break;
 
-  else if(DACNum == 1)
-  {
-    m_dac_1->set(CHVALUE, val);
-    return 1;
-  }
+    case 1 : 
+      return m_dac_0->set(DAC_CH_LOAD_PB2, load);
+      break;
 
-  else if(DACNum == 2)
-  {  
-    m_dac_2->set(CHVALUE, val);
-    return 1;
-  }
+    case 2 : 
+      return m_dac_0->set(DAC_CH_LOAD_PB3, load);
+      break;
 
-  else
-    return -1;
+    case 3 : 
+      return m_dac_0->set(DAC_CH_LOAD_PB4, load);
+      break;
 
+    case 4 : 
+      return m_dac_1->set(DAC_CH_LOAD_PB5, load);
+      break;
+
+    case 5 : 
+      return m_dac_1->set(DAC_CH_LOAD_PB6, load);
+      break;
+
+    case 6 :
+      return m_dac_1->set(DAC_CH_LOAD_PB7, load);
+      break;
+
+    case 7 :
+      return m_dac_1->set(DAC_CH_LOAD_PB8, load);
+      break;
+
+    case 8 : 
+      return m_dac_2->set(DAC_CH_LOAD_PB9, load);
+      break;
+
+    default:
+      // TODO throw exception
+      return 0.;
+    }  
 }
 
-double PBv2TB::readDac(int DACNum, int CHVALUE)
+double PBv2TB::getVout(uint8_t pbNum)
 {
-  if(DACNum == 0)
-    return m_dac_0->read(CHVALUE);
+  switch ( pbNum )
+    {
+    case 0 : 
+      return m_adc_lv1->read(ADC_VOUT_PB1);
+      break;
 
-  else if(DACNum == 1)
-    return m_dac_1->read(CHVALUE);
+    case 1 : 
+      return m_adc_lv0->read(ADC_VOUT_PB2);
+      break;
 
-  else if(DACNum == 2)  
-    return m_dac_2->read(CHVALUE); 
+    case 2 : 
+      return m_adc_lv0->read(ADC_VOUT_PB3);
+      break;
 
-  else
-    return -1;
-}
+    case 3 : 
+      return m_adc_lv0->read(ADC_VOUT_PB4);
+      break;
 
-int PBv2TB::getDAC_CH(int pbNum)
-{
-  if(pbNum == 1)
-    return DAC_CH_LOAD_PB1;
+    case 4 : 
+      return m_adc_lv0->read(ADC_VOUT_PB5);
+      break;
 
-  else if(pbNum == 2)
-    return DAC_CH_LOAD_PB2;
-  
-  else if(pbNum == 3)
-    return DAC_CH_LOAD_PB3;
+    case 5 : 
+      return m_adc_lv0->read(ADC_VOUT_PB6);
+      break;
 
-  else if(pbNum == 4)
-    return DAC_CH_LOAD_PB4;
+    case 6 : 
+      return m_adc_lv0->read(ADC_VOUT_PB7);
+      break;
 
-  else if(pbNum == 5)
-    return DAC_CH_LOAD_PB5;
+    case 7 : 
+      return m_adc_lv0->read(ADC_VOUT_PB8);
+      break;
 
-  else if(pbNum == 6)
-    return DAC_CH_LOAD_PB6;
+    case 8 : 
+      return m_adc_lv0->read(ADC_VOUT_PB9);
+      break;
 
-  else if(pbNum == 7)
-    return DAC_CH_LOAD_PB7;
-
-  else if(pbNum == 8)
-    return DAC_CH_LOAD_PB8;
-
-  else if(pbNum == 9)
-    return DAC_CH_LOAD_PB9;
-
-  else
-    return -1;
-}
-
-int PBv2TB::getDAC_Num(int pbNum)
-{
-  if(pbNum == 1 || pbNum == 2 || pbNum == 3 || pbNum == 4)
-    return 0;
-
-  else if(pbNum == 5 || pbNum == 6 || pbNum == 7 || pbNum == 8)
-    return 1;
-  
-  else if(pbNum == 9)
-    return 2;
-
-  else 
-    return -1;
-}
-
-double PBv2TB::getVout(int pbNum){
-  switch ( pbNum ) {
-
-  case 1 : 
-    return m_adc_lv1->read(6);
-    break;
-
-  case 2 : 
-    return m_adc_lv0->read(7);
-    break;
-
-  case 3 : 
-    return m_adc_lv0->read(5);
-    break;
-
-  case 4 : 
-    return m_adc_lv0->read(3);
-    break;
-
-  case 5 : 
-    return m_adc_lv0->read(1);
-    break;
-
-  case 6 : 
-    return m_adc_lv0->read(0);
-    break;
-
-  case 7 : 
-    return m_adc_lv0->read(2);
-    break;
-
-  case 8 : 
-    return m_adc_lv0->read(4);
-    break;
-
-  default : 
-    return m_adc_lv0->read(6);
-  }
+    default:
+      // TODO throw exception
+      return 0.;
+    }
 }
 
 /*

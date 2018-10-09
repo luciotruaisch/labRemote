@@ -343,8 +343,6 @@ int main(int argc, char* argv[]) {
       name = TestName + "_" + pb9;
     }
 
-    int DACNum = tb.getDAC_Num(i);
-    int CHVALUE = tb.getDAC_CH(i);
     logpath = "log/" + name + "_DCDCEfficiencyBurnin" + std::to_string(t) + ".log";
     logfile.open(logpath, std::fstream::out);
     logfile << "Dac Iout IoutADC VoutADC Iin IinADC ntc ptat" << std::endl;
@@ -352,12 +350,10 @@ int main(int argc, char* argv[]) {
     
 
     for (double dac = dac_min; dac <= dac_max; dac+=dac_step) {
-      tb.setDac(DACNum, CHVALUE, dac);
       unsigned cur = 0;
       unsigned ptat = 0;
       unsigned ntc = 0;
-      double dacVal = tb.readDac(DACNum, CHVALUE);
-      double iout = dacVal * 4.0/2.75;
+      double iout = tb.setLoad(i-1, dac);
       std::this_thread::sleep_for(std::chrono::seconds(10));
 
       switch(i)
@@ -366,66 +362,64 @@ int main(int argc, char* argv[]) {
           amac1->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac1->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac1->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 2 :
           amac2->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac2->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac2->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 3 :
           amac3->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac3->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac3->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 4 :
           amac4->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac4->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac4->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 5 :
           amac5->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac5->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac5->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 6 :
           amac6->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac6->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac6->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 7 :
           amac7->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac7->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac7->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         case 8 :
           amac8->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac8->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac8->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
           break;
 
         default :
           amac9->read(AMACreg::VALUE_RIGHT_CH1, cur);
           amac9->read(AMACreg::VALUE_RIGHT_CH3, ptat);
           amac9->read(AMACreg::VALUE_RIGHT_CH2, ntc);
-          logfile << dacVal << " " << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
+          logfile << iout << " " << cur << " " << tb.getVout(i) << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << ntc << " " << ptat << std::endl;
     }
-
-    tb.setDac(DACNum, CHVALUE, 0);
   }
 }
 
@@ -472,11 +466,9 @@ int main(int argc, char* argv[]) {
     }
 
     logger(logINFO) << "Testing current usage as a funciton of input voltage...";
-    int DACNum = tb.getDAC_Num(j);
-    int CHVALUE = tb.getDAC_CH(j);
     logpath = "log/" + name + "_VinIin" + std::to_string(t) + ".log";
     logfile.open(logpath, std::fstream::out);
-    logfile << "Vin Iin IinADC Vout" << std::endl;
+    logfile << "Vin Iin IinADC" << std::endl;
 
     for (double vin=vin_min; vin<=vin_max; vin+=vin_step) {
       ps.turnOff();
@@ -486,11 +478,8 @@ int main(int argc, char* argv[]) {
       amac1->write(AMACreg::LV_ENABLE, 0x1);
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
-      //double lv = dc.getValues().vol;//mV
-      //should this be DAC values or tb.getVinCurrent()?
-      double lvADC = tb.readDac(DACNum, CHVALUE); //get correct DAC value
-      std::cout << vin << "\t" << ps.getCurrent() << "\t" << tb.getVinCurrent() << "\t" << lvADC << std::endl;
-      logfile << vin << " " << ps.getCurrent() << " " << tb.getVinCurrent() << " " << lvADC << std::endl;
+      std::cout << vin << "\t" << ps.getCurrent() << "\t" << tb.getVinCurrent() << std::endl;
+      logfile << vin << " " << ps.getCurrent() << " " << tb.getVinCurrent() << std::endl;
     }
     amac1->write(AMACreg::LV_ENABLE, 0x0);
     //dc.turnOff();

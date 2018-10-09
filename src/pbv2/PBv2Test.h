@@ -13,6 +13,9 @@ public:
   ~PBv2Test();
 
   bool runGeneral();
+  bool runLVEnable();
+  bool runDCDCEfficiency();
+  bool runVin();
   
 private:
   std::string m_name;
