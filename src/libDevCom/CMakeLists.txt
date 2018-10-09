@@ -34,6 +34,7 @@ set(SrcFiles DeviceCom.cpp
   DeviceCalibration.cpp
   DummyCalibration.cpp
   LinearCalibration.cpp
+  FileCalibration.cpp
 )
 
 if ( ${ENABLE_FTDI} )
