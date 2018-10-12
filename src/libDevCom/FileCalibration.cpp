@@ -37,7 +37,7 @@ uint32_t FileCalibration::uncalibrate(double value)
   for(uint32_t i=0; i<m_values.size()-1; i++)
     {
       if(m_values[i]<=value && value<m_values[i+1]) // Found interval
-	return m_counts[i]+(m_values[i]-value)/(m_values[i]-m_values[i+1])*(m_counts[i+1]-m_counts[i]);
+	return round(m_counts[i]+(m_values[i]-value)/(m_values[i]-m_values[i+1])*(m_counts[i+1]-m_counts[i]));
     }
   return 0;
 }
