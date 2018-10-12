@@ -26,7 +26,7 @@ public:
   void setVoltage(double volt);
   std::string getVoltage();
   void setCurrent(double cur);
-  std::string getCurrent();
+  double getCurrent();
   void turnOn();
   void turnOff();
 

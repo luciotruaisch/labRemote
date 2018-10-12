@@ -63,9 +63,9 @@ void SorensenPs::setCurrent(double cur)
   this->send("I"+std::to_string(m_ch)+" " + std::to_string(cur));
 }
 
-std::string SorensenPs::getCurrent()
+double SorensenPs::getCurrent()
 {
-  return this->receive("I"+std::to_string(m_ch)+"O?").substr(0, 5);
+  return std::stof(this->receive("I"+std::to_string(m_ch)+"O?").substr(0, 5));
 }
 
 void SorensenPs::turnOn()
