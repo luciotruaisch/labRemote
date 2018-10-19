@@ -21,63 +21,65 @@
 using namespace std;
 class ControllerGalil : public ControllerBase
 {
-private:
-    GCon port; // port connected to Galil
-    string dn; // device name
+	private:
+		GCon port; // port connected to Galil
+		string dn; // device name
 
-public:
-    ControllerGalil(const char* device_name);
-    ~ControllerGalil();
+	public:
+		ControllerGalil(const char* device_name);
+		~ControllerGalil();
 
-    int connect();
-    int disconnect();
+		int connect();
+		int disconnect();
 
-    int write(const string& cmd);
+		int write(const string& cmd);
+		string* write_with_reply(const string& cmd);
 
-    int set_speed(int axis, float sp);
+		int set_speed(int axis, float sp);
 
-    int mv_abs(int axis, float value);
-    int mv_rel(int axis, float value);
-    int stop();
+		int mv_abs(int axis, float value);
+		int mv_rel(int axis, float value);
+		int stop();
 
-    int get_position();
-    int get_speed();
+		int get_position();
+		int get_speed();
 
-    int set_home();
-    int set_center();
+		int set_home();
+		int set_center();
 
-    void find_max_min();
-    void find_z_min();
-    void check_z_min();
-public:
-    // 14.2 mili-meter is the total distance the Z-axis can travel.
-    // project the absolute turns (or position) to the 14.2 mm length
-    // lowest position would be zero, while highest position is 14.2 mm.
-    float m_raw_position[3];
-    float m_ymax; // turns at the top, --> 14.2mm
-    float m_ymin; // turns at the bottom, --> 0
-private:
-    inline bool check(GReturn rc){
-        return (rc == G_NO_ERROR);
-    }
-    int convert_mm_to_turns(float value)
-    {
-        // value is the relative distance.
-        return value* (m_ymax - m_ymin)/14.2;
-    }
-    float convert_turns_to_mm(float turns){
-        float res = 14.2*(turns - m_ymin)/(m_ymax - m_ymin);
-        res = (int)(res*1000) / 1000.;
-        return res;
-    }
-    char axis_index_to_name(int axis){
-        // ABC is for XYZ!
-        // axis starts from 0 to 2;
-        return 'A'+axis;
-    }
-    string generate_cmd(const char* cmd, int axis, int steps);
-    void make_a_move(int axis);
-    char buf[1024];
+		void find_max_min();
+		void find_z_min();
+		void check_z_min();
+		void poll_position();
+	public:
+		// 14.2 mili-meter is the total distance the Z-axis can travel.
+		// project the absolute turns (or position) to the 14.2 mm length
+		// lowest position would be zero, while highest position is 14.2 mm.
+		float m_raw_position[3];
+		float m_ymax; // turns at the top, --> 14.2mm
+		float m_ymin; // turns at the bottom, --> 0
+	private:
+		inline bool check(GReturn rc){
+			return (rc == G_NO_ERROR);
+		}
+		int convert_mm_to_turns(float value)
+		{
+			// value is the relative distance.
+			return value* (m_ymax - m_ymin)/14.2;
+		}
+		float convert_turns_to_mm(float turns){
+			float res = 14.2*(turns - m_ymin)/(m_ymax - m_ymin);
+			res = (int)(res*1000) / 1000.;
+			return res;
+		}
+		char axis_index_to_name(int axis){
+			// ABC is for XYZ!
+			// axis starts from 0 to 2;
+			return 'A'+axis;
+		}
+		string generate_cmd(const char* cmd, int axis, int steps);
+		void make_a_move(int axis);
+		char buf[1024];
 
 };
 

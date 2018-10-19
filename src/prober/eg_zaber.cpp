@@ -19,9 +19,6 @@ void sig_handler(int signum){
 	if(signum == SIGINT){
 		emergency_stop = 1;
 	}
-
-	//printf("Received SIGINT. Exiting program.\n");
-	//exit(signum);	
 }
 
 
@@ -29,6 +26,7 @@ void sig_handler(int signum){
 
 void poll_zaber(z_port port){
 	char reply[256] = { 0 };
+	char pos_reply[256] = { 0 };
 	struct za_reply decoded_reply;
 	za_send(port, "/"); // '/' generates a response form all devices in the chain
 	za_receive(port, reply, sizeof(reply));
@@ -45,8 +43,11 @@ void poll_zaber(z_port port){
 		za_send(port, "/ \n");
 		za_receive(port, reply, sizeof(reply));
 		std::cout << reply << std::endl;
+		za_send(port, "/get pos \n");
+		za_receive(port, pos_reply, sizeof(pos_reply));
+		std::cout << pos_reply << std::endl;
 		current_status = reply;
-		sleep(0.5);
+		sleep(1);
 	}
 }
 

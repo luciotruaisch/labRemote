@@ -1,26 +1,58 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <unistd.h> //for sleep function
+#include <signal.h> //for signal handling
 
 #include "ControllerGalil.h"
 
 using namespace std;
+
+bool emergency_stop = 0; 
+
+void sig_handler(int signum){
+	if(signum == SIGINT){
+		emergency_stop = 1;
+	}
+}
+
+void poll_galil(ControllerGalil* ctrl){
+	string *reply, *last_reply; 
+	reply = ctrl->write_with_reply("TP");
+	sleep(1);
+	last_reply = ctrl->write_with_reply("TP");
+	while (*last_reply != *reply) {
+		if (emergency_stop == 1) {
+			ctrl->write("AB");
+			exit(SIGINT);	
+		}
+		reply = ctrl->write_with_reply("TP");
+		sleep(1);
+		last_reply = ctrl->write_with_reply("TP");
+	}
+} 
+
+
 int main(int argc, char** argv){
-    ControllerGalil* ctrl = new ControllerGalil("192.168.1.30");
-    ctrl->connect();
 
-    string input = "";
-    while(true){
-        printf("please enter commands, q for quit\n");
-        getline(cin, input);
-        if(input[0] == 'q') break;
-        if(input[0] == '\n') continue;
-        // char cmd[256];
-        // int n = sprintf(cmd, "%s", input.c_str());
-        ctrl->write(input);
-        // ctrl->mv_abs(1, 10.);
-    }
+	signal(SIGINT, sig_handler);
 
-    delete ctrl;
-    return 0;
+	ControllerGalil* ctrl = new ControllerGalil("192.168.1.30");
+	ctrl->connect();
+
+	string input = "";
+	while(true){
+		printf("Please enter commands. p for poll. q for quit\n");
+		getline(cin, input);
+		if(input[0] == 'q') {
+			ctrl->write("AB");
+			break;	
+		}
+		if(input[0] == '\n') continue;
+		if(input[0] == 'p') poll_galil(ctrl);
+		ctrl->write(input);
+	}
+
+	delete ctrl;
+	return 0;
 }

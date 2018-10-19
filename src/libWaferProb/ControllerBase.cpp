@@ -25,6 +25,7 @@ void ControllerBase::print_cmd(){
 			"CHECKZMIN --> check the minimum position of Z-axis\n"
 			"XY_PARK --> park the xy controller \n"
 			"XY_UNPARK --> unpark the xy controller \n"
+			"POLL_POS --> poll positions of controllers\n"
 			"----------------------------------------------------------\n"
 	      );
 }
