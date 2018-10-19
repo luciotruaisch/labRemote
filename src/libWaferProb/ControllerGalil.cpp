@@ -79,7 +79,7 @@ string* ControllerGalil::write_with_reply(const string& cmd){
 	printf("Galil: %s --> %s\n", cmd.c_str(), buf);
 	string* result = new string(buf);	
 
-//	poll_position();	
+	poll_position();	
 	return result;
 }
 
