@@ -16,7 +16,7 @@
 #include "SerialCom.h"
 #include "GenericPs.h"
 
-class AgilentPs : GenericPs {
+class AgilentPs : public GenericPs {
     public:
         AgilentPs(std::string dev, unsigned addr);
         ~AgilentPs();

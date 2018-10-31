@@ -3,7 +3,7 @@
 #include "EndeavourComException.h"
 #include "EndeavourRawFTDI.h"
 
-#include <memory>
+ #include <memory>
 
 namespace PBv3TestTools {
     json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
@@ -46,12 +46,12 @@ namespace PBv3TestTools {
         } catch(EndeavourComException &e) {
             logger(logERROR) << e.what();
             testSum["error"] = e.what();
-            return testSum;
+	    return testSum;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         double lv_on = load->getValues().vol;//mV
-        logger(logINFO) << " --> Reading " << lv_on << "mV in off state.";
+        logger(logINFO) << " --> Reading " << lv_on << "mV in on state.";
         testSum["data"][1] = {1, lv_on};
 
         if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
@@ -514,7 +514,7 @@ namespace PBv3TestTools {
         ps->turnOn();
 
         testSum["header"] = {"Vset [V]", "Vread [V]", "Iread [A]", "DCDCin [counts]"};
-        std::cout << "Vset\tVread\tIread" << std::endl;
+        std::cout << "Vset\tVread\tIread\tDCDCin [counts]" << std::endl;
         int index = 0;
         for (double vset = v_start; vset<=v_end; vset+=v_step) {
             ps->setVoltage(vset);

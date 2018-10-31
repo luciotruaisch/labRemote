@@ -50,7 +50,8 @@ int main(int argc, char* argv[]) {
 
     // Init Agilent
     logger(logINFO) << "Init Agilent PS";
-    TTIMX180TPPs ps(agiDev, 10);
+    AgilentPs ps(agiDev, 10);
+       // TTIMX180TPPs ps(agiDev, 10);
     try
     {
         ps.init();
@@ -69,7 +70,7 @@ int main(int argc, char* argv[]) {
     logger(logINFO) << "Init BK DCDC Load";
     Bk85xx dc(bkDev);
     dc.setRemote();
-    dc.setRemoteSense(true);
+    dc.setRemoteSense(false);
     dc.setModeCC();
     dc.setCurrent(0);
     dc.turnOn();
@@ -89,10 +90,11 @@ int main(int argc, char* argv[]) {
         logger(logERROR) << e;
         return 1;
     }
+    
 
     // Measure LV IV
     uint32_t test=0;
-    testSum["tests"][test++] = PBv3TestTools::measureLvIV(dynamic_cast<GenericPs*>(&ps));
+    //testSum["tests"][test++] = PBv3TestTools::measureLvIV(dynamic_cast<GenericPs*>(&ps));
     
     // Turn on power
     logger(logINFO) << "Turn on PS fully";
@@ -115,7 +117,7 @@ int main(int argc, char* argv[]) {
 
     // Start testing
     testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
-    testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
+       testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
     testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
