@@ -4,9 +4,7 @@
 # Find libpico
 find_package(Pico)
 
-if ( ${LIBPICO_FOUND} )
-  set(ENABLE_SCOPE 1)
-else()
+if (NOT ${ENABLE_SCOPE} )
   message("Disabling libScope due to missing libpico")
   return()
 endif()

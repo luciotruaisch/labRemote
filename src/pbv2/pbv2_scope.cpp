@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
 
   float period=pico->getPeriod();
 
-  std::vector<std::vector<float>> data;
+  std::vector<std::vector<float>> data(1,std::vector<float>(PS6000_BUFFER_SIZE));
 
   // Run test with LV on
   logpath = "log/" + TestName + "_CoilLVON.log";
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 
   amac.write(AMACreg::LV_ENABLE, 0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  data=pico->run();
+  pico->run(data);
 
   logfile << "time coil" << std::endl;
 
@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 
   amac.write(AMACreg::LV_ENABLE, 0x0);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  data=pico->run();
+  pico->run(data);
 
   logfile << "time coil" << std::endl;
 

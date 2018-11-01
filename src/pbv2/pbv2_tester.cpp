@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
   pico.setRange(0, 200);
   pico.configChannels();
   float period=pico.getPeriod();
-  std::vector<std::vector<float>> picodata;
+  std::vector<std::vector<float>> picodata(1,std::vector<float>(PS6000_BUFFER_SIZE));
 #else // SCOPE
   log(logINFO) << "\tSkipping noise measurement due to missing libScope";
 #endif // SCOPE
@@ -319,7 +319,7 @@ int main(int argc, char* argv[]) {
 
   amac.write(AMACreg::LV_ENABLE, 0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  picodata=pico.run();
+  pico.run(picodata);
 
   logfile << "time coil" << std::endl;
   for(unsigned int row=0; row<picodata[0].size(); row++)
@@ -333,7 +333,7 @@ int main(int argc, char* argv[]) {
 
   amac.write(AMACreg::LV_ENABLE, 0x0);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
-  picodata=pico.run();
+  pico.run(picodata);
 
   logfile << "time coil" << std::endl;
   for(unsigned int row=0; row<picodata[0].size(); row++)
