@@ -1,6 +1,7 @@
 #include "LineCalibration.h"
 
 #include <cmath>
+#include <iostream>
 
 LineCalibration::LineCalibration(double m, double b)
   : m_m(m), m_b(b)

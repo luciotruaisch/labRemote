@@ -33,6 +33,14 @@
 #define ADC_VOUT_PB8 4
 #define ADC_VOUT_PB9 6
 
+#define NTC_CH_L1L3 4
+#define NTC_CH_L3L5 2
+#define NTC_CH_L5L7 0
+#define NTC_CH_L7L9 1
+#define NTC_CH_L2L4 3
+#define NTC_CH_L4L6 5
+#define NTC_CH_L6L8 7
+
 class PBv2TB
 {
 public:
@@ -45,6 +53,8 @@ public:
   double getVinCurrent();
   double getP5VCurrent();
   double getM5VCurrent();
+
+  double getNTC(uint8_t ntc);
 
   double setLoad      (uint8_t pbNum, double   load);
   void   setLoadCounts(uint8_t pbNum, uint32_t counts);

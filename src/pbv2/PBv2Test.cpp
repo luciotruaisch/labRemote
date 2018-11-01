@@ -60,8 +60,8 @@ bool PBv2Test::runLVEnable()
 
 bool PBv2Test::runDCDCEfficiency()
 {
-  double load_min = 0.0;
-  double load_max = 4; //(lv_enable_works)?2.75:0;
+  double load_min = 0;
+  double load_max = 2; //(lv_enable_works)?2.75:0;
   double load_step = 0.1;
 
   logger(logINFO) << "Testing Current Sense Amp & Efficiency...";
@@ -78,7 +78,6 @@ bool PBv2Test::runDCDCEfficiency()
       unsigned ptat = 0;
       unsigned ntc = 0;
       double iout = m_tb->setLoad(m_pbidx, load)*1000;
-      std::this_thread::sleep_for(std::chrono::seconds(1));
 
       m_pb->read(AMACreg::VALUE_RIGHT_CH1, cur);
       m_pb->read(AMACreg::VALUE_RIGHT_CH3, ptat);

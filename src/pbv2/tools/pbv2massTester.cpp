@@ -18,15 +18,17 @@ int main(int argc, char* argv[])
 {
   //
   // Get settings from the command line
-  if (argc != 3)
+  if (argc != 11)
     {
       logger(logERROR) << "Not enough parameters!";
-      logger(logERROR) << "Usage: " << argv[0] << " pbIDX TESTNAME";
+      logger(logERROR) << "Usage: " << argv[0] << " TESTNAME PB1 PB2 PB3 PB4 PB5 PB6 PB7 PB8 PB9";
       return -1;
     }
 
-  uint8_t pbidx = std::stoi(argv[1]);
-  std::string TestName = argv[2];
+  std::string TestName = argv[1];
+  std::vector<std::string> PBNames;
+  for(uint i=0;i<9;i++)
+    PBNames.push_back(argv[2+i]);
 
   //
   // Create log directory if it does not exist
@@ -63,19 +65,23 @@ int main(int argc, char* argv[])
       return 1;
     }
   std::shared_ptr<PBv2TB> tb=std::make_shared<PBv2TB>();
-  PBv2Test test(TestName, tb, pbidx, ps);
 
-  std::cout << ": " << tb->getP5VCurrent() << std::endl;
-  std::cout << "Input LV Current (TB): " << tb->getVinCurrent() << std::endl;
-  std::cout << "Input LV Voltage (TB): " << tb->getVin() << std::endl;
+  for(uint pbidx=0; pbidx<9; pbidx++)
+    {
+      PBv2Test test(TestName+"_"+PBNames[pbidx], tb, pbidx, ps);
 
-  tb->getPB(pbidx)->init();
+      std::cout << ": " << tb->getP5VCurrent() << std::endl;
+      std::cout << "Input LV Current (TB): " << tb->getVinCurrent() << std::endl;
+      std::cout << "Input LV Voltage (TB): " << tb->getVin() << std::endl;
 
-  test.runGeneral();
-  test.runLVEnable();
-  test.runDCDCEfficiency();
-  test.runVin();
-  test.runVinIn();
+      tb->getPB(pbidx)->init();
+
+      test.runGeneral();
+      test.runLVEnable();
+      test.runDCDCEfficiency();
+      test.runVin();
+      test.runVinIn();
+    }
 
   //
   // Power-off

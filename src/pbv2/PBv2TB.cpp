@@ -1,5 +1,7 @@
 #include "PBv2TB.h"
 
+#include <cmath>
+
 #include "I2CCom.h"
 #include "I2CDevCom.h"
 #include "PCA9548ACom.h"
@@ -10,6 +12,7 @@
 #include "LinearCalibration.h"
 #include "DeviceCalibration.h"
 #include "FileCalibration.h"
+#include "LineCalibration.h"
 
 PBv2TB::PBv2TB(const std::string& i2cdev)
 {
@@ -21,7 +24,7 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   m_mux1=std::make_shared<I2CDevCom>(0x74, "/dev/i2c-0");
 
   // ADCs
-  m_adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7993, std::make_shared<PCA9548ACom>(0x22, 2, m_mux0));
+  m_adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7994, std::make_shared<PCA9548ACom>(0x22, 2, m_mux0));
   m_adc_lv0=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x21, 1, m_mux0));
   m_adc_lv1=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x22, 1, m_mux0));
 
@@ -31,15 +34,15 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   m_dac_1=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4D, 1, m_mux0));
   m_dac_2=std::make_shared<DAC5574>(maxcurr, std::make_shared<PCA9548ACom>(0x4E, 1, m_mux0));
 
-  m_dac_0->setCalibration(DAC_CH_LOAD_PB1, std::make_shared<FileCalibration>("load1.csv"));
-  m_dac_0->setCalibration(DAC_CH_LOAD_PB2, std::make_shared<FileCalibration>("load2.csv"));
-  m_dac_0->setCalibration(DAC_CH_LOAD_PB3, std::make_shared<FileCalibration>("load3.csv"));
-  m_dac_0->setCalibration(DAC_CH_LOAD_PB4, std::make_shared<FileCalibration>("load4.csv"));
-  m_dac_1->setCalibration(DAC_CH_LOAD_PB5, std::make_shared<FileCalibration>("load5.csv"));
-  m_dac_1->setCalibration(DAC_CH_LOAD_PB6, std::make_shared<FileCalibration>("load6.csv"));
-  m_dac_1->setCalibration(DAC_CH_LOAD_PB7, std::make_shared<FileCalibration>("load7.csv"));
-  m_dac_1->setCalibration(DAC_CH_LOAD_PB8, std::make_shared<FileCalibration>("load8.csv"));
-  m_dac_2->setCalibration(DAC_CH_LOAD_PB9, std::make_shared<FileCalibration>("load9.csv"));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB1, std::make_shared<LineCalibration>(0.019, 0.030));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB2, std::make_shared<LineCalibration>(0.019, 0.119));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB3, std::make_shared<LineCalibration>(0.019, 0.002));
+  m_dac_0->setCalibration(DAC_CH_LOAD_PB4, std::make_shared<LineCalibration>(0.019, 0.035));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB5, std::make_shared<LineCalibration>(0.018, 0.058));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB6, std::make_shared<LineCalibration>(0.018,-0.025));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB7, std::make_shared<LineCalibration>(0.019,-0.047));
+  m_dac_1->setCalibration(DAC_CH_LOAD_PB8, std::make_shared<LineCalibration>(0.019,-0.033));
+  m_dac_2->setCalibration(DAC_CH_LOAD_PB9, std::make_shared<LineCalibration>(0.019,-0.008));
 
   // PBs
   m_pbs[0]=std::make_shared<AMAC>(std::make_shared<PCA9548ACom>(0x0 ,7, m_mux1));
@@ -54,18 +57,14 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
 
   //
   // Load calibrations for the different channels
-  m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN     , std::make_shared<LinearCalibration>(3.3*(35+90.9)/35,0x3FF));
-  m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.005)  ,0x3FF));
-  m_adc_pwr->setCalibration(PBV2_ADC_CH_P5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0x3FF));
-  m_adc_pwr->setCalibration(PBV2_ADC_CH_M5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0x3FF));
-
+  m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN     , std::make_shared<LinearCalibration>(3.3*(35+90.9)/35,0xFFF));
+  m_adc_pwr->setCalibration(PBV2_ADC_CH_VIN_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.005)  ,0xFFF));
+  m_adc_pwr->setCalibration(PBV2_ADC_CH_P5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0xFFF));
+  m_adc_pwr->setCalibration(PBV2_ADC_CH_M5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0xFFF));
 
   // Initialize the PBs
-  for(uint8_t i=0;i<9;i++)
-    {
-      m_pbs[i]->init();
-      setLoad(i,0);
-    }
+  for(uint8_t i=1;i<2;i++)
+    setLoad(i,0);
 }
 
 PBv2TB::~PBv2TB()
@@ -89,6 +88,20 @@ double PBv2TB::getP5VCurrent()
 double PBv2TB::getM5VCurrent()
 {
   return m_adc_pwr->read(PBV2_ADC_CH_M5V_CURR);
+}
+
+double PBv2TB::getNTC(uint8_t ntc)
+{
+  // NTC properties
+  static const double R25=10e3;
+  static const double B  =(3601+3650)/2;
+  static const double T25=298.15;
+  static const double T0 =273.15;
+
+  double tempvolt=m_adc_lv1->read(ntc);
+  double tempres =10e3/(tempvolt/3.3)-10e3;
+  
+  return 1/(log(tempres/R25)/B+1/T25)-T0;
 }
 
 std::shared_ptr<AMAC> PBv2TB::getPB(uint8_t pb)
@@ -132,7 +145,7 @@ double PBv2TB::setLoad(uint8_t pbNum, double load)
       return m_dac_1->set(DAC_CH_LOAD_PB8, load);
       break;
 
-    case 8 : 
+    case 8 :
       return m_dac_2->set(DAC_CH_LOAD_PB9, load);
       break;
 
