@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../src/libZaber/include/z_common.h
+windows.h
+-
+
+../src/libZaber/include/za_serial.h
+z_common.h
+../src/libZaber/include/z_common.h
+
+/home/ltruaisch/labRemote/src/libZaber/za_serial.cpp
+string.h
+-
+stdio.h
+-
+stdlib.h
+-
+za_serial.h
+/home/ltruaisch/labRemote/src/libZaber/za_serial.h
+fcntl.h
+-
+sys/stat.h
+-
+sys/types.h
+-
+termios.h
+-
+unistd.h
+-
+errno.h
+-
+

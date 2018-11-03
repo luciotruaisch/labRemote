@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/pbv2powerOff.dir/pbv2powerOff.cpp.o  -o ../../../bin/pbv2powerOff  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lDevCom -lGPIB -lpbv2 -lGPIB -lpbv2 

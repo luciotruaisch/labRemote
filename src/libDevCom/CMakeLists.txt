@@ -25,6 +25,7 @@ set(SrcFiles DeviceCom.cpp
   ADCDevice.cpp
   AD799X.cpp
   MAX11619.cpp
+  MCP3428.cpp
   #LTC2333.cpp
 
   #AD5160.cpp
@@ -35,6 +36,7 @@ set(SrcFiles DeviceCom.cpp
   DummyCalibration.cpp
   LinearCalibration.cpp
   LineCalibration.cpp
+  GainCalibration.cpp
   FileCalibration.cpp
 )
 

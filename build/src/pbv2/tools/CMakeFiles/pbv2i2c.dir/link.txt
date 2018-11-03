@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/pbv2i2c.dir/pbv2i2c.cpp.o  -o ../../../bin/pbv2i2c  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lDevCom -lGPIB -lpbv2 -lGPIB -lpbv2 

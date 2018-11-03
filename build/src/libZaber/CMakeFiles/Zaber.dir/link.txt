@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC   -shared -Wl,-soname,libZaber.so -o ../../lib/libZaber.so CMakeFiles/Zaber.dir/za_serial.cpp.o 

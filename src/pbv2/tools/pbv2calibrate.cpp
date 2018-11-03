@@ -36,6 +36,8 @@ int main(int argc, char* argv[])
 
       std::fstream logfile(filename, std::fstream::out);
       logfile << "DAC" << " " << "Iout" << std::endl;
+      //Modification to modify the value of the charge
+      /*
 
       //initiate power supply 
       SorensenPs ps("/dev/ttyUSB0", 11);
@@ -48,20 +50,20 @@ int main(int argc, char* argv[])
       ps.turnOn();
       std::this_thread::sleep_for(std::chrono::seconds(1));      
       std::cout << "Power supply turned on, voltage set to " << ps.getVoltage()
-		<< " current set to " << ps.getCurrent() << std::endl;
-
+      << " current set to " << ps.getCurrent() << std::endl;*/
+      
       for(uint32_t i=0; i<0xFF; i+=4)
         {
       	  tb.setLoadCounts(pb, i);
 
 	  std::this_thread::sleep_for(std::chrono::seconds(10));
-	  double lastcurr=ps.getCurrent();
+	  // double lastcurr=ps.getCurrent();
 
-      	  logfile   << i << " " << lastcurr << std::endl;
-      	  std::cout << i << " " << lastcurr << std::endl;
+	  logfile   << i << " " <<std::endl; // lastcurr << std::endl;
+	  std::cout << i << " " <<std::endl; // lastcurr << std::endl;
         }
 
-      ps.turnOff();
+      // ps.turnOff();
     }
 
   catch(ComIOException &e)

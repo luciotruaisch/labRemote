@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/test_agilent_bk85.dir/test_agilent_bk85.cpp.o  -o ../../../bin/test_agilent_bk85  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lGPIB -lDevCom 

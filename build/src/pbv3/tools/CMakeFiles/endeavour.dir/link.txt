@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/endeavour.dir/endeavour.cpp.o  -o ../../../bin/endeavour  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lDevCom -lpbv3 -lGPIB 

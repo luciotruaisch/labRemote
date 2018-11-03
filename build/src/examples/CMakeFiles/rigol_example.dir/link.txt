@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/rigol_example.dir/rigol_example.cpp.o  -o ../../bin/rigol_example  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lGPIB -lDevCom 
