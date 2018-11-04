@@ -10,10 +10,12 @@ src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/DeviceCalibr
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/DeviceCom.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/DummyCalibration.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/FileCalibration.h
+src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/GainCalibration.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/I2CCom.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/I2CDevCom.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/LineCalibration.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/LinearCalibration.h
+src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/MCP3428.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/../libDevCom/PCA9548ACom.h
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/PBv2TB.cpp
 src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o: ../src/pbv2/PBv2TB.h

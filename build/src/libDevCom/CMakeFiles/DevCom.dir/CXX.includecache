@@ -275,6 +275,8 @@ ADCDevice.h
 /home/ltruaisch/labRemote/src/libDevCom/MCP3428.cpp
 MCP3428.h
 /home/ltruaisch/labRemote/src/libDevCom/MCP3428.h
+iostream
+-
 GainCalibration.h
 /home/ltruaisch/labRemote/src/libDevCom/GainCalibration.h
 NotSupportedException.h

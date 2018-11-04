@@ -11,6 +11,7 @@ GainCalibration::~GainCalibration()
 
 double GainCalibration::calibrate(uint32_t counts)
 {
+  std::cout<< "Binary data is:" << counts << std::endl;
   //Voltage value of the LSB Output
   double val_LSB = 2.0*m_reference/(pow(2.0, (double)m_bit));
 

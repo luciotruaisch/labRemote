@@ -9,6 +9,10 @@ PBv2Test::PBv2Test(const std::string& name, std::shared_ptr<PBv2TB> tb, uint8_t 
   : m_name(name), m_tb(tb), m_pbidx(pbidx), m_pb(m_tb->getPB(pbidx)), m_ps(ps)
 { }
 
+PBv2Test::PBv2Test(const std::string& name, std::shared_ptr<PBv2TB> tb, uint8_t pbidx)
+  : m_name(name), m_tb(tb), m_pbidx(pbidx), m_pb(m_tb->getPB(pbidx)), m_ps(0)
+{ }
+
 PBv2Test::~PBv2Test()
 { }
 
@@ -55,6 +59,24 @@ bool PBv2Test::runLVEnable()
     }
 
   logger(logINFO) << " ++ LV enable good! " << lv_on << " " << lv_off;
+  return true;
+}
+
+//Test the fonctioning of HV switch
+bool PBv2Test::runHVEnable()
+{
+  //Activate the HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x1);
+  std::this_thread::sleep_for(std::chrono::seconds(10));
+  double hv_on = m_tb->getHVout(m_pbidx);
+  std::cout << "HV switch on =" << hv_on << std::endl;
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+  //Turn off the HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x0);
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+  double hv_off = m_tb->getHVout(m_pbidx);
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+  std::cout << "HV switch off =" << hv_off << std::endl;
   return true;
 }
 

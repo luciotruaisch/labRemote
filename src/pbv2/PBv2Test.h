@@ -10,10 +10,12 @@ class PBv2Test
 {
 public:
   PBv2Test(const std::string& name, std::shared_ptr<PBv2TB> tb, uint8_t pbidx, std::shared_ptr<SorensenPs> ps);
+  PBv2Test(const std::string& name, std::shared_ptr<PBv2TB> tb, uint8_t pbidx); 
   ~PBv2Test();
 
   bool runGeneral();
   bool runLVEnable();
+  bool runHVEnable();
   bool runDCDCEfficiency();
   bool runVin();
   bool runVinIn();

@@ -141,6 +141,16 @@ pbv2massTester/fast:
 .PHONY : pbv2massTester/fast
 
 # Convenience name for target.
+pbv2VHtest: src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/rule
+
+.PHONY : pbv2HVtest
+
+# fast build rule for target.
+pbv2HVtest/fast:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/build.make src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/build
+.PHONY : pbv2HVtest/fast
+
+# Convenience name for target.
 src/pbv2/tools/CMakeFiles/pbv2i2c.dir/rule:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2i2c.dir/rule
 .PHONY : src/pbv2/tools/CMakeFiles/pbv2i2c.dir/rule
@@ -440,7 +450,34 @@ pbv2activeTester.cpp.s:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2activeTester.dir/build.make src/pbv2/tools/CMakeFiles/pbv2activeTester.dir/pbv2activeTester.cpp.s
 .PHONY : pbv2activeTester.cpp.s
 
-pbv2adc.o: pbv2adc.cpp.o
+pbvHVtest.o: pbv2HVtest.cpp.o
+
+.PHONY : pbv2HVtest.o
+
+# target to build an object file
+pbvHVtest.cpp.o:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/build.make src/pbv2/tools/CMakeFiles/pbvHVtest.dir/pbv2HVtest.cpp.o
+.PHONY : pbv2HVtest.cpp.o
+
+pbv2HVtest.i: pbv2HVtest.cpp.i
+
+.PHONY : pbv2HVtest.i
+
+# target to preprocess a source file
+pbv2HVtest.cpp.i:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/build.make src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/pbv2HVtest.cpp.i
+.PHONY : pbv2HVtest.cpp.i
+
+pbvHVtest.s: pbv2HVtest.cpp.s
+
+.PHONY : pbv2HVtest.s
+
+# target to generate assembly for a file
+pbvHVtest.cpp.s:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbvHVtest.dir/build.make src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/pbv2HVtest.cpp.s
+.PHONY : pbv2HVtest.cpp.s
+
+pbv2burnin.o: pbv2adc.cpp.o
 
 .PHONY : pbv2adc.o
 

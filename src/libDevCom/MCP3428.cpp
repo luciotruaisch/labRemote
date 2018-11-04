@@ -1,5 +1,5 @@
 #include "MCP3428.h"
-
+#include <iostream>
 #include "GainCalibration.h"
 #include "NotSupportedException.h"
 
@@ -48,11 +48,34 @@ uint32_t  MCP3428::readCount()
 uint32_t MCP3428::readCount(uint8_t ch)
 {
   uint32_t chcount = 0;
+  /* std::cout << "Read channel is:" << unsigned(ch) << std::endl;
+  std::cout << "Conversion mode" << unsigned(m_conv_mode) << std::endl;
+  std::cout << "res:" << unsigned(m_bit_res) << ", Gain:" << unsigned(m_PGA) << std::endl;*/
   //Check if Channel exist
   if (ch < m_numChannels)
     {
+      //Resolution bit
+      uint8_t bit;
+      switch(m_bit_res)
+	{
+	case e12_bit:
+	  bit = 0;
+	  break;
+	case e14_bit:
+	  bit = 1;
+	  break;
+	case e16_bit:
+	  bit = 2;
+	  break;
+	default:
+	  bit = 0;
+	  break;
+	}
+
       //Configuration register
-      uint8_t vConfig = 0x80|(ch<<5)|(m_conv_mode << 4)|(m_bit_res << 2)|m_PGA;
+      uint8_t vConfig = 0;
+      vConfig = 0x80|(ch<<5)|(m_conv_mode << 4)|(bit << 2)|m_PGA;
+      std::cout << "Configuration reg is:" << unsigned(vConfig) << std::endl;
       //Write on configuration register
       m_com->write_reg8(vConfig);
 

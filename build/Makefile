@@ -462,6 +462,19 @@ keithley_test/fast:
 .PHONY : keithley_test/fast
 
 #=============================================================================
+# Target rules for targets named keithley_test
+
+# Build rule for target.
+pbvHVtest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pbvHVtest
+.PHONY : pbvHVtest
+
+# fast build rule for target.
+pbvHVtest/fast:
+	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbvHVtest.dir/build.make src/pbv2/tools/CMakeFiles/pbvHVtest.dir/build
+.PHONY : pbvHVtest/fast
+
+#=============================================================================
 # Target rules for targets named rigol_example
 
 # Build rule for target.
@@ -510,6 +523,7 @@ help:
 	@echo "... tempsensor_monitor"
 	@echo "... keithley_test"
 	@echo "... rigol_example"
+	@echo "... pbv2HVtest"
 .PHONY : help
 
 

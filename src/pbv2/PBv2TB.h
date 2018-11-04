@@ -33,6 +33,16 @@
 #define ADC_VOUT_PB8 4
 #define ADC_VOUT_PB9 6
 
+#define ADC_HVOUT_PB1 2
+#define ADC_HVOUT_PB2 3
+#define ADC_HVOUT_PB3 0
+#define ADC_HVOUT_PB4 1
+#define ADC_HVOUT_PB5 2
+#define ADC_HVOUT_PB6 3
+#define ADC_HVOUT_PB7 0
+#define ADC_HVOUT_PB8 1
+#define ADC_HVOUT_PB9 2
+
 #define NTC_CH_L1L3 4
 #define NTC_CH_L3L5 2
 #define NTC_CH_L5L7 0
@@ -60,6 +70,7 @@ public:
   void   setLoadCounts(uint8_t pbNum, uint32_t counts);
 
   double getVout(uint8_t pbNum);
+  double getHVout(uint8_t pbNum);
   
 private:
   //
@@ -70,6 +81,9 @@ private:
   std::shared_ptr<ADCDevice> m_adc_pwr;
   std::shared_ptr<ADCDevice> m_adc_lv0;
   std::shared_ptr<ADCDevice> m_adc_lv1;
+  std::shared_ptr<ADCDevice> m_adc_hv0;
+  std::shared_ptr<ADCDevice> m_adc_hv1;
+  std::shared_ptr<ADCDevice> m_adc_hv2;
 
   std::shared_ptr<DACDevice> m_dac_0;
   std::shared_ptr<DACDevice> m_dac_1;

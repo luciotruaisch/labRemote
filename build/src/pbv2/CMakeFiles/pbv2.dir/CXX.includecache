@@ -84,6 +84,10 @@ string
 vector
 -
 
+../src/pbv2/../libDevCom/GainCalibration.h
+DeviceCalibration.h
+../src/pbv2/../libDevCom/DeviceCalibration.h
+
 ../src/pbv2/../libDevCom/I2CCom.h
 DeviceCom.h
 ../src/pbv2/../libDevCom/DeviceCom.h
@@ -103,6 +107,16 @@ DeviceCalibration.h
 ../src/pbv2/../libDevCom/LinearCalibration.h
 DeviceCalibration.h
 ../src/pbv2/../libDevCom/DeviceCalibration.h
+
+../src/pbv2/../libDevCom/MCP3428.h
+stdint.h
+-
+memory
+-
+I2CCom.h
+../src/pbv2/../libDevCom/I2CCom.h
+ADCDevice.h
+../src/pbv2/../libDevCom/ADCDevice.h
 
 ../src/pbv2/../libDevCom/PCA9548ACom.h
 memory
@@ -157,6 +171,10 @@ AD799X.h
 /home/ltruaisch/labRemote/src/pbv2/AD799X.h
 DAC5574.h
 /home/ltruaisch/labRemote/src/pbv2/DAC5574.h
+MCP3428.h
+/home/ltruaisch/labRemote/src/pbv2/MCP3428.h
+GainCalibration.h
+/home/ltruaisch/labRemote/src/pbv2/GainCalibration.h
 LinearCalibration.h
 /home/ltruaisch/labRemote/src/pbv2/LinearCalibration.h
 DeviceCalibration.h
