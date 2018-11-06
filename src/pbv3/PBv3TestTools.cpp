@@ -67,20 +67,25 @@ namespace PBv3TestTools {
     }
 
     // Range is iout in mA
-    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max, double VinSet) {
+  json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load,  int step, int min, int max, double VinSet) {
         logger(logINFO) << "## Measuring DCDC efficiency ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         json testSum;
+
         testSum["name"] = "measure_efficiency";
         testSum["success"] = false;
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        try {
-            load->setCurrent(0);
-            load->turnOn();
-        } catch(std::string &s) {
-            logger(logERROR) << s;
-            testSum["error"] = s;
-            return testSum;
-        }
+	
+
+	try {
+	  load->setCurrent(0);
+	  load->turnOn();
+	} catch(std::string &s) {
+	  logger(logERROR) << s;
+	  testSum["error"] = s;
+	  return testSum;
+	}
+	
+	
         
         logger(logINFO) << " --> Vin = " << VinSet << "V";
         ps->setVoltage(VinSet);
@@ -95,9 +100,13 @@ namespace PBv3TestTools {
             return testSum;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        logger(logINFO) << " --> Get baseline current: (" << ps->getCurrent() << ")A";
-        double Iin_offset = std::stod(ps->getCurrent());
-        testSum["Iin_offset"] = Iin_offset;
+
+		
+	logger(logINFO) << " --> Get baseline current: (" << ps->getCurrent() << ")A";
+	double Iin_offset = std::stod(ps->getCurrent());
+	testSum["Iin_offset"] = Iin_offset;
+	
+
 
         logger(logINFO) << " --> Turn on DCDC ...";
         try {
@@ -118,7 +127,8 @@ namespace PBv3TestTools {
             << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
         testSum["header"] = {"Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]",
             "VddLR [counts]", "DCDCin [counts]", "NTC [counts]",
-            "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"};
+	    "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"
+			     ,"Efficiency"};
         // Set sub-channel
         try {
             amac->wrField(&AMACv2::Ch12Mux, 0); //a
@@ -165,11 +175,11 @@ namespace PBv3TestTools {
                 return testSum;
             }
 
-            double efficiency = (1.5*iout*1e-3)/(Vin*(Iin-Iin_offset));
+            double efficiency = (Vout*iout*1e-6)/(Vin*(Iin-Iin_offset));
             std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
                 << "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
                 << Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
-            testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT};
+            testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency};
 
         }
 

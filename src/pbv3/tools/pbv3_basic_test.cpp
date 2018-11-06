@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 
     // Init Keithley2410
     logger(logINFO) << "Init Keithley 2410";
-    Keithley24XX sm(agiDev, 23);
+    /* Keithley24XX sm(agiDev, 23);
     try
     {
         sm.turnOff();
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
         logger(logERROR) << e;
         return 1;
     }
-    
+    */
 
     // Measure LV IV
     uint32_t test=0;
@@ -114,16 +114,17 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     
+   
 
     // Start testing
     testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
-       testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
+    //  testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
-    testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
+    //    testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
     testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
     testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
-    testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
+    //    testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
 
     testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
     outfile << std::setw(4) << testSum << std::endl;
@@ -133,7 +134,7 @@ int main(int argc, char* argv[]) {
     logger(logINFO) << "Power off";
     ps.turnOff();
     dc.turnOff();
-    sm.turnOff();
+    //sm.turnOff();
 
     return 0;
 }

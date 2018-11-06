@@ -43,7 +43,8 @@ int main(int argc, char* argv[]) {
 
     // Init Agilent
     logger(logINFO) << "Init Agilent PS";
-    TTITSX1820PPs ps(agiDev, 11);
+    AgilentPs ps(agiDev, 10);
+    //TTITSX1820PPs ps(agiDev, 11);
     try
     {
         ps.init();
@@ -63,11 +64,12 @@ int main(int argc, char* argv[]) {
     dc.setRemote();
     dc.setRemoteSense(false);
     dc.setModeCC();
-    dc.setCurrent(0);
+    //Load turned on w/ nonzero current
+    dc.setCurrent(2500);
     dc.turnOn();
 
     // Init Keithley2410
-    logger(logINFO) << "Init Keithley 2410";
+    /*  logger(logINFO) << "Init Keithley 2410";
     Keithley24XX sm(agiDev, 23);
     try
     {
@@ -80,7 +82,7 @@ int main(int argc, char* argv[]) {
         logger(logERROR) << e;
         return 1;
     }
-
+    */
 
     // Turn on power
     logger(logINFO) << "Turn on PS";
@@ -101,7 +103,10 @@ int main(int argc, char* argv[]) {
     // 
     // Start running tests in a loop forever!
     //
-    for(uint32_t i=0; i<10; i++)
+    //time in minutes when the monitor is written to json files
+    double time_write_mon =1.0;
+
+    for(uint32_t i=0; i<60; i++)
       {
 	//
 	// Run the long tests
@@ -116,27 +121,41 @@ int main(int argc, char* argv[]) {
 	testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 
 	// Start testing
+	//Run efficiency once to get baseline current (ie powercycle)
+
 	uint32_t test=0;
 	try { testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);                    } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 	//try { testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);                                                   } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
-	try { testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500); } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
+
+
+	
+	try { testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 2500, 2500); } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 	try { testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());                                                              } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
-	try { testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);                                                  } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
+	//try { testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);                                                  } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 
 	testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 	outfile << std::setw(4) << testSum << std::endl;
 	outfile.close();
 
+	//Check if 30min has elapsed
+	auto t_out = std::chrono::system_clock::now();
+	auto t_in = std::chrono::system_clock::now();
+	auto t_in2 = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapse = t_in-t_out;
+	std::chrono::duration<double> elapse2 = t_in2-t_in;
+
+	int iter = 0;
 	//
-	// Monitor things for a while
-	dc.setCurrent(100);
+	// Monitor things for a while (30 min explicitly here)
+	dc.setCurrent(2500);
 	dc.turnOn();
 
 	amac->wrField(&AMACv2::DCDCen, 1);
 	amac->wrField(&AMACv2::DCDCenC, 1);
 
-	for(uint32_t iMon=0;iMon<PERIOD_LONG/PERIOD_MONITOR;iMon++)
-	  {
+	//for(uint32_t iMon=0;iMon<PERIOD_LONG/PERIOD_MONITOR;iMon++)
+	while(elapse.count()/60. < 30.)
+	{
 	    std::string fileName = outDir + "/" + PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-monitor.json";
 	    std::fstream outfile(fileName, std::ios::out);
 
@@ -145,30 +164,42 @@ int main(int argc, char* argv[]) {
 	    testSum["program"] = argv[0];
 	    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
-	    // Start testing
-	    try 
+	    // Start testing ( 1 min, then the file is written)
+	    while(elapse2.count()/60. < time_write_mon){
+	      /*  try 
 	      {
-		testSum["tests"][0] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
+		testSum["tests"][iter] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
 	      }
 	    catch(const EndeavourComException &e)
-	      { logger(logERROR) << e.what(); }
+	    { logger(logERROR) << e.what(); }*/
+	    t_in2 = std::chrono::system_clock::now();
+	    elapse2 = t_in2-t_in;
+	    iter++;
+	    }
+
+	    iter = 0;
 
 	    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 	    outfile << std::setw(4) << testSum << std::endl;
 	    outfile.close();
-	  }
+	    //updating elapsed time
+	    t_in = std::chrono::system_clock::now();
+	    elapse = t_in-t_out;
+	}
 
 	amac->wrField(&AMACv2::DCDCen, 0);
 	amac->wrField(&AMACv2::DCDCenC, 0);
 
 	dc.turnOff();
+	
+
       }
 
     //
     // Power off
     ps.turnOff();
     dc.turnOff();
-    sm.turnOff();
+    //sm.turnOff();
 
     return 0;
 }
