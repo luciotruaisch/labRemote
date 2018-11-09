@@ -11,7 +11,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 else()
   message(WARNING "You are using an unsupported compiler! Compilation has only been tested with Clang and GCC.")
 endif()
-
+                          
 if(CMAKE_BUILD_TYPE MATCHES Debug)
   add_compile_options(-g)
 else()
@@ -22,10 +22,14 @@ add_compile_options(-Wno-deprecated)
 add_compile_options(-std=c++11)
 add_compile_options(-Wall)
 add_compile_options(-fPIC)
+add_compile_options(-pthread)
+add_compile_options(-m64)
+add_compile_options(-I/usr/include/root)
 
 #
 # Check dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 
 # Find libFTDI1
 find_package ( LibFTDI1 )

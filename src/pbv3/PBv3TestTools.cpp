@@ -175,7 +175,8 @@ namespace PBv3TestTools {
                 return testSum;
             }
 
-            double efficiency = (Vout*iout*1e-6)/(Vin*(Iin-Iin_offset));
+	    // double efficiency = (Vout*iout*1e-6)/(Vin*(Iin-Iin_offset));
+	    double efficiency = (1.5*iout*1e-3)/(Vin*(Iin-Iin_offset));
             std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
                 << "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
                 << Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
