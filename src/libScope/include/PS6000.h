@@ -7,6 +7,8 @@
 
 #include <string>
 
+#define PS6000_BUFFER_SIZE 2097152 // This is a random number
+
 struct CHANNEL_SETTINGS
 {
   int16_t DCcoupled;
@@ -43,18 +45,28 @@ public:
   virtual void open();
   virtual void close();
 
+  virtual void setTrigger  (uint8_t ch, float threshold, Direction direction);
+  virtual void unsetTrigger(uint8_t ch);
+
+  virtual void setTriggerPosition(float percentage);
+  virtual float getTriggerPosition();
+
   virtual void setEnable(unsigned short ch, bool enable);
   virtual bool getEnable(unsigned short ch) const;
 
   virtual void setRange(unsigned short ch, unsigned int range);
   virtual unsigned int getRange(unsigned short ch) const;
 
-  virtual void setPeriod(float period);
+  virtual void  setPeriod(float period);
   virtual float getPeriod() const;
 
   virtual void configChannels();
 
-  virtual std::vector<std::vector<float>> run();
+  virtual void     setSamples(uint32_t samples);
+  virtual uint32_t getSamples();
+
+  virtual void run(std::vector<std::vector<float>> &results);
+  virtual void run(std::vector<std::vector<int16_t>> &results);
 
   virtual void printInfo() const;
 
@@ -71,6 +83,12 @@ private:
 
   float m_period;
   uint32_t m_timebase=0;
+
+  uint32_t m_samples=PS6000_BUFFER_SIZE;
+  float m_triggerPosition=0.;
+
+  // Buffers
+  int16_t* m_buffers[4]={nullptr, nullptr, nullptr, nullptr};
 
   // Available ranges
   PS6000_RANGE m_firstRange;
@@ -90,6 +108,8 @@ private:
 						     50000};
 
   void initInfo();
+
+  void initBuffer  (unsigned short ch,bool init=true);
 };
 
 #endif // PS6000_H

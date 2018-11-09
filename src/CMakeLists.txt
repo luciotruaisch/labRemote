@@ -31,6 +31,7 @@ add_compile_options(-I/usr/include/root)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 
+
 # Find libFTDI1
 find_package ( LibFTDI1 )
 
@@ -45,6 +46,15 @@ else()
   message(" libmpsse = ${LIBMPSSE_FOUND}")
 endif()
 
+#
+# Find libpico
+find_package(Pico)
+
+if ( ${LIBPICO_FOUND} )
+  set(ENABLE_SCOPE 1)
+else()
+  message("Disabling libScope due to missing libpico")
+endif()
 
 #
 # Add libraries

@@ -3,9 +3,13 @@
 
 #include <vector>
 
+#include <stdint.h>
+
 class PicoScope
 {
 public:
+  enum Direction {Rising, Falling};
+
   PicoScope();
   virtual ~PicoScope();
 
@@ -13,6 +17,14 @@ public:
   // Initialization
   virtual void open() =0;
   virtual void close() =0;
+
+  //
+  // Trigger configuration
+  virtual void setTrigger  (uint8_t ch, float threshold, Direction direction) =0;
+  virtual void unsetTrigger(uint8_t ch) =0;
+
+  virtual void setTriggerPosition(float percentage) =0;
+  virtual float getTriggerPosition() =0;
 
   //
   // Channel configurations
@@ -29,7 +41,11 @@ public:
 
   //
   // Running stuff
-  virtual std::vector<std::vector<float>> run() =0;
+  virtual void     setSamples(uint32_t samples) =0;
+  virtual uint32_t getSamples() =0;
+
+  virtual void run(std::vector<std::vector<float>> &results) =0;
+  virtual void run(std::vector<std::vector<int16_t>> &results) =0;
 
   virtual void printInfo() const =0;
 };
