@@ -7,14 +7,22 @@
 
 #include <math.h>
 
-#define BUFFER_SIZE 2097152
-
 PS6000::PS6000()
   : PicoScope()
 { }
 
 PS6000::~PS6000()
-{ }
+{
+  // Cleanup the buffers
+  for(uint ch=0;ch<4;ch++)
+    {
+      if(m_buffers[ch]!=nullptr)
+	{
+	  delete[] m_buffers[ch];
+	  m_buffers[ch]=nullptr;
+	}
+    }
+ }
 
 void PS6000::open()
 {
@@ -104,11 +112,11 @@ void PS6000::initInfo()
       break;
 
     case PS6402C:
-      m_model		= PS6402C;
-      m_firstRange = PS6000_50MV;
-      m_lastRange = PS6000_20V;
-      m_channelCount = 4;
-      m_AWG = false;
+      m_model	      = PS6402C;
+      m_firstRange    = PS6000_50MV;
+      m_lastRange     = PS6000_20V;
+      m_channelCount  = 4;
+      m_AWG           = false;
       m_awgBufferSize = 0;
 
       for (uint i = 0; i < PS6000_MAX_CHANNELS; i++)
@@ -315,12 +323,68 @@ void PS6000::initInfo()
     }
 }
 
+void PS6000::initBuffer(unsigned short ch,bool init)
+{
+  PICO_STATUS status;
+
+  if(init && m_buffers[ch]==nullptr)
+    {
+      m_buffers[ch]=new int16_t[PS6000_BUFFER_SIZE];
+
+      status=ps6000SetDataBuffer(m_handle, (PS6000_CHANNEL)ch, &m_buffers[ch][0], PS6000_BUFFER_SIZE, PS6000_RATIO_MODE_NONE);
+      if(status!=PICO_OK)
+	throw std::string("Unable to set data buffer: "+status);
+    }
+  else if(!init && m_buffers[ch]!=nullptr)
+    {
+      delete[] m_buffers[ch];
+      m_buffers[ch]=nullptr;
+    }
+}
+
+void PS6000::setTrigger(uint8_t ch, float threshold, Direction direction)
+{
+  if(ch>=m_channelCount)
+    throw std::string("Channel out of range"); //: "+ch+"/"+m_channelCount);
+
+  float chfactor=((float)m_availRanges[m_channelSettings[ch].range])/PS6000_MAX_VALUE;
+  
+  PS6000_THRESHOLD_DIRECTION dir=PS6000_NONE;
+  switch(direction)
+    {
+    case Rising:
+      dir=PS6000_RISING;
+      break;
+    case Falling:
+      dir=PS6000_FALLING;
+      break;
+    }
+
+  ps6000SetSimpleTrigger(m_handle, true, (PS6000_CHANNEL)ch, threshold/chfactor, dir, 0, 0);
+}
+ 
+void PS6000::unsetTrigger(uint8_t ch)
+{
+  ps6000SetSimpleTrigger(m_handle, false, (PS6000_CHANNEL)ch, 0, PS6000_NONE, 0, 0);
+}
+
+void PS6000::setTriggerPosition(float percentage)
+{
+  m_triggerPosition=percentage;
+}
+
+float PS6000::getTriggerPosition()
+{
+  return m_triggerPosition;
+}
+
 void PS6000::setEnable(unsigned short ch, bool enable)
 {
   if(ch>=m_channelCount)
     throw std::string("Channel out of range"); //: "+ch+"/"+m_channelCount);
 
   m_channelSettings[ch].enabled=enable;
+  initBuffer(ch, enable);
 }
 
 bool PS6000::getEnable(unsigned short ch) const
@@ -382,37 +446,32 @@ void PS6000::configChannels()
 		       m_channelSettings[PS6000_CHANNEL_A + i].enabled,
 		       (PS6000_COUPLING)m_channelSettings[PS6000_CHANNEL_A + i].DCcoupled,
 		       (PS6000_RANGE)m_channelSettings[PS6000_CHANNEL_A + i].range, 0, PS6000_BW_FULL);
+
+      initBuffer(i, m_channelSettings[PS6000_CHANNEL_A + i].enabled);
     }
 }
 
-std::vector<std::vector<float>> PS6000::run()
+void PS6000::setSamples(uint32_t samples)
+{ 
+  if(samples>PS6000_BUFFER_SIZE)
+    throw std::string("Requested number of samples too big");
+  m_samples=samples; 
+}
+
+uint32_t PS6000::getSamples()
+{ return m_samples; }
+
+void PS6000::run(std::vector<std::vector<float>> &results)
 {
-  PICO_STATUS status;
-
-  // Configure buffers for readback
-  int16_t* buffers[4]={nullptr, nullptr, nullptr, nullptr};
-
-  for(int16_t i = 0; i < m_channelCount; i++)
-    {
-      if(m_channelSettings[i].enabled)
-	{
-	  buffers[i]=new int16_t[BUFFER_SIZE];
-
-	  status=ps6000SetDataBuffer(m_handle, (PS6000_CHANNEL)i, &buffers[i][0], BUFFER_SIZE, PS6000_RATIO_MODE_NONE);
-	  if(status!=PICO_OK)
-	    throw std::string("Unable to set data buffer: "+status);
-	}
-    }
-
   // figure out sampling rate
-  uint32_t sampleCount=BUFFER_SIZE;
-  uint32_t realSampleCount;
-  ps6000GetTimebase2(m_handle, m_timebase, sampleCount, &m_period, 0, &realSampleCount, 0);
+  uint32_t realSampleCount=m_samples;
+
+  ps6000GetTimebase2(m_handle, m_timebase, m_samples, &m_period, 0, &realSampleCount, 0);
   m_period*=1e-9;
-  //std::cout << "sampleCount = " << sampleCount << ", m_period = " << m_period << ", realSampleCount = " << realSampleCount << std::endl;
 
   // Gather data
-  ps6000RunBlock(m_handle, 0, sampleCount, m_timebase, 1, nullptr, 0, nullptr, nullptr);
+  uint32_t pretriggerSamples=m_samples*m_triggerPosition;
+  ps6000RunBlock(m_handle, pretriggerSamples, m_samples-pretriggerSamples, m_timebase, 1, nullptr, 0, nullptr, nullptr);
 
   int16_t ready=0;
   do
@@ -422,32 +481,63 @@ std::vector<std::vector<float>> PS6000::run()
     } 
   while(ready==0);
 
-  ps6000GetValues(m_handle, 0, &sampleCount, 1, PS6000_RATIO_MODE_NONE, 0, nullptr);
+  ps6000GetValues(m_handle, 0, &realSampleCount, 1, PS6000_RATIO_MODE_NONE, 0, nullptr);
 
   //
   // Store the data
-  std::vector<std::vector<float>> result;
-  for(int16_t ch = 0; ch < m_channelCount; ch++)
+  for(int16_t ch = 0, i=0; ch < m_channelCount; ch++)
     {
-      std::vector<float> chresult;
       if(m_channelSettings[ch].enabled)
    	{
-  	  for(uint j=0;j<sampleCount;j++)
-  	    chresult.push_back((float)buffers[ch][j]*m_availRanges[m_channelSettings[ch].range]/PS6000_MAX_VALUE);
-   	}
-      result.push_back(chresult);
+	  float chfactor=((float)m_availRanges[m_channelSettings[ch].range])/PS6000_MAX_VALUE;
+  	  for(uint j=0;j<realSampleCount;j++)
+	    results[i][j]=m_buffers[ch][j]*chfactor;
+	  i++;
+	}
     }
 
   //
   // Cleanup
   ps6000Stop(m_handle);
+}
 
-  for(int16_t i = 0; i < m_channelCount; i++)
+void PS6000::run(std::vector<std::vector<int16_t>> &results)
+{
+  // figure out sampling rate
+  uint32_t realSampleCount=m_samples;
+
+  ps6000GetTimebase2(m_handle, m_timebase, m_samples, &m_period, 0, &realSampleCount, 0);
+  m_period*=1e-9;
+
+  // Gather data
+  uint32_t pretriggerSamples=m_samples*m_triggerPosition;
+  ps6000RunBlock(m_handle, pretriggerSamples, m_samples-pretriggerSamples, m_timebase, 1, nullptr, 0, nullptr, nullptr);
+
+  int16_t ready=0;
+  do
     {
-      if(m_channelSettings[i].enabled) delete[] buffers[i];
+      std::this_thread::sleep_for(std::chrono::microseconds(100));
+      ps6000IsReady(m_handle, &ready);
+    } 
+  while(ready==0);
+
+  ps6000GetValues(m_handle, 0, &realSampleCount, 1, PS6000_RATIO_MODE_NONE, 0, nullptr);
+
+  //
+  // Store the data
+  for(int16_t ch = 0, i=0; ch < m_channelCount; ch++)
+    {
+      if(m_channelSettings[ch].enabled)
+   	{
+  	  for(uint j=0;j<realSampleCount;j++)
+	    results[i][j]=m_buffers[ch][j];
+	  i++;
+	}
     }
 
-  return result;
+  //
+  // Cleanup
+  ps6000Stop(m_handle);
 }
 
 void PS6000::printInfo() const
