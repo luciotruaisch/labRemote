@@ -217,8 +217,10 @@ namespace PBv3TestTools {
 
         // Configure sourcemeter
         sm->turnOff();
-        sm->setSource(KeithleyMode::CURRENT, 1e-3, 1e-3);
-        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+        // sm->setSource(KeithleyMode::CURRENT, 1e-3, 1e-3);
+        // sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+	sm->setSource(KeithleyMode::VOLTAGE, 500, 500);
+	sm->setSense(KeithleyMode::CURRENT, 1.27e-3, 1.27e-3);
 
         testSum["header"] = {"HV Enable", "Voltage [V]", "Current [A]"};
         // See what we see
