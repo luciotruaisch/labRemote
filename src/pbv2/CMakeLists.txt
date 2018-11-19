@@ -1,19 +1,18 @@
 # add global dependencies
-include_directories( ../libDevCom )
 include_directories( ../libGPIB/include )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
-set(SrcFiles PBv2TB.cpp
-  PBv2Test.cpp
-)
+if( ${ENABLE_FTDI} )
+  add_definitions(-DFTDI)
+endif()
 
-add_library(pbv2 SHARED ${SrcFiles}) 
-target_link_libraries(pbv2 -lDevCom -lGPIB)
+if( ${ENABLE_SCOPE} )
+  include_directories( ../libScope/include )
+  include_directories( ${LIBPICO_INCLUDE_DIR} )
+  
+  add_definitions(-DSCOPE)
+endif()
 
-<<<<<<< HEAD
-add_subdirectory(tools)
-add_subdirectory(singleboard)
-=======
 # add executables
 file(GLOB tools [a-zA-Z]*.c[a-zA-Z]*)
 
@@ -29,4 +28,3 @@ foreach(target ${tools})
     add_dependencies(${execname} Scope)
   endif()
 endforeach()
->>>>>>> origin

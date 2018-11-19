@@ -82,8 +82,12 @@ int main(int argc, char* argv[]) {
     {
         sm.turnOff();
         sm.init();
-        sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-        sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+
+        //sm.setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
+        //sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+	//Currently the resistor is ~400k Ohm. V cant exceed 400 V
+	sm.setSource(KeithleyMode::VOLTAGE, 200, 200);
+	sm.setSense(KeithleyMode::CURRENT, 1e-6, 1e-6);
     }
     catch(std::string e)
     {
@@ -109,6 +113,7 @@ int main(int argc, char* argv[]) {
     try {
         amac.reset(new AMACv2(amacid, std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI())));
         amac->init();
+	amac->initRegisters();
     } catch(EndeavourComException &e) {
         logger(logERROR) << e.what();
         return 1;
@@ -117,14 +122,16 @@ int main(int argc, char* argv[]) {
    
 
     // Start testing
-    testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
-     testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
-    testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
-      testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
+    //testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
+    testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
+    //testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
+    testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
     testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
-    testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
-    testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
-    testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
+    //testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
+    //testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
+    //testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope(amac.get(), 0.1);
+    //testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac.get());
+    //testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
 
     testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
     outfile << std::setw(4) << testSum << std::endl;

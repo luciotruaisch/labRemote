@@ -90,7 +90,7 @@ namespace PBv3TestTools {
         logger(logINFO) << " --> Vin = " << VinSet << "V";
         ps->setVoltage(VinSet);
 
-        logger(logINFO) << " --> Turn off DCDC ..";
+          logger(logINFO) << " --> Turn off DCDC ..";
         try {
             amac->wrField(&AMACv2::DCDCen, 0);
             amac->wrField(&AMACv2::DCDCenC, 0);
@@ -98,7 +98,7 @@ namespace PBv3TestTools {
             logger(logERROR) << e.what();
             testSum["error"] = e.what();
             return testSum;
-        }
+	}
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 		
@@ -118,7 +118,21 @@ namespace PBv3TestTools {
             return testSum;
         }
 
-        unsigned dwell_time = 5; //s
+	//test for current offset for cur1V
+	logger(logINFO) << "--> Set Cur1V offset bit ...";
+	try {
+	  // amac->wrField(&AMACv2::DCDCiZeroReading,1);
+	  
+	  amac->wrField(&AMACv2::DCDCiOffset, 8);	
+	} catch(EndeavourComException &e) {
+	  logger(logERROR) << e.what();
+	  testSum["error"] = e.what();
+	  return testSum;
+	}
+
+
+        //unsigned dwell_time = .1; //s
+	unsigned dwell_time = 5; //s
         testSum["dwellTime"] = dwell_time;
 
         logger(logINFO) << " --> Starting measurement ...";
@@ -141,7 +155,10 @@ namespace PBv3TestTools {
 
         // Loop over currents
         int index = 0;
-        for (int iout=min;iout<=max;iout+=step,index++) {
+	int n_stats = 1;
+
+        for (int iout=min;iout<=max;iout+=step){//,index++) {
+	  for(int npts = 0; npts <n_stats; npts++,index++){
             logger(logDEBUG) << " --> Setting " << iout << "mA load!";
             // Set Current
             load->setCurrent(iout);
@@ -180,10 +197,10 @@ namespace PBv3TestTools {
             std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
                 << "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
                 << Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
-            testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency};
+            testSum["data"][index] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency, npts};
 
-        }
-
+	  }
+	}
         logger(logINFO) << " --> Done!! Turng off load!";
         load->setCurrent(0);
 
@@ -217,8 +234,10 @@ namespace PBv3TestTools {
 
         // Configure sourcemeter
         sm->turnOff();
-        sm->setSource(KeithleyMode::CURRENT, 1e-3, 1e-3);
-        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+        // sm->setSource(KeithleyMode::CURRENT, 1e-3, 1e-3);
+        // sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+	sm->setSource(KeithleyMode::VOLTAGE, 500, 500);
+	sm->setSense(KeithleyMode::CURRENT, 1.27e-3, 1.27e-3);
 
         testSum["header"] = {"HV Enable", "Voltage [V]", "Current [A]"};
         // See what we see
@@ -377,8 +396,76 @@ namespace PBv3TestTools {
 
         return testSum;
     }
+  
+  json calibrateAMACoffset(AMACv2 *amac)
+  {
+    logger(logINFO) << "## Calibrating AMAC offset ##";
+    json testSum;
+    testSum["name"] = "amac_calibrate_offset";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    int counts;
 
-    json calibrateAMAC(AMACv2 *amac, double step)
+    amac->wrField(&AMACv2Reg::AMen,1);
+    amac->wrField(&AMACv2Reg::AMenC,1);
+    amac->wrField(&AMACv2Reg::AMzeroCalib, 1);
+    amac->wrField(&AMACv2Reg::AMzeroCalibC, 1);
+    //amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+    
+    usleep(5e3);
+    int index = 0;
+    for(int gain_set=0; gain_set<16; gain_set++,index++)
+      {
+	amac->wrField(&AMACv2Reg::AMintCalib, gain_set);
+	counts = amac->rdField(&AMACv2Reg::Ch4Value);	
+	testSum["data"][index] = {gain_set,counts}; 
+      }
+    testSum["header"] = {"gain_set","counts"};
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["success"] = true;
+    return testSum;
+}
+
+  json calibrateAMACslope(AMACv2 *amac, double step)
+  {
+    logger(logINFO) << "## Calibrating AMAC Extensively ##";
+    json testSum;
+    testSum["name"] = "amac_calibrate_ext";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    amac->wrField(&AMACv2Reg::AMbgen, 1);
+    amac->wrField(&AMACv2Reg::AMen,1);
+    amac->wrField(&AMACv2Reg::AMenC,1);
+    // Run the test
+    int index=0;
+    for(int bg_set = 0; bg_set<16; bg_set++){
+      amac->wrField(&AMACv2Reg::AMbg , bg_set);
+      amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+      for(double CALin=0; CALin<1.01; CALin+=step)
+	{
+	  //actual voltage to be compared against digitized value
+	  double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+	  for(int gain_set = 0; gain_set<16; gain_set++,index++)
+	    {
+	      amac->wrField(&AMACv2Reg::AMintCalib, gain_set);
+	      //digital about
+	      usleep(5e3);
+	      uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+	      testSum["data"][index] = {CALact, CALamac,bg_set, gain_set};
+	    }
+	}//end cycling through voltages
+    }//end cycling through bandgap
+    // Store the results
+    testSum["header"] = {"CAL","Counts","BandGap","gain_set"};
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["success"] = true;
+
+    return testSum;
+  }
+
+
+  json calibrateAMAC(AMACv2 *amac, double step)
     {
         logger(logINFO) << "## Calibrating AMAC ##";
         json testSum;
@@ -386,18 +473,20 @@ namespace PBv3TestTools {
         testSum["success"] = false;
         testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
+
         // Run the test
         int index=0;
-        for(double CALin=0; CALin<1.01; CALin+=step,index++)
-        {
-            double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
-            amac->wrField(&AMACv2Reg::Ch4Mux , 1);
-            usleep(5e3);
-            uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
-            testSum["data"][index] = {CALact, CALamac};
-        }
 
-        // Store the results
+	for(double CALin=0; CALin<1.01; CALin+=step,index++)
+	    {
+	      double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+	      amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+	      //digital about
+	      usleep(5e3);
+	      uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+	      testSum["data"][index] = {CALact, CALamac};
+	    }
+	    
         testSum["header"] = {"CAL","Counts"};
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["success"] = true;
@@ -425,11 +514,17 @@ namespace PBv3TestTools {
         double ileak_min = 0;
         double ileak_max = 1.0e-3;
         double ileak_step = 1.0e-8;
+	double resist = 400e3; //400 kOhm resistor in HV circuit
+	
 
         logger(logINFO) << " --> Turn on SourceMeter";
         sm->turnOff();
-        sm->setSource(KeithleyMode::CURRENT, ileak_min >= 1e-6 ? ileak_min : 1e-6, ileak_min);
-        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
+	// sm->setSource(KeithleyMode::VOLTAGE, 500, 500);        
+	// sm->setSense(KeithleyMode::CURRENT, ileak_min >= 1e-6 ? ileak_min : 1e-6, ileak_min);//??
+	sm->setSource(KeithleyMode::CURRENT, ileak_min >= 1e-6 ? ileak_min : 1e-6, ileak_min);//??
+	sm->setSense(KeithleyMode::VOLTAGE, 500, 500);        
+	
+        
         sm->turnOn();
 
         logger(logINFO) << " --> Turn on HVmux";
@@ -439,14 +534,16 @@ namespace PBv3TestTools {
         amac->wrField(&AMACv2::HVcurGain, 0);
 
         logger(logINFO) << " --> Starting measurement";
-        std::cout << "HV_i_set\tHV_v\t\tHV_i\t\t\tGain 0\tGain 1\tGain 2\tGain 4\tGain 8" << std::endl;
+        std::cout << "HV_i_set\tHV_v_set\t\tHV_v\t\tHV_i\t\t\tGain 0\tGain 1\tGain 2\tGain 4\tGain 8" << std::endl;
 
         int counter = 0;
-        for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step) {
+	int index = 0;  
+      for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step,index++) {
             counter++;
             if (counter%10 == 0)
                 ileak_step = ileak_step*10;
-            sm->setSource(KeithleyMode::CURRENT, ileak >= 1e-6 ? ileak : 1e-6, ileak);
+            //sm->setSource(KeithleyMode::VOLTAGE, ileak >= 1e-6 ? ileak : (1e-6)*resist, ileak*resist);
+	    sm->setSource(KeithleyMode::CURRENT, ileak >= 1e-6 ? ileak : (1e-6), ileak);
             std::this_thread::sleep_for(std::chrono::seconds(1));
             double hv_v = std::stod(sm->sense(KeithleyMode::VOLTAGE));
             double hv_i = std::stod(sm->sense(KeithleyMode::CURRENT));
@@ -461,12 +558,15 @@ namespace PBv3TestTools {
                 std::this_thread::sleep_for(std::chrono::milliseconds(500));
                 val[i] = amac->rdField(&AMACv2::Ch14Value);
             }
-            std::cout << ileak << "\t\t" << hv_v << "\t" << hv_i << "\t\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
-        }
-
-        sm->setSource(KeithleyMode::CURRENT, 1e-6, 1e-6);
-        sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
-        sm->turnOff();
+            std::cout << ileak << "\t\t" << ileak*resist<< "\t\t" << hv_v << "\t" << hv_i << "\t\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
+	    testSum["data"][index] ={ileak, hv_v, hv_i, val[0], val[1],val[2],val[3],vl[4]};
+      }
+      testSum["header"] = {"HV_i_se","HV_v_set","HV_v","HV_i","Gain 0","Gain 1","Gain 2","Gain 4","Gain 8"}
+	// sm->setSource(KeithleyMode::VOLTAGE, 500, 500);
+        // sm->setSense(KeithleyMode::CURRENT, 1.27e-6, 1.27e-6);
+	sm->setSource(KeithleyMode::CURRENT, 1.e-6, 1.e-6);
+	sm->setSense(KeithleyMode::VOLTAGE, 500, 500);	
+	sm->turnOff();
 
         testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
         testSum["success"] = true;

@@ -12,6 +12,7 @@ public:
   ~AMACv2();
 
   void init();
+  void initRegisters();
 
   virtual void write_reg(unsigned int address, unsigned int data);
 

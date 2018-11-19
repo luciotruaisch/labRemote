@@ -74,8 +74,10 @@ int main(int argc, char* argv[]) {
     try
     {
         sm.init();
-        sm.setSource(KeithleyMode::CURRENT, 0.5e-6, 0.5e-6);
-        sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+        //sm.setSource(KeithleyMode::CURRENT, 0.5e-6, 0.5e-6);
+        //sm.setSense(KeithleyMode::VOLTAGE, 500, 500);
+	sm.setSource(KeithleyMode::VOLTAGE, 400, 400);
+	sm.setSense(KeithleyMode::CURRENT, .5e-6, .5e-6);
     }
     catch(std::string e)
     {
