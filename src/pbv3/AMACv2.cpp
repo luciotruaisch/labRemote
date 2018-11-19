@@ -23,19 +23,25 @@ void AMACv2::init()
       usleep(10);
     }
 
-  // Setting which has given us 1 mV / count
-  //write_reg(52, 0x898D); // VDD = 1.206 for AMAC #10 (value from the spec)
-  //write_reg(52, 0x898B); // VDD = 1.255 for AMAC #10 (1.277 for AMAC #9)
-  wrField(&AMACv2Reg::VDDbg  , 0xE);
-  wrField(&AMACv2Reg::VDDbgen, 1);
-  wrField(&AMACv2Reg::AMbg   , 0xE);
-  wrField(&AMACv2Reg::AMbgen , 1);
+
 
   // for (auto const& p : regMap)
   //   { //set all amac registers according to default values
   //     if(canBeWritten(p.second))
   // 	syncReg(p.second);
   //   }  
+}
+
+void AMACv2::initRegisters(){
+  // Setting which has given us 1 mV / count
+  wrField(&AMACv2Reg::VDDbg  , 0xE);
+  wrField(&AMACv2Reg::VDDbgen, 1);
+  wrField(&AMACv2Reg::AMbg   , 0xE);
+  wrField(&AMACv2Reg::AMbgen , 1);
+
+  // Setting which give best offset for the Cur1(0)V current monitors
+  wrField(&AMACv2::DCDCiOffset, 8);	
+
 }
 
 void AMACv2::syncReg(AMACv2Field AMACv2Reg::* ref)

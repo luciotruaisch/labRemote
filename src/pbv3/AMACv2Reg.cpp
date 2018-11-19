@@ -272,7 +272,7 @@ void AMACv2Reg::init()
   DCDCoN.initReg(m_cfg, RW, 0, 1, 16, 58, "DCDCoN"); regMap["DCDCoN"] = &AMACv2Reg::DCDCoN;
   DCDCiZeroReading.initReg(m_cfg, RW, 0, 1, 15, 58, "DCDCiZeroReading"); regMap["DCDCiZeroReading"] = &AMACv2Reg::DCDCiZeroReading;
   DCDCiRangeSW.initReg(m_cfg, RW, 1, 1, 12, 58, "DCDCiRangeSW"); regMap["DCDCiRangeSW"] = &AMACv2Reg::DCDCiRangeSW;
-  DCDCiOffset.initReg(m_cfg, RW, 8, 4, 12, 58, "DCDCiOffset"); regMap["DCDCiOffset"] = &AMACv2Reg::DCDCiOffset;
+  DCDCiOffset.initReg(m_cfg, RW, 8, 4, 8, 58, "DCDCiOffset"); regMap["DCDCiOffset"] = &AMACv2Reg::DCDCiOffset;
   DCDCiP.initReg(m_cfg, RW, 0, 3, 4, 58, "DCDCiP"); regMap["DCDCiP"] = &AMACv2Reg::DCDCiP;
   DCDCiN.initReg(m_cfg, RW, 0, 3, 0, 58, "DCDCiN"); regMap["DCDCiN"] = &AMACv2Reg::DCDCiN;
   // 60 - HxICm_cfg
