@@ -28,7 +28,6 @@ EndeavourRawFTDI::EndeavourRawFTDI()
   if((ret=ftdi_usb_open(m_ftdi,0x0403,0x6014))<0)
     throw EndeavourComException("Unable to find FTDI device: " + std::string(ftdi_get_error_string(m_ftdi)));
 
-
   //
   // Configure device for MPSSE
   

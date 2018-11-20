@@ -14,7 +14,9 @@ MCP4801::~MCP4801()
 
 void MCP4801::setCount(uint32_t counts)
 {
+  std::cout << "Set count requested for " << counts << std::endl;
   counts=((counts<<4)|0x3000)&0xFFFF;
+  std::cout << "0x" << std::hex << std::setw(16) << std::setfill('0') << counts << std::dec << std::endl;
   m_com->write_reg16(counts);
 }
 

@@ -27,6 +27,7 @@ namespace PBv3TestTools {
     json calibrateAMAC(AMACv2 *amac, double step);
     json calibrateAMACslope(AMACv2 *amac, double step);
     json calibrateAMACoffset(AMACv2 *amac);
+    json testAMACdac(AMACv2 *amac, double Vset);
     json measureHvSense(AMACv2 *amac, Keithley24XX *sm);
     json measureLvIV(GenericPs *ps);
     json calibVinResponse(AMACv2 *amac, GenericPs *ps);

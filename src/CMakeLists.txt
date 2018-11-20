@@ -64,12 +64,12 @@ add_subdirectory(libGalil)
 add_subdirectory(libImageRec)
 add_subdirectory(libZaber)
 add_subdirectory(libWaferProb)
-add_subdirectory(libScope)
+#add_subdirectory(libScope)
 
 #
 # Add binaries
 add_subdirectory(prober)
-add_subdirectory(pbv2)
+#add_subdirectory(pbv2)
 add_subdirectory(pbv3)
 #add_subdirectory(varload)
-add_subdirectory(examples)
+#add_subdirectory(examples)

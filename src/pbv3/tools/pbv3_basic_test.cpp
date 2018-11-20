@@ -49,9 +49,11 @@ int main(int argc, char* argv[]) {
     unsigned short int amacid=0x0;
 
     // Init Agilent
-    logger(logINFO) << "Init Agilent PS";
-    AgilentPs ps(agiDev, 10);
-       // TTIMX180TPPs ps(agiDev, 10);
+    //logger(logINFO) << "Init Agilent PS";
+    logger(logINFO) << "Init TTIMSX PS";
+    //    AgilentPs ps(agiDev, 10);
+    //TTIMX180TPPs ps(agiDev, 10);
+    TTITSX1820PPs ps(agiDev, 10);
     try
     {
         ps.init();
@@ -73,11 +75,11 @@ int main(int argc, char* argv[]) {
     dc.setRemoteSense(false);
     dc.setModeCC();
     dc.setCurrent(0);
-    dc.turnOn();
+    //    dc.turnOn();
 
     // Init Keithley2410
     logger(logINFO) << "Init Keithley 2410";
-    Keithley24XX sm(agiDev, 23);
+    Keithley24XX sm(agiDev, 02);
     try
     {
         sm.turnOff();
@@ -121,15 +123,16 @@ int main(int argc, char* argv[]) {
     
    
 
-    // Start testing
-    //testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
-    testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
-    //testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
-    testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
-    testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
-    //testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
-    //testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
-    //testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope(amac.get(), 0.1);
+    //     // Start testing
+    // testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
+    // //    testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
+    // testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
+    // //testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
+    // testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
+    // testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
+    // testSum["tests"][test++] = PBv3TestTools::calibrateAMAC(amac.get(), 0.1);
+    //  testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope(amac.get(), 0.1);
+    testSum["tests"][test++] = PBv3TestTools::testAMACdac(amac.get(), 1.0);
     //testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac.get());
     //testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, &sm);
 

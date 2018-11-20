@@ -426,6 +426,32 @@ namespace PBv3TestTools {
     return testSum;
 }
 
+json testAMACdac(AMACv2 *amac, double Vset)
+  {
+    logger(logINFO) << "## Calibrating AMAC Extensively ##";
+    json testSum;
+    testSum["name"] = "amac_calibrate_ext";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    amac->wrField(&AMACv2Reg::AMbgen, 1);
+    amac->wrField(&AMACv2Reg::AMen,1);
+    amac->wrField(&AMACv2Reg::AMenC,1);
+    // Run the test
+    double CALact=0;
+       
+    
+    for(int pause = 0; pause <1000; pause++){
+    CALact = 0;
+    
+    CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(Vset*3)/3;
+    std::cout<<"AMAC DAC Voltage Reading: "<<CALact<<std::endl;
+    usleep(2e6);
+    }
+    return testSum;
+  }
+
+
   json calibrateAMACslope(AMACv2 *amac, double step)
   {
     logger(logINFO) << "## Calibrating AMAC Extensively ##";
@@ -439,19 +465,48 @@ namespace PBv3TestTools {
     amac->wrField(&AMACv2Reg::AMenC,1);
     // Run the test
     int index=0;
+    double CALact=0;
+    uint CALamac=0;
+    int count = 0;
     for(int bg_set = 0; bg_set<16; bg_set++){
       amac->wrField(&AMACv2Reg::AMbg , bg_set);
       amac->wrField(&AMACv2Reg::Ch4Mux , 1);
+    
       for(double CALin=0; CALin<1.01; CALin+=step)
 	{
+	  
 	  //actual voltage to be compared against digitized value
-	  double CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+	  CALact = 0;
+	  try{
+	    CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*3)/3;
+	  } catch(EndeavourComException &e) {
+	    logger(logERROR) << e.what();
+	    testSum["error"] = e.what();
+	    return testSum;
+	  }
+
+
 	  for(int gain_set = 0; gain_set<16; gain_set++,index++)
 	    {
+	      try{
 	      amac->wrField(&AMACv2Reg::AMintCalib, gain_set);
+	      } catch(EndeavourComException &e) {
+		std::cout<<"fun1: "<<std::endl;
+		logger(logERROR) << e.what();
+		testSum["error"] = e.what();
+		return testSum;
+	      }
 	      //digital about
-	      usleep(5e3);
-	      uint CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+	      usleep(5e4);
+	      try{ 
+		CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+		count++;
+	      }catch(EndeavourComException &e) {
+		std::cout<<"Test Greg AMAC Slope: "<<bg_set<<std::endl;
+		logger(logERROR) << e.what();
+		testSum["error"] = e.what();
+		return testSum;
+	      }
 	      testSum["data"][index] = {CALact, CALamac,bg_set, gain_set};
 	    }
 	}//end cycling through voltages
@@ -559,9 +614,9 @@ namespace PBv3TestTools {
                 val[i] = amac->rdField(&AMACv2::Ch14Value);
             }
             std::cout << ileak << "\t\t" << ileak*resist<< "\t\t" << hv_v << "\t" << hv_i << "\t\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
-	    testSum["data"][index] ={ileak, hv_v, hv_i, val[0], val[1],val[2],val[3],vl[4]};
+	    testSum["data"][index] ={ileak, hv_v, hv_i, val[0], val[1],val[2],val[3],val[4]};
       }
-      testSum["header"] = {"HV_i_se","HV_v_set","HV_v","HV_i","Gain 0","Gain 1","Gain 2","Gain 4","Gain 8"}
+      testSum["header"] = {"HV_i_se","HV_v_set","HV_v","HV_i","Gain 0","Gain 1","Gain 2","Gain 4","Gain 8"};
 	// sm->setSource(KeithleyMode::VOLTAGE, 500, 500);
         // sm->setSense(KeithleyMode::CURRENT, 1.27e-6, 1.27e-6);
 	sm->setSource(KeithleyMode::CURRENT, 1.e-6, 1.e-6);

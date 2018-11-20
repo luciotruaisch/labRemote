@@ -2,6 +2,8 @@
 
 #include <libftdi1/ftdi.h>
 
+#include <unistd.h>
+
 int32_t ftdi_read_alldata(struct ftdi_context *ftdi, std::vector<uint8_t>& data, uint32_t requested)
 {
   data.resize(requested);
@@ -13,6 +15,7 @@ int32_t ftdi_read_alldata(struct ftdi_context *ftdi, std::vector<uint8_t>& data,
 	return ret;
       cnt+=ret;
       if(cnt==requested) return cnt;
+      usleep(1e3);
     }
 
   return cnt;

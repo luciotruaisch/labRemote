@@ -41,6 +41,7 @@ std::string TTITSX1820PPs::receive(std::string cmd)
 void TTITSX1820PPs::init() {
   // Check if the PS is connected
   std::string idn=this->receive("*idn?");
+  
   idn.erase(std::find_if(idn.rbegin(), idn.rend(), [](int ch) {
         return !std::isspace(ch);
       }).base(), idn.end());
