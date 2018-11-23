@@ -15,7 +15,7 @@
 #include <stdint.h>
 
 #define CHUNK_SIZE 65535
-#define LATENCY_MS 2
+#define LATENCY_MS 4
 #define USB_TIMEOUT 120000
 
 
@@ -272,7 +272,7 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
 	  lastBit=bit;
 	}
     }
-  //std::cout << std::endl;
+  //std::cout << std::dec << std::endl;
 }
 
 void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size)

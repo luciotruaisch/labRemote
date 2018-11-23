@@ -17,22 +17,30 @@
 
 using nlohmann::json;
 
-namespace PBv3TestTools {
-    // All helper functions expects all hardware to be on and initialised
-    json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load);
-    json testHvEnable(AMACv2 *amac, Keithley24XX *sm, unsigned frequency=0x3);
-    json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max , double VinSet=11.0);
-    json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
-    json runBER(AMACv2 *amac);
-    json calibrateAMAC(AMACv2 *amac, double step);
-    json calibrateAMACslope(AMACv2 *amac, double step);
-    json calibrateAMACoffset(AMACv2 *amac);
-    json testAMACdac(AMACv2 *amac, double Vset);
-    json measureHvSense(AMACv2 *amac, Keithley24XX *sm);
-    json measureLvIV(GenericPs *ps);
-    json calibVinResponse(AMACv2 *amac, GenericPs *ps);
+namespace PBv3TestTools
+{
+  // All helper functions expects all hardware to be on and initialised
 
-    std::string getTimeAsString(std::chrono::system_clock::time_point t);
+  // LV tests
+  json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load);
+  json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load, int step, int min, int max , double VinSet=11.0);
+  json calibVinResponse(AMACv2 *amac, GenericPs *ps);
+  json measureLvIV(GenericPs *ps);
+
+  //
+  // HV tests
+  json testHvEnable(AMACv2 *amac, Keithley24XX *sm, unsigned frequency=0x3);
+  json measureHvSense(AMACv2 *amac, Keithley24XX *sm);
+
+  //
+  // AMAC tests
+  json runBER(AMACv2 *amac);
+  json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
+  json calibrateAMACslope (AMACv2 *amac, double step, bool scanSettings=true);
+  json calibrateAMACoffset(AMACv2 *amac,              bool scanSettings=true);
+  json testOF(AMACv2 *amac, GenericPs *ps);
+
+  std::string getTimeAsString(std::chrono::system_clock::time_point t);
 }
 
 #endif

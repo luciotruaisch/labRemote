@@ -26,7 +26,7 @@ uint32_t MAX11619::readCount(uint8_t ch)
   std::vector<uint8_t> data(2*4);
   m_com->read_block(data);
   uint16_t chvalue=(data[2*ch+0]<<8)|(data[2*ch+1]<<0);
-  
+
   return (chvalue>>2)&0x3FF;
 }
 

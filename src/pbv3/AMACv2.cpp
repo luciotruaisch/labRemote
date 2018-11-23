@@ -32,16 +32,18 @@ void AMACv2::init()
   //   }  
 }
 
-void AMACv2::initRegisters(){
+void AMACv2::initRegisters()
+{
   // Setting which has given us 1 mV / count
   wrField(&AMACv2Reg::VDDbg  , 0xE);
   wrField(&AMACv2Reg::VDDbgen, 1);
-  wrField(&AMACv2Reg::AMbg   , 0xE);
+  wrField(&AMACv2Reg::AMbg   , 10);
   wrField(&AMACv2Reg::AMbgen , 1);
+  wrField(&AMACv2Reg::AMintCalib, 0);
 
   // Setting which give best offset for the Cur1(0)V current monitors
-  wrField(&AMACv2::DCDCiOffset, 8);	
-
+  wrField(&AMACv2::DCDCiOffset, 8);
+  wrField(&AMACv2::DCDCoOffset, 8);
 }
 
 void AMACv2::syncReg(AMACv2Field AMACv2Reg::* ref)
@@ -53,14 +55,14 @@ void AMACv2::wrField(AMACv2Field AMACv2Reg::* ref, uint32_t data)
 {
   setField(ref, data);
   EndeavourCom::write_reg(getAddr(ref), (this->*ref).readRaw());
-  usleep(10);
+  usleep(1e4);
 }
 
 uint32_t AMACv2::rdField(AMACv2Field AMACv2Reg::* ref)
 {
   uint32_t ret = EndeavourCom::read_reg(getAddr(ref));  
   setReg(getAddr(ref), ret);
-  usleep(10);
+  usleep(1e4);
   return getField(ref);
 }
 
@@ -68,5 +70,5 @@ void AMACv2::write_reg(unsigned int address, unsigned int data)
 {
   setReg(address, data);
   EndeavourCom::write_reg(address, data);
-  usleep(10);
+  usleep(1e4);
 }

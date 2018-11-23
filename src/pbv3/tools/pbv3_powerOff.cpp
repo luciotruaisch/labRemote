@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 
     // Init Keithley2410
     logger(logINFO) << "Init Keithley 2410";
-    Keithley24XX sm(agiDev, 23);
+    Keithley24XX sm(agiDev, 02);
     try
     {
         sm.init();
