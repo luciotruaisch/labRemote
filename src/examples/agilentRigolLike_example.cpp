@@ -28,7 +28,7 @@ void usage(char *argv[]) {
   std::cerr << "List of options:" << std::endl;
   std::cerr << " -c, --channel Ch  Set PS channel to work on to Ch (default: " << channel << ")" << std::endl;
   std::cerr << " -p, --port        Set serial port to which the PS is connected to (default: " << port << ")" << std::endl;
-  std::cerr << " -g, --gpib        Set GPIB adress to which the PS is connected to (default: " << port << ")" << std::endl;
+  std::cerr << " -g, --gpib        Set GPIB adress to which the PS is connected to (default: " << gpib << ")" << std::endl;
   std::cerr << " --debug           Enable more verbose printout"  << std::endl;
   std::cerr << "" << std::endl;
   std::cerr << "" << std::endl;
