@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 
     // Init com
     logger(logINFO) << "Init AMAC";
-    std::unique_ptr<AMACv2> amac;
+    std::shared_ptr<AMACv2> amac;
     try {
         amac.reset(new AMACv2(amacid, std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI())));
         amac->init();
@@ -133,8 +133,8 @@ int main(int argc, char* argv[]) {
 	try { testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);                                                 } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 
 	try { testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500); } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
-	try { testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope (amac.get(),0.1, false);                                      } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
-	try { testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac.get()    , false);                                      } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
+	try { testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope (amac, 0.1, false);                                      } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
+	try { testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac,      false);                                      } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 
 	testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 	outfile << std::setw(4) << testSum << std::endl;

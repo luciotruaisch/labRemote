@@ -412,7 +412,7 @@ namespace PBv3TestTools {
     return testSum;
     }
 
-  json calibrateAMACoffset(AMACv2 *amac, bool scanSettings)
+  json calibrateAMACoffset(std::shared_ptr<AMACv2> amac, bool scanSettings)
   {
     logger(logINFO) << "## Calibrating AMAC offset ##";
     json testSum;
@@ -447,7 +447,7 @@ namespace PBv3TestTools {
     return testSum;
   }
 
-  json calibrateAMACslope(AMACv2 *amac, double step, bool scanSettings)
+  json calibrateAMACslope(std::shared_ptr<AMACv2> amac, double step, bool scanSettings)
   {
     logger(logINFO) << "## Calibrating AMAC slope ##";
     json testSum;
@@ -483,7 +483,7 @@ namespace PBv3TestTools {
 		CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*2)/2;
 
 		//digital about
-		usleep(5e3);
+		usleep(50e3);
 		CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
 		testSum["data"][index++] = {CALact, CALamac,bg_set, gain_set};
 		std::cout << CALact << "\t" << bg_set << "\t" << gain_set << "\t" << CALamac << std::endl;

@@ -18,6 +18,7 @@ set(SrcFiles
   AMACv2Reg.cpp
 
   PBv3TestTools.cpp
+  PBv3ConfigTools.cpp
   )
 
 if ( ${LIBFTDI_FOUND} )

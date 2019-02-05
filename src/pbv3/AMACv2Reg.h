@@ -28,6 +28,9 @@ public:
 		
   void initReg(uint32_t* cfg, rw_t rw, uint32_t defaultVal, uint8_t width, uint8_t offset, uint8_t regNbr, const std::string& fieldName);
 
+  void setDefaultVal(uint32_t defaultVal);
+  void writeDefaultVal();
+
   uint32_t read() const;
   uint32_t readRaw() const;
 
@@ -39,29 +42,33 @@ public:
 
 class AMACv2Reg
 {
- private:
+private:
   void init();
 
- public:
+public:
   static const unsigned numRegs = 171;
   uint32_t m_cfg[numRegs];
 
-  AMACv2Reg();  
+  AMACv2Reg();
+
+  AMACv2Field* findField(const std::string& fieldName);
 
   uint32_t getField(AMACv2Field AMACv2Reg::* ref);
   uint32_t getField(const std::string& fieldName);
-		
+
+  uint32_t getReg(uint32_t reg);
   uint32_t getReg(AMACv2Field AMACv2Reg::* ref);
-		
+  uint32_t getReg(const std::string& fieldName);
+
   void setField(AMACv2Field AMACv2Reg::* ref, uint32_t value);
   void setField(const std::string& fieldName, uint32_t value);
 
   void setReg(uint32_t reg, uint32_t value);
   void setReg(AMACv2Field AMACv2Reg::* ref, uint32_t value);
-		
+
   uint8_t getAddr(AMACv2Field AMACv2Reg::* ref);
   uint8_t getAddr(const std::string& fieldName);
-		
+
   bool canBeWritten(AMACv2Field AMACv2Reg::* ref);
 
   // 0 - Status register

@@ -13,37 +13,23 @@ void AMACv2::init()
   // Set AMAC ID
   EndeavourCom::setid(EndeavourCom::REFMODE::IDPads, 0x0);
   usleep(10);
-
-  // Read AMAC registers into memory
-  uint data;
-  for(uint reg=0;reg<AMACv2Reg::numRegs;reg++)
-    {
-      data=(reg==0)?read_reg(reg):readnext_reg();
-      setReg(reg, data);
-      usleep(10);
-    }
-
-
-
-  // for (auto const& p : regMap)
-  //   { //set all amac registers according to default values
-  //     if(canBeWritten(p.second))
-  // 	syncReg(p.second);
-  //   }  
 }
 
 void AMACv2::initRegisters()
-{
-  // Setting which has given us 1 mV / count
-  wrField(&AMACv2Reg::VDDbg  , 0xE);
-  wrField(&AMACv2Reg::VDDbgen, 1);
-  wrField(&AMACv2Reg::AMbg   , 10);
-  wrField(&AMACv2Reg::AMbgen , 1);
-  wrField(&AMACv2Reg::AMintCalib, 0);
+{ 
+  // Initialize registers with default values
+  for(auto fieldKV : regMap)
+    {
+      if((this->*fieldKV.second).canBeWrittenField())
+	(this->*fieldKV.second).writeDefaultVal();
+    }
 
-  // Setting which give best offset for the Cur1(0)V current monitors
-  wrField(&AMACv2::DCDCiOffset, 8);
-  wrField(&AMACv2::DCDCoOffset, 8);
+  // Write AMAC registers into the chip
+  for(uint reg=0;reg<AMACv2Reg::numRegs;reg++)
+    {
+      EndeavourCom::write_reg(reg, getReg(reg));
+      usleep(10);
+    }
 }
 
 void AMACv2::syncReg(AMACv2Field AMACv2Reg::* ref)
@@ -55,6 +41,13 @@ void AMACv2::wrField(AMACv2Field AMACv2Reg::* ref, uint32_t data)
 {
   setField(ref, data);
   EndeavourCom::write_reg(getAddr(ref), (this->*ref).readRaw());
+  usleep(1e4);
+}
+
+void AMACv2::wrField(const std::string& fieldName, uint32_t data)
+{
+  setField(fieldName, data);
+  EndeavourCom::write_reg(getAddr(fieldName), getReg(fieldName));
   usleep(1e4);
 }
 
@@ -71,4 +64,36 @@ void AMACv2::write_reg(unsigned int address, unsigned int data)
   setReg(address, data);
   EndeavourCom::write_reg(address, data);
   usleep(1e4);
+}
+
+void AMACv2::setADCslope (double ADCslope)
+{ 
+  m_ADCslope=ADCslope;
+}
+
+void AMACv2::setADCoffset(uint8_t ch, uint32_t counts)
+{
+  if(ch>=16) return;
+  m_ADCoffset[ch]=counts;
+}
+
+double AMACv2::calibrateCounts(uint8_t ch, uint32_t counts)
+{
+  if(ch>=16) return 0.;
+
+  return m_ADCslope*(counts-m_ADCoffset[ch]);
+}
+
+double AMACv2::getVDDREG()
+{
+  wrField(&AMACv2Reg::Ch3Mux, 0);
+  uint32_t counts=rdField(&AMACv2Reg::Ch3Value);
+  return calibrateCounts(3, counts)*3/2;
+}
+
+double AMACv2::getAM()
+{
+  wrField(&AMACv2Reg::Ch4Mux, 0);
+  uint32_t counts=rdField(&AMACv2Reg::Ch4Value);
+  return calibrateCounts(4, counts);
 }

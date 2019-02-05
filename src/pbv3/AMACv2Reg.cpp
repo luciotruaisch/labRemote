@@ -4,7 +4,7 @@ AMACv2Field::AMACv2Field()
 { }
 
 bool AMACv2Field::canBeWrittenField() const
-{ return (m_rw != WO); }
+{ return (m_rw != RO); }
 
 void AMACv2Field::initReg(uint32_t* cfg, rw_t rw, uint32_t defaultVal, uint8_t width, uint8_t offset, uint8_t regNbr, const std::string& fieldName)
 {
@@ -19,6 +19,22 @@ void AMACv2Field::initReg(uint32_t* cfg, rw_t rw, uint32_t defaultVal, uint8_t w
   if(m_rw != RO)
     this->write(m_defaultVal);
 }
+
+void AMACv2Field::setDefaultVal(uint32_t defaultVal)
+{
+  m_defaultVal=defaultVal;
+}
+
+void AMACv2Field::writeDefaultVal()
+{
+  if(m_rw == RO)
+    {
+      std::cerr << " --> Error: Read-only register \"" << m_fieldName <<"\""<< std::endl;
+      return;
+    }
+  write(m_defaultVal);
+}
+
 
 void AMACv2Field::write(const uint32_t& cfgBits)
 {
@@ -644,6 +660,13 @@ void AMACv2Reg::init()
   WRNHiThCh15.initReg(m_cfg, RW, 0x3FF, 10, 0, 171, "WRNHiThCh15"); regMap["WRNHiThCh15"] = &AMACv2Reg::WRNHiThCh15;
 }
 
+AMACv2Field* AMACv2Reg::findField(const std::string& fieldName)
+{
+  if(regMap.find(fieldName) != regMap.end())
+    return &(this->*regMap[fieldName]);
+
+  return nullptr;
+}
 
 uint32_t AMACv2Reg::getField(AMACv2Field AMACv2Reg::* ref)
 {
@@ -658,10 +681,27 @@ uint32_t AMACv2Reg::getField(const std::string& fieldName)
     std::cerr << " --> Error: Could not find register \""<< fieldName << "\"" << std::endl;
   return 0;
 }
-		
+
+uint32_t AMACv2Reg::getReg(uint32_t reg)
+{
+  if(reg<numRegs)
+    return m_cfg[reg];
+  else
+    return 0;
+}
+
 uint32_t AMACv2Reg::getReg(AMACv2Field AMACv2Reg::* ref)
 {
   return (this->*ref).readRaw();
+}
+
+uint32_t AMACv2Reg::getReg(const std::string& fieldName)
+{
+  if(regMap.find(fieldName) != regMap.end())
+    return(this->*regMap[fieldName]).readRaw();
+  else
+    std::cerr << " --> Error: Could not find register \""<< fieldName << "\"" << std::endl;
+  return 0;
 }
 
 void AMACv2Reg::setField(AMACv2Field AMACv2Reg::* ref, uint32_t value)

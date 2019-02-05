@@ -17,11 +17,28 @@ public:
   virtual void write_reg(unsigned int address, unsigned int data);
 
   void wrField(AMACv2Field AMACv2Reg::* ref, uint32_t data);
+  void wrField(const std::string& fieldName, uint32_t data);
+
   uint32_t rdField(AMACv2Field AMACv2Reg::* ref);
+  uint32_t rdField(const std::string& fieldName);
+
+  //
+  // ADC configuration
+  void setADCslope (double ADCslope);
+  void setADCoffset(uint8_t ch, uint32_t counts);
+
+  //
+  // Calibrated ADC readings
+  double getVDDREG();
+  double getAM();
 
 private:
+  double calibrateCounts(uint8_t ch, uint32_t counts);
+
   void syncReg(AMACv2Field AMACv2Reg::* ref);
 
+  double   m_ADCslope      =1.;
+  uint32_t m_ADCoffset[16] ={0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 };
 
 #endif // AMACv2_H_

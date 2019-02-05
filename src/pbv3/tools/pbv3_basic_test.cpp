@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <string.h>
+#include <getopt.h>
 
 #include <iostream>
 #include <iomanip>
@@ -19,26 +20,82 @@
 #include "AgilentPs.h"
 #include "TTITSX1820PPs.h"
 #include "TTIMX180TPPs.h"
-#include "PBv3TestTools.h"
 #include "Keithley24XX.h"
 
-loglevel_e loglevel = logINFO;
+#include "PBv3TestTools.h"
+#include "PBv3ConfigTools.h"
 
+//------ SETTINGS
+loglevel_e loglevel = logINFO;
+std::string configfile = "config.json";
+//---------------
+
+void usage(char* argv[])
+{
+  std::cerr << "Usage: " << argv[0] << " [options] datadir BK85XX GPIB" << std::endl;
+  std::cerr << "List of options:" << std::endl;
+  std::cerr << " -c, --config      Config for initializing the AMAC. (default: " << configfile << ")" << std::endl;
+  std::cerr << " --debug           Enable more verbose printout"  << std::endl;
+  std::cerr << "" << std::endl;
+  std::cerr << "" << std::endl;
+}
 
 int main(int argc, char* argv[]) 
-{    
-  if (argc < 4) {
-    logger(logERROR) << "Not enough arguments!";
-    logger(logERROR) << "Usage: " << argv[0] << " <data folder> <BK85XX> <GPIB>";
-    return -1;
-  }
-    
-  json testSum;
-  testSum["program"] = argv[0];
-  testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
-  std::string outDir = argv[1];
-  std::string bkDev = argv[2];
-  std::string agiDev = argv[3];
+{
+  if (argc < 4)
+    {
+      usage(argv);
+      return 1;
+    }
+
+  int c;
+  const int DEBUG_OPTION = 1000;
+  while (1)
+    {
+      int option_index = 0;
+      static struct option long_options[] =
+	{
+	  {"config",   required_argument, 0,  'c' },
+	  {"debug",    no_argument      , 0,  DEBUG_OPTION },
+	  {0,          0                , 0,  0 }
+	};
+
+      c = getopt_long(argc, argv, "c:", long_options, &option_index);
+      if (c == -1)
+	break;
+
+      switch (c)
+	{
+	case 'c':
+	  configfile = optarg;
+	  break;
+	case DEBUG_OPTION:
+	  loglevel = logDEBUG;
+	  break;
+	default:
+	  std::cerr << "Invalid option supplied. Aborting." << std::endl;
+	  std::cerr << std::endl;
+	  usage(argv);
+	}
+    }
+
+  if (argc-optind < 3)
+    {
+      std::cout << argc << " " << optind << " " << 1 << std::endl;
+      std::cerr << "Required paths missing." << std::endl;
+      std::cerr << std::endl;
+      usage(argv);
+      return 1;
+    }
+
+  std::string outDir = argv[optind++];
+  std::string bkDev  = argv[optind++];
+  std::string agiDev = argv[optind++];
+
+  logger(logDEBUG) << "Settings";
+  logger(logDEBUG) << " outDir: " << outDir;
+  logger(logDEBUG) << " bkDev: "  << bkDev;
+  logger(logDEBUG) << " agiDev: " << agiDev;
 
   // Output file
   std::string fileName = outDir + "/" + PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-test.json";
@@ -49,10 +106,10 @@ int main(int argc, char* argv[])
   unsigned short int amacid=0x0;
 
   // Init Agilent
-  //logger(logINFO) << "Init Agilent PS";
-  logger(logINFO) << "Init TTITSX PS";
-  //    AgilentPs ps(agiDev, 10);
-  TTIMX180TPPs ps(agiDev, 10);
+  logger(logINFO) << "Init Agilent PS";
+  AgilentPs ps(agiDev, 10);
+  //logger(logINFO) << "Init TTITSX PS";
+  //TTIMX180TPPs ps(agiDev, 10);
   //TTITSX1820PPs ps(agiDev, 10);
   try
     {
@@ -72,13 +129,13 @@ int main(int argc, char* argv[])
   logger(logINFO) << "Init BK DCDC Load";
   Bk85xx dc(bkDev);
   dc.setRemote();
-  dc.setRemoteSense(true);
+  dc.setRemoteSense(false);
   dc.setModeCC();
   dc.setCurrent(0);
 
   // Init Keithley2410
   logger(logINFO) << "Init Keithley 2410";
-  Keithley24XX sm(agiDev, 02);
+  Keithley24XX sm(agiDev, 05);
   try
     {
       sm.turnOff();
@@ -105,19 +162,36 @@ int main(int argc, char* argv[])
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
   // Init com
+
+  json config;
+  if(!configfile.empty())
+    {
+      std::ifstream fh_in(configfile);
+      if(fh_in.is_open())
+	fh_in >> config;
+    }
+
+
   logger(logINFO) << "Init AMAC";
-  std::unique_ptr<AMACv2> amac;
+  std::shared_ptr<AMACv2> amac;
   try {
     amac.reset(new AMACv2(amacid, std::unique_ptr<EndeavourRaw>(new EndeavourRawFTDI())));
     amac->init();
+    PBv3ConfigTools::configAMAC(amac, config, false);
     amac->initRegisters();
   } catch(EndeavourComException &e) {
     logger(logERROR) << "Unable to initialize AMACv2";
     logger(logERROR) << e.what();
     return 1;
   }
-    
+
+  //
   // Start testing
+  json testSum;
+  testSum["program"] = argv[0];
+  testSum["config"] = config;
+  testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
+
   testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
   testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get()  , dynamic_cast<GenericPs*>(&ps), &dc, &sm);
   testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
@@ -125,8 +199,8 @@ int main(int argc, char* argv[])
   //testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
   testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
   testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
-  testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac.get() ,      false);
-  testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope (amac.get() , 0.1, false);
+  testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac,       false);
+  testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope (amac, 0.01, false);
 
   testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
   outfile << std::setw(4) << testSum << std::endl;
