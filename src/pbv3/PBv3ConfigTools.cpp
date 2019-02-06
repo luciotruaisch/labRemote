@@ -179,15 +179,18 @@ namespace PBv3ConfigTools
     std::vector<double> x,y;
     uint n=0;
 
-    for(double CALin=0; CALin<1.01; CALin+=0.1)
+    // Longer wait for the first value due to RC constant
+    dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(0);
+    usleep(10e3);
+    for(double CALin=0; CALin<1.01; CALin+=0.05)
       {
-	//actual voltage to be compared against digitized value
+	// actual voltage to be compared against digitized value
 	CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*2)/2;
 
-	//digital about
-	usleep(50e3);
+	// digital about
+	usleep(5e3);
 	CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
-	if(CALamac==1023) break;
+	if(CALamac==1023) break; //saturated, don't include
 
 	x.push_back(CALamac);
 	y.push_back(CALact);

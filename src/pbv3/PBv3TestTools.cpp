@@ -145,10 +145,10 @@ namespace PBv3TestTools {
     std::cout << "Vin" << "\t" << "Iin" << "\t" << "Vout" << "\t" << "Iout" << "\t" << "Vdcdc"
 	      << "\t" << "VddLr" << "\t" << "DCDCin" << "\t" << "NTC" << "\t"
 	      << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
-    testSum["header"] = {"Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]",
-			 "VddLR [counts]", "DCDCin [counts]", "NTC [counts]",
-			 "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"
-			 ,"Efficiency"};
+    testSum["header"] = {"Vin", "Iin", "Vout", "Iout", "Vdcdc",
+			 "VddLR", "DCDCin", "NTC",
+			 "Cur10V", "Cur1V", "PTAT",
+			 "Efficiency"};
     // Set sub-channel
     try {
       amac->wrField(&AMACv2::Ch12Mux, 0); //a
@@ -160,53 +160,49 @@ namespace PBv3TestTools {
 
     // Loop over currents
     int index = 0;
-    //int n_stats = 100;
-    int n_stats = 1;
 
     for (int iout=min;iout<=max;iout+=step){
       //allowing system to reach thermal equilibrium
       std::this_thread::sleep_for(std::chrono::seconds(dwell_time));
-      for(int npts = 0; npts <n_stats; npts++){
-	logger(logDEBUG) << " --> Setting " << iout << "mA load!";
-	// Set Current
-	load->setCurrent(iout);
-	// Wait for temp and everything to settle
-	std::this_thread::sleep_for(std::chrono::seconds(dwell_time_s));
-	// Read AMAC values
-	int Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT;
-	try {
-	  Vdcdc  = amac->rdField(&AMACv2::Ch0Value);
-	  VddLr  = amac->rdField(&AMACv2::Ch1Value);
-	  DCDCin = amac->rdField(&AMACv2::Ch2Value);
-	  NTC    = amac->rdField(&AMACv2::Ch9Value);
-	  Cur10V = amac->rdField(&AMACv2::Ch12Value);
-	  Cur1V  = amac->rdField(&AMACv2::Ch13Value);
-	  PTAT   = amac->rdField(&AMACv2::Ch15Value);
-	} catch(EndeavourComException &e) {
-	  logger(logERROR) << e.what();
-	  testSum["error"] = e.what();
-	  return testSum;
-	}
-
-	double Vin = std::stod(ps->getVoltage());
-	double Iin = std::stod(ps->getCurrent());
-
-	double Vout = 0;
-	try {
-	  Vout = load->getValues().vol;
-	} catch(std::string &s) {
-	  logger(logERROR) << s;
-	  testSum["error"] = s;
-	  return testSum;
-	}
-
-	double efficiency = (Vout*iout*1e-6)/(Vin*(Iin-Iin_offset));
-	//double efficiency = (1.5*iout*1e-3)/(Vin*(Iin-Iin_offset));
-	std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
-		  << "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
-		  << Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
-	testSum["data"][index++] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency, npts};
+      logger(logDEBUG) << " --> Setting " << iout << "mA load!";
+      // Set Current
+      load->setCurrent(iout);
+      // Wait for temp and everything to settle
+      std::this_thread::sleep_for(std::chrono::seconds(dwell_time_s));
+      // Read AMAC values
+      int Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT;
+      try {
+	Vdcdc  = amac->rdField(&AMACv2::Ch0Value);
+	VddLr  = amac->rdField(&AMACv2::Ch1Value);
+	DCDCin = amac->rdField(&AMACv2::Ch2Value);
+	NTC    = amac->rdField(&AMACv2::Ch9Value);
+	Cur10V = amac->rdField(&AMACv2::Ch12Value);
+	Cur1V  = amac->rdField(&AMACv2::Ch13Value);
+	PTAT   = amac->rdField(&AMACv2::Ch15Value);
+      } catch(EndeavourComException &e) {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
       }
+
+      double Vin = std::stod(ps->getVoltage());
+      double Iin = std::stod(ps->getCurrent());
+
+      double Vout = 0;
+      try {
+	Vout = load->getValues().vol;
+      } catch(std::string &s) {
+	logger(logERROR) << s;
+	testSum["error"] = s;
+	return testSum;
+      }
+
+      double efficiency = (Vout*iout*1e-6)/(Vin*(Iin-Iin_offset));
+      //double efficiency = (1.5*iout*1e-3)/(Vin*(Iin-Iin_offset));
+      std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
+		<< "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
+		<< Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
+      testSum["data"][index++] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency};
     }
     logger(logINFO) << " --> Done!! Turng off load!";
     load->setCurrent(0);
@@ -477,14 +473,18 @@ namespace PBv3TestTools {
 	  {
 	    amac->wrField(&AMACv2Reg::AMintCalib, gain_set);
 
+	    // Longer wait for the first value due to RC constant
+	    dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(0);
+	    usleep(10e3);
 	    for(double CALin=0; CALin<1.01; CALin+=step)
 	      {
-		//actual voltage to be compared against digitized value
+		// actual voltage to be compared against digitized value
 		CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*2)/2;
 
-		//digital about
-		usleep(50e3);
+		// digital about
+		usleep(5e3);		
 		CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
+
 		testSum["data"][index++] = {CALact, CALamac,bg_set, gain_set};
 		std::cout << CALact << "\t" << bg_set << "\t" << gain_set << "\t" << CALamac << std::endl;
 	      }

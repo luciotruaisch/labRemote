@@ -39,6 +39,7 @@ void usage(char* argv[])
   std::cerr << "  vddbg                            Tune the VDD bandgap." << std::endl;
   std::cerr << "  ambg                             Tune the AM bandgap." << std::endl;
   std::cerr << "  rampgain                         Tune the ADC slope." << std::endl;
+  std::cerr << "  slope                            Recalibrate the ADC slope." << std::endl;
   std::cerr << "  all                              Tune everything." << std::endl;
   std::cerr << "" << std::endl;
   std::cerr << "List of options:" << std::endl;
@@ -189,6 +190,8 @@ int main(int argc, char* argv[])
 	config.merge_patch(PBv3ConfigTools::tuneAMBG    (amac));
       if(command=="rampgain")
 	config.merge_patch(PBv3ConfigTools::tuneRampGain(amac));
+      if(command=="slope")
+	config.merge_patch(PBv3ConfigTools::calibrateSlope(amac));
     }
 
   //
