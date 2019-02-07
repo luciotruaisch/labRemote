@@ -275,12 +275,12 @@ void AMACv2Reg::init()
   DRcurr    .initReg(m_cfg, RW, 4, 3,  8, 56, "DRcurr"    ); regMap["DRcurr"    ] = &AMACv2Reg::DRcurr;
   RingOscFrq.initReg(m_cfg, RW, 4, 3,  0, 56, "RingOscFrq"); regMap["RingOscFrq"] = &AMACv2Reg::RingOscFrq;
   // 57 - NTC
-  NTCpbCal.initReg(m_cfg, RW, 0, 1, 19, 57, "NTCpbCal"); regMap["NTCpbCal"] = &AMACv2Reg::NTCpbCal;
+  NTCpbCal       .initReg(m_cfg, RW, 1, 1, 19, 57, "NTCpbCal       "); regMap["NTCpbCal"       ] = &AMACv2Reg::NTCpbCal;
   NTCpbSenseRange.initReg(m_cfg, RW, 4, 3, 16, 57, "NTCpbSenseRange"); regMap["NTCpbSenseRange"] = &AMACv2Reg::NTCpbSenseRange;
-  NTCy0Cal.initReg(m_cfg, RW, 0, 1, 11, 57, "NTCy0Cal"); regMap["NTCy0Cal"] = &AMACv2Reg::NTCy0Cal;
-  NTCy0SenseRange.initReg(m_cfg, RW, 4, 3, 8, 57, "NTCy0SenseRange"); regMap["NTCy0SenseRange"] = &AMACv2Reg::NTCy0SenseRange;
-  NTCx0Cal.initReg(m_cfg, RW, 0, 1, 3, 57, "NTCx0Cal"); regMap["NTCx0Cal"] = &AMACv2Reg::NTCx0Cal;
-  NTCx0SenseRange.initReg(m_cfg, RW, 4, 3, 0, 57, "NTCx0SenseRange"); regMap["NTCx0SenseRange"] = &AMACv2Reg::NTCx0SenseRange;
+  NTCy0Cal       .initReg(m_cfg, RW, 1, 1, 11, 57, "NTCy0Cal       "); regMap["NTCy0Cal"       ] = &AMACv2Reg::NTCy0Cal;
+  NTCy0SenseRange.initReg(m_cfg, RW, 4, 3,  8, 57, "NTCy0SenseRange"); regMap["NTCy0SenseRange"] = &AMACv2Reg::NTCy0SenseRange;
+  NTCx0Cal       .initReg(m_cfg, RW, 1, 1,  3, 57, "NTCx0Cal       "); regMap["NTCx0Cal"       ] = &AMACv2Reg::NTCx0Cal;
+  NTCx0SenseRange.initReg(m_cfg, RW, 4, 3,  0, 57, "NTCx0SenseRange"); regMap["NTCx0SenseRange"] = &AMACv2Reg::NTCx0SenseRange;
   // 58 - LvCurCal
   DCDCoOffset.initReg(m_cfg, RW, 4, 4, 20, 58, "DCDCoOffset"); regMap["DCDCoOffset"] = &AMACv2Reg::DCDCoOffset;
   DCDCoZeroReading.initReg(m_cfg, RW, 0, 1, 19, 58, "DCDCoZeroReading"); regMap["DCDCoZeroReading"] = &AMACv2Reg::DCDCoZeroReading;

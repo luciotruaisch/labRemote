@@ -97,3 +97,21 @@ double AMACv2::getAM()
   uint32_t counts=rdField(&AMACv2Reg::Ch4Value);
   return calibrateCounts(4, counts);
 }
+
+double AMACv2::getNTCx()
+{
+  uint32_t counts=rdField(&AMACv2Reg::Ch7Value);
+  return calibrateCounts(7, counts);
+}
+
+double AMACv2::getNTCy()
+{
+  uint32_t counts=rdField(&AMACv2Reg::Ch8Value);
+  return calibrateCounts(8, counts);
+}
+
+double AMACv2::getNTCpb()
+{
+  uint32_t counts=rdField(&AMACv2Reg::Ch9Value);
+  return calibrateCounts(9, counts);
+}

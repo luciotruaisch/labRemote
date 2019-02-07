@@ -290,4 +290,38 @@ namespace PBv3ConfigTools
 
     return config;
   }
+
+  json calibrateNTC(std::shared_ptr<AMACv2> amac)
+  {
+    logger(logINFO) << "## Calibrating NTCs ##";
+
+    json config;
+
+    // Enable NTC calibration
+    amac->wrField(&AMACv2Reg::NTCpbCal, 0);
+    amac->wrField(&AMACv2Reg::NTCx0Cal, 0);
+    amac->wrField(&AMACv2Reg::NTCy0Cal, 0);
+    usleep(5e3);
+
+    double NTCx =amac->getNTCx ();
+    double NTCy =amac->getNTCy ();
+    double NTCpb=amac->getNTCpb();
+
+    logger(logDEBUG) << "NTCx = " << NTCx << " mV";
+    logger(logDEBUG) << "NTCy = " << NTCy << " mV";
+    logger(logDEBUG) << "NTCpb= " << NTCpb<< " mV";
+
+    config["calib"]["NTCx"] = NTCx ;
+    config["calib"]["NTCy"] = NTCy ;
+    config["calib"]["NTCpb"]= NTCpb;
+
+    // Disable NTC calibration
+    amac->wrField(&AMACv2Reg::NTCpbCal, 1);
+    amac->wrField(&AMACv2Reg::NTCx0Cal, 1);
+    amac->wrField(&AMACv2Reg::NTCy0Cal, 1);
+
+    configAMAC(amac, config, true);
+
+    return config;
+  }
 }

@@ -101,7 +101,7 @@ namespace PBv3ConfigTools
   /**
    * \brief Calibrate the ADC response slope
    *
-   * Updates the ADC calibration slope.
+   * Updates the ADC calibration slope in mV/count.
    *
    * \param amac Pointer to the AMACv2 object
    *
@@ -112,13 +112,24 @@ namespace PBv3ConfigTools
   /**
    * \brief Calibrate the ADC response offsets
    *
-   * Updates the ADC calibration offsets.
+   * Updates the ADC calibration offsets in counts.
    *
    * \param amac Pointer to the AMACv2 object
    *
    * \return updated json calibration
    */
   json calibrateOffset(std::shared_ptr<AMACv2> amac);
+
+  /**
+   * \brief Calibrate the NTC reference voltage
+   *
+   * Updates the NTC reference voltages (pb,x,y) in mV.
+   *
+   * \param amac Pointer to the AMACv2 object
+   *
+   * \return updated json calibration
+   */
+  json calibrateNTC(std::shared_ptr<AMACv2> amac);
 }
 
 #endif

@@ -40,6 +40,7 @@ void usage(char* argv[])
   std::cerr << "  ambg                             Tune the AM bandgap." << std::endl;
   std::cerr << "  rampgain                         Tune the ADC slope." << std::endl;
   std::cerr << "  slope                            Recalibrate the ADC slope." << std::endl;
+  std::cerr << "  ntc                              Recalibrate the NTCs.." << std::endl;
   std::cerr << "  all                              Tune everything." << std::endl;
   std::cerr << "" << std::endl;
   std::cerr << "List of options:" << std::endl;
@@ -185,13 +186,15 @@ int main(int argc, char* argv[])
     {
       logger(logINFO) << "Running " << command;
       if(command=="vddbg")
-	config.merge_patch(PBv3ConfigTools::tuneVDDBG   (amac));
+	config.merge_patch(PBv3ConfigTools::tuneVDDBG     (amac));
       if(command=="ambg")
-	config.merge_patch(PBv3ConfigTools::tuneAMBG    (amac));
+	config.merge_patch(PBv3ConfigTools::tuneAMBG      (amac));
       if(command=="rampgain")
-	config.merge_patch(PBv3ConfigTools::tuneRampGain(amac));
+	config.merge_patch(PBv3ConfigTools::tuneRampGain  (amac));
       if(command=="slope")
 	config.merge_patch(PBv3ConfigTools::calibrateSlope(amac));
+      if(command=="ntc")
+	config.merge_patch(PBv3ConfigTools::calibrateNTC  (amac));
     }
 
   //
