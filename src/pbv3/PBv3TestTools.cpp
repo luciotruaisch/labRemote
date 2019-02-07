@@ -145,10 +145,10 @@ namespace PBv3TestTools {
     std::cout << "Vin" << "\t" << "Iin" << "\t" << "Vout" << "\t" << "Iout" << "\t" << "Vdcdc"
 	      << "\t" << "VddLr" << "\t" << "DCDCin" << "\t" << "NTC" << "\t"
 	      << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
-    testSum["header"] = {"Vin", "Iin", "Vout", "Iout", "Vdcdc",
-			 "VddLR", "DCDCin", "NTC",
-			 "Cur10V", "Cur1V", "PTAT",
-			 "Efficiency"};
+    testSum["header"] = {"Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]",
+			 "VddLR [counts]", "DCDCin [counts]", "NTC [counts]",
+			 "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"
+			 ,"Efficiency"};
     // Set sub-channel
     try {
       amac->wrField(&AMACv2::Ch12Mux, 0); //a
@@ -482,7 +482,7 @@ namespace PBv3TestTools {
 		CALact=dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getDAC()->set(CALin*2)/2;
 
 		// digital about
-		usleep(5e3);		
+		usleep(5e3);
 		CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
 
 		testSum["data"][index++] = {CALact, CALamac,bg_set, gain_set};
