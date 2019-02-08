@@ -38,6 +38,7 @@ namespace PBv3TestTools
   json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
   json calibrateAMACslope (std::shared_ptr<AMACv2> amac, double step, bool scanSettings=true);
   json calibrateAMACoffset(std::shared_ptr<AMACv2> amac,              bool scanSettings=true);
+  json calibrateAMACcm    (std::shared_ptr<AMACv2> amac, uint32_t tests=1000);
   json testOF(AMACv2 *amac, GenericPs *ps);
 
   std::string getTimeAsString(std::chrono::system_clock::time_point t);

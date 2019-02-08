@@ -59,6 +59,14 @@ uint32_t AMACv2::rdField(AMACv2Field AMACv2Reg::* ref)
   return getField(ref);
 }
 
+uint32_t AMACv2::rdField(const std::string& fieldName)
+{
+  uint32_t ret = EndeavourCom::read_reg(getAddr(fieldName));  
+  setReg(getAddr(fieldName), ret);
+  usleep(1e4);
+  return getField(fieldName);
+}
+
 void AMACv2::write_reg(unsigned int address, unsigned int data)
 {
   setReg(address, data);
@@ -84,6 +92,15 @@ double AMACv2::calibrateCounts(uint8_t ch, uint32_t counts)
   return m_ADCslope*(counts-m_ADCoffset[ch]);
 }
 
+double AMACv2::getADC(uint8_t ch)
+{
+  if(ch>=16) return 0.;
+  uint32_t counts=0;
+  counts=rdField("Ch"+std::to_string(ch)+"Value");
+
+  return calibrateCounts(ch, counts);
+}
+
 double AMACv2::getVDDREG()
 {
   wrField(&AMACv2Reg::Ch3Mux, 0);
@@ -96,6 +113,13 @@ double AMACv2::getAM()
   wrField(&AMACv2Reg::Ch4Mux, 0);
   uint32_t counts=rdField(&AMACv2Reg::Ch4Value);
   return calibrateCounts(4, counts);
+}
+
+double AMACv2::getAM900()
+{
+  wrField(&AMACv2Reg::Ch3Mux, 2);
+  uint32_t counts=rdField(&AMACv2Reg::Ch3Value);
+  return calibrateCounts(3, counts);
 }
 
 double AMACv2::getNTCx()
@@ -114,4 +138,18 @@ double AMACv2::getNTCpb()
 {
   uint32_t counts=rdField(&AMACv2Reg::Ch9Value);
   return calibrateCounts(9, counts);
+}
+
+double AMACv2::getCur10V()
+{
+  wrField(&AMACv2Reg::Ch12Mux , 0); // Read the out difference
+  uint32_t counts=rdField(&AMACv2Reg::Ch12Value);
+  return calibrateCounts(12, counts)/10.4;
+}
+
+double AMACv2::getCur1V()
+{
+  wrField(&AMACv2Reg::Ch13Mux , 0); // Read the out difference
+  uint32_t counts=rdField(&AMACv2Reg::Ch13Value);
+  return calibrateCounts(13, counts)/30.;
 }

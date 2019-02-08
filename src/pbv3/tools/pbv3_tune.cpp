@@ -40,7 +40,9 @@ void usage(char* argv[])
   std::cerr << "  ambg                             Tune the AM bandgap." << std::endl;
   std::cerr << "  rampgain                         Tune the ADC slope." << std::endl;
   std::cerr << "  slope                            Recalibrate the ADC slope." << std::endl;
-  std::cerr << "  ntc                              Recalibrate the NTCs.." << std::endl;
+  std::cerr << "  ntc                              Recalibrate the NTCs." << std::endl;
+  std::cerr << "  cur1v                            Tune the Cur1V CM block." << std::endl;
+  std::cerr << "  cur10v                           Tune the Cur10V CM block." << std::endl;
   std::cerr << "  all                              Tune everything." << std::endl;
   std::cerr << "" << std::endl;
   std::cerr << "List of options:" << std::endl;
@@ -195,6 +197,10 @@ int main(int argc, char* argv[])
 	config.merge_patch(PBv3ConfigTools::calibrateSlope(amac));
       if(command=="ntc")
 	config.merge_patch(PBv3ConfigTools::calibrateNTC  (amac));
+      if(command=="cur10v")
+	config.merge_patch(PBv3ConfigTools::tuneCur10V    (amac));
+      if(command=="cur1v")
+	config.merge_patch(PBv3ConfigTools::tuneCur1V     (amac));
     }
 
   //

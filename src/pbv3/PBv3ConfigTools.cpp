@@ -163,6 +163,180 @@ namespace PBv3ConfigTools
     return config;
   }
 
+  json tuneCur10V(std::shared_ptr<AMACv2> amac)
+  {
+    logger(logINFO) << "## Tuning input current monitor block ##";
+
+    json config;
+
+    // Power on the current mirrors
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1); // Short the DCDCo inputs
+
+    //
+    // Tune the offset
+    amac->wrField(&AMACv2Reg::Ch12Mux , 0);
+
+    double bestDV=-1;
+    uint32_t bestOffset=0; 
+    for(uint i=0;i<pow(2,4);i++)
+      {
+    	amac->wrField(&AMACv2Reg::DCDCiOffset, i);
+    	usleep(5e3);
+    	double DV=amac->getADC(12);
+    	logger(logDEBUG) << " DCDCiOffset = " << i << ", DV = " << DV << " mV";
+    	if(bestDV==-1 || fabs(DV-100)<fabs(bestDV-100))
+    	  {
+    	    bestDV=DV;
+    	    bestOffset=i;
+    	  }
+      }
+
+    amac->wrField(&AMACv2Reg::DCDCiOffset, bestOffset);
+    bestDV=0;
+    for(uint i=0; i<100; i++)
+      {
+    	usleep(5e3);
+    	bestDV+=amac->getADC(12);
+      }
+    bestDV/=100;
+
+    logger(logINFO) << "\tDCDCiOffset = " << bestOffset;
+    logger(logINFO) << "\toffset = " << bestDV << " mV";
+
+    config["registers"]["DCDCiOffset"] = bestOffset;
+    config["calib"]["Cur10Voffset"] = bestDV;
+    configAMAC(amac, config, true);
+
+    //
+    // Tune the current mirrors (does not do anything other than write values)
+
+    double Vout=0;
+    for(uint i=0;i<100;i++)
+      {
+	usleep(5e3);
+	Vout+=amac->rdField(&AMACv2Reg::Ch12Value);
+      }
+    Vout/=100;
+
+    amac->wrField(&AMACv2Reg::Ch12Mux , 1); // Read the low point
+    double VtestL=0;
+    for(uint i=0;i<100;i++)
+      {
+	usleep(5e3);
+	VtestL+=amac->rdField(&AMACv2Reg::Ch12Value);
+      }
+    VtestL/=100;
+
+    amac->wrField(&AMACv2Reg::Ch12Mux , 2); // Read the high point
+    usleep(5e3);
+    double VtestH=0;
+    for(uint i=0;i<100;i++)
+      {
+	usleep(5e3);
+	VtestH+=amac->rdField(&AMACv2Reg::Ch12Value);
+      }
+    VtestH/=100;
+
+    logger(logDEBUG) << "Vout   = " << Vout << " counts";
+    logger(logDEBUG) << "VtestL = " << VtestL << " counts";
+    logger(logDEBUG) << "VtestH = " << VtestH << " counts";
+
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 0); // Short the DCDCo inputs
+
+    //configAMAC(amac, config, true);
+
+    return config;
+  }
+
+  json tuneCur1V(std::shared_ptr<AMACv2> amac)
+  {
+    logger(logINFO) << "## Tuning output current monitor block ##";
+
+    json config;
+
+    // Power on the current mirrors
+    amac->wrField(&AMACv2Reg::DCDCen, 1);
+    amac->wrField(&AMACv2Reg::DCDCenC, 1);
+
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1); // Short the DCDCo inputs
+
+    //
+    // Tune the offset
+    amac->wrField(&AMACv2Reg::Ch13Mux , 0);
+
+    double bestDV=-1;
+    uint32_t bestOffset=0; 
+    for(uint i=0;i<pow(2,4);i++)
+      {
+    	amac->wrField(&AMACv2Reg::DCDCoOffset, i);
+    	usleep(5e3);
+    	double DV=amac->getADC(13);
+    	logger(logDEBUG) << " DCDCoOffset = " << i << ", DV = " << DV << " mV";
+    	if(bestDV==-1 || fabs(DV-100)<fabs(bestDV-100))
+    	  {
+    	    bestDV=DV;
+    	    bestOffset=i;
+    	  }
+      }
+
+    amac->wrField(&AMACv2Reg::DCDCoOffset, bestOffset);
+    bestDV=0;
+    for(uint i=0; i<100; i++)
+      {
+    	usleep(5e3);
+    	bestDV+=amac->getADC(13);
+      }
+    bestDV/=100;
+
+    logger(logINFO) << "\tDCDCoOffset = " << bestOffset;
+    logger(logINFO) << "\toffset = " << bestDV << " mV";
+
+    config["registers"]["DCDCoOffset"] = bestOffset;
+    config["calib"]["Cur1Voffset"] = bestDV;
+    configAMAC(amac, config, true);
+    
+
+    //
+    // Tune the current mirrors (does not do anything other than write values)
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 0); // separate the DCDCo inputs
+
+    double Vout=0;
+    for(uint i=0;i<10;i++)
+      {
+	usleep(5e3);
+	Vout+=amac->rdField(&AMACv2Reg::Ch13Value);
+      }
+    Vout/=10;
+
+    amac->wrField(&AMACv2Reg::Ch13Mux , 1); // Read the low point
+    double VtestL=0;
+    for(uint i=0;i<10;i++)
+      {
+	usleep(5e3);
+	VtestL+=amac->rdField(&AMACv2Reg::Ch13Value);
+      }
+    VtestL/=10;
+
+    amac->wrField(&AMACv2Reg::Ch13Mux , 2); // Read the high point
+    usleep(5e3);
+    double VtestH=0;
+    for(uint i=0;i<10;i++)
+      {
+	usleep(5e3);
+	VtestH+=amac->rdField(&AMACv2Reg::Ch13Value);
+      }
+    VtestH/=10;
+
+    logger(logDEBUG) << "Vout   = " << Vout << " counts";
+    logger(logDEBUG) << "VtestL = " << VtestL << " counts";
+    logger(logDEBUG) << "VtestH = " << VtestH << " counts";
+
+    amac->wrField(&AMACv2Reg::DCDCen, 0);
+    amac->wrField(&AMACv2Reg::DCDCenC, 0);
+
+    return config;
+  }
+
   json calibrateSlope(std::shared_ptr<AMACv2> amac)
   {
     logger(logINFO) << "## Calibrating AMAC slope ##";
@@ -215,6 +389,8 @@ namespace PBv3ConfigTools
     logger(logDEBUG) << "\tm = " << m << ", b = " << b;
 
     config["calib"]["slope"]=m*1e3;
+
+    configAMAC(amac, config, true);
 
     return config;
   }
@@ -280,6 +456,8 @@ namespace PBv3ConfigTools
 
     counts=amac->rdField(&AMACv2Reg::Ch15Value);
     config["calib"]["offset"][15] = counts;
+
+    logger(logDEBUG) << config["calib"]["offset"];
 
 
     // Disable offset calibration

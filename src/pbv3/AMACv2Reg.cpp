@@ -282,15 +282,15 @@ void AMACv2Reg::init()
   NTCx0Cal       .initReg(m_cfg, RW, 1, 1,  3, 57, "NTCx0Cal       "); regMap["NTCx0Cal"       ] = &AMACv2Reg::NTCx0Cal;
   NTCx0SenseRange.initReg(m_cfg, RW, 4, 3,  0, 57, "NTCx0SenseRange"); regMap["NTCx0SenseRange"] = &AMACv2Reg::NTCx0SenseRange;
   // 58 - LvCurCal
-  DCDCoOffset.initReg(m_cfg, RW, 4, 4, 20, 58, "DCDCoOffset"); regMap["DCDCoOffset"] = &AMACv2Reg::DCDCoOffset;
+  DCDCoOffset     .initReg(m_cfg, RW, 4, 4, 20, 58, "DCDCoOffset"     ); regMap["DCDCoOffset"     ] = &AMACv2Reg::DCDCoOffset;
   DCDCoZeroReading.initReg(m_cfg, RW, 0, 1, 19, 58, "DCDCoZeroReading"); regMap["DCDCoZeroReading"] = &AMACv2Reg::DCDCoZeroReading;
-  DCDCoP.initReg(m_cfg, RW, 0, 1, 17, 58, "DCDCoP"); regMap["DCDCoP"] = &AMACv2Reg::DCDCoP;
-  DCDCoN.initReg(m_cfg, RW, 0, 1, 16, 58, "DCDCoN"); regMap["DCDCoN"] = &AMACv2Reg::DCDCoN;
+  DCDCoN          .initReg(m_cfg, RW, 0, 1, 17, 58, "DCDCoN"          ); regMap["DCDCoN"          ] = &AMACv2Reg::DCDCoN;
+  DCDCoP          .initReg(m_cfg, RW, 0, 1, 16, 58, "DCDCoP"          ); regMap["DCDCoP"          ] = &AMACv2Reg::DCDCoP;
   DCDCiZeroReading.initReg(m_cfg, RW, 0, 1, 15, 58, "DCDCiZeroReading"); regMap["DCDCiZeroReading"] = &AMACv2Reg::DCDCiZeroReading;
-  DCDCiRangeSW.initReg(m_cfg, RW, 1, 1, 12, 58, "DCDCiRangeSW"); regMap["DCDCiRangeSW"] = &AMACv2Reg::DCDCiRangeSW;
-  DCDCiOffset.initReg(m_cfg, RW, 8, 4, 8, 58, "DCDCiOffset"); regMap["DCDCiOffset"] = &AMACv2Reg::DCDCiOffset;
-  DCDCiP.initReg(m_cfg, RW, 0, 3, 4, 58, "DCDCiP"); regMap["DCDCiP"] = &AMACv2Reg::DCDCiP;
-  DCDCiN.initReg(m_cfg, RW, 0, 3, 0, 58, "DCDCiN"); regMap["DCDCiN"] = &AMACv2Reg::DCDCiN;
+  DCDCiRangeSW    .initReg(m_cfg, RW, 1, 1, 12, 58, "DCDCiRangeSW"    ); regMap["DCDCiRangeSW"    ] = &AMACv2Reg::DCDCiRangeSW;
+  DCDCiOffset     .initReg(m_cfg, RW, 8, 4,  8, 58, "DCDCiOffset"     ); regMap["DCDCiOffset"     ] = &AMACv2Reg::DCDCiOffset;
+  DCDCiP          .initReg(m_cfg, RW, 0, 3,  4, 58, "DCDCiP"          ); regMap["DCDCiP"          ] = &AMACv2Reg::DCDCiP;
+  DCDCiN          .initReg(m_cfg, RW, 0, 3,  0, 58, "DCDCiN"          ); regMap["DCDCiN"          ] = &AMACv2Reg::DCDCiN;
   // 60 - HxICm_cfg
   HxLAM.initReg(m_cfg, RW, 0, 1, 16, 60, "HxLAM"); regMap["HxLAM"] = &AMACv2Reg::HxLAM;
   HxFlagsLatch.initReg(m_cfg, RW, 1, 1, 12, 60, "HxFlagsLatch"); regMap["HxFlagsLatch"] = &AMACv2Reg::HxFlagsLatch;

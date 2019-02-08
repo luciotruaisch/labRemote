@@ -95,6 +95,34 @@ namespace PBv3ConfigTools
    */
   json tuneRampGain(std::shared_ptr<AMACv2> amac);
 
+  /**
+   * \brief Find the ramp gain for ADC response of 1mV / count
+   *
+   * Modifes the following registers:
+   *  - AMintCalib
+   *
+   * Updates the ADC calibration.
+   *
+   * \param amac Pointer to the AMACv2 object
+   *
+   * \return updated json configuration and calibration
+   */
+  json tuneCur10V(std::shared_ptr<AMACv2> amac);
+
+  /**
+   * \brief Find the ramp gain for ADC response of 1mV / count
+   *
+   * Modifes the following registers:
+   *  - AMintCalib
+   *
+   * Updates the ADC calibration.
+   *
+   * \param amac Pointer to the AMACv2 object
+   *
+   * \return updated json configuration and calibration
+   */
+  json tuneCur1V(std::shared_ptr<AMACv2> amac);
+
   //
   // All helper functions for calibration of the AMAC
 

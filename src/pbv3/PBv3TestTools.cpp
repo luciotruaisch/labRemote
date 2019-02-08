@@ -87,7 +87,7 @@ namespace PBv3TestTools {
 
     }
 
-    // Range is iout in mA
+  // Range is iout in mA
   json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load,  int step, int min, int max, double VinSet) 
   {
     logger(logINFO) << "## Measuring DCDC efficiency ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
@@ -714,5 +714,75 @@ namespace PBv3TestTools {
     testSum["success"] = true;
     return testSum;
   }
+
+  json calibrateAMACcm(std::shared_ptr<AMACv2> amac, uint32_t tests) 
+  {
+    logger(logINFO) << "## Calibrating CM block ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    json testSum;
+
+    testSum["name"] = "amac_calibrate_cm";
+    testSum["success"] = false;
+    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    logger(logINFO) << " --> Turn on DCDC ...";
+    try {
+      amac->wrField(&AMACv2::DCDCen, 1);
+      amac->wrField(&AMACv2::DCDCenC, 1);
+    } catch(EndeavourComException &e) {
+      logger(logERROR) << e.what();
+      testSum["error"] = e.what();
+      return testSum;
+    }
+
+    logger(logINFO) << " --> Starting measurement ...";
+    std::cout << "Cur10V" << "\t" << "Cur1V" << std::endl;
+    testSum["header"] = { "Cur10V [counts]", "Cur1V [counts]" };
+    // Set sub-channel
+    try {
+      amac->wrField(&AMACv2::Ch12Mux, 0); //a
+      amac->wrField(&AMACv2::Ch13Mux, 0); //a
+    } catch(EndeavourComException &e) {
+      logger(logERROR) << e.what();
+      return testSum;
+    } 
+
+    // Short the P/N
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1);
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1);
+
+    // Take many measurements
+    for (uint32_t i=0; i<tests; i++)
+      {
+	int32_t Cur10V, Cur1V;
+	usleep(2e3);
+	try
+	  {
+	    Cur10V = amac->rdField(&AMACv2::Ch12Value);
+	    Cur1V  = amac->rdField(&AMACv2::Ch13Value);
+	  }
+	catch(EndeavourComException &e)
+	  {
+	    logger(logERROR) << e.what();
+	    testSum["error"] = e.what();
+	    return testSum;
+	  }
+
+	if(i%=(tests/10)==0) std::cout << Cur10V << "\t" << Cur1V << std::endl;
+	testSum["data"][i] = {Cur10V, Cur1V};
+      }
+
+    // Separate the P/N
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1);
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1);
+
+    testSum["success"] = true;
+    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    amac->initRegisters();
+
+    return testSum;
+  }
+
+
 }
 

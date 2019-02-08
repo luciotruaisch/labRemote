@@ -29,11 +29,17 @@ public:
 
   //
   // Calibrated ADC readings
+  double getADC(uint8_t ch);
+
   double getVDDREG();
   double getAM();
+  double getAM900();
   double getNTCx();
   double getNTCy();
   double getNTCpb();
+
+  double getCur10V();
+  double getCur1V();
 
 private:
   double calibrateCounts(uint8_t ch, uint32_t counts);
