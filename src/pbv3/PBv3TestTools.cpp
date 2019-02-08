@@ -735,7 +735,7 @@ namespace PBv3TestTools {
     }
 
     logger(logINFO) << " --> Starting measurement ...";
-    std::cout << "Cur10V" << "\t" << "Cur1V" << std::endl;
+    //std::cout << "Cur10V" << "\t" << "Cur1V" << std::endl;
     testSum["header"] = { "Cur10V [counts]", "Cur1V [counts]" };
     // Set sub-channel
     try {
@@ -767,7 +767,7 @@ namespace PBv3TestTools {
 	    return testSum;
 	  }
 
-	if(i%=(tests/10)==0) std::cout << Cur10V << "\t" << Cur1V << std::endl;
+	//if(i%=(tests/10)==0) std::cout << Cur10V << "\t" << Cur1V << std::endl;
 	testSum["data"][i] = {Cur10V, Cur1V};
       }
 

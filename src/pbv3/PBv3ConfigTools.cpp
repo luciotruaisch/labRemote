@@ -170,7 +170,7 @@ namespace PBv3ConfigTools
     json config;
 
     // Power on the current mirrors
-    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1); // Short the DCDCo inputs
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1); // Short the DCDCi inputs
 
     //
     // Tune the offset

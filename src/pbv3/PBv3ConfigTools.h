@@ -96,12 +96,19 @@ namespace PBv3ConfigTools
   json tuneRampGain(std::shared_ptr<AMACv2> amac);
 
   /**
-   * \brief Find the ramp gain for ADC response of 1mV / count
+   * \brief Tune the offset for the input current monitor block
+   *
+   * Scans through all settings for the DCDCiOffset register until it finds
+   * a configuration where the ADC reads ~100 mV when the two measurements
+   * shorted together.
+   *
+   * Also prints values for the current monitor test point values
+   * when the zero calibration is enabled, but does not do anything with them.
    *
    * Modifes the following registers:
-   *  - AMintCalib
+   *  - DCDCiOffset
    *
-   * Updates the ADC calibration.
+   * Updates the current offset calibration based on 100 readings.
    *
    * \param amac Pointer to the AMACv2 object
    *
@@ -110,12 +117,19 @@ namespace PBv3ConfigTools
   json tuneCur10V(std::shared_ptr<AMACv2> amac);
 
   /**
-   * \brief Find the ramp gain for ADC response of 1mV / count
+   * \brief Tune the offset for the output current monitor block
+   *
+   * Scans through all settings for the DCDCoOffset register until it finds
+   * a configuration where the ADC reads ~100 mV when the two measurements
+   * shorted together.
+   *
+   * Also prints values for the current monitor test point values
+   * when the zero calibration is disabled, but does not do anything with them.
    *
    * Modifes the following registers:
-   *  - AMintCalib
+   *  - DCDCoOffset
    *
-   * Updates the ADC calibration.
+   * Updates the current offset calibration based on 100 readings.
    *
    * \param amac Pointer to the AMACv2 object
    *
