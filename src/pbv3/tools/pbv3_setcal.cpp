@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     
     std::unique_ptr<EndeavourRawFTDI> comm; //=std::make_unique<EndeavourRawFTDI>();
     comm.reset(new EndeavourRawFTDI());
-    comm->getDAC()->set(2); //std::stof(argv[1]));
+    comm->getDAC()->set(std::stof(argv[1]));
 
     return 0;
 }
