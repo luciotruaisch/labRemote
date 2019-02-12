@@ -188,19 +188,32 @@ int main(int argc, char* argv[])
     {
       logger(logINFO) << "Running " << command;
       if(command=="vddbg")
-	config.merge_patch(PBv3ConfigTools::tuneVDDBG     (amac));
+	config.merge_patch(PBv3ConfigTools::tuneVDDBG      (amac));
       if(command=="ambg")
-	config.merge_patch(PBv3ConfigTools::tuneAMBG      (amac));
+	config.merge_patch(PBv3ConfigTools::tuneAMBG       (amac));
       if(command=="rampgain")
-	config.merge_patch(PBv3ConfigTools::tuneRampGain  (amac));
+	config.merge_patch(PBv3ConfigTools::tuneRampGain   (amac));
       if(command=="slope")
-	config.merge_patch(PBv3ConfigTools::calibrateSlope(amac));
+	config.merge_patch(PBv3ConfigTools::calibrateSlope (amac));
+      if(command=="offset")
+	config.merge_patch(PBv3ConfigTools::calibrateOffset(amac));
       if(command=="ntc")
-	config.merge_patch(PBv3ConfigTools::calibrateNTC  (amac));
+	config.merge_patch(PBv3ConfigTools::calibrateNTC   (amac));
       if(command=="cur10v")
-	config.merge_patch(PBv3ConfigTools::tuneCur10V    (amac));
+	config.merge_patch(PBv3ConfigTools::tuneCur10V     (amac));
       if(command=="cur1v")
-	config.merge_patch(PBv3ConfigTools::tuneCur1V     (amac));
+	config.merge_patch(PBv3ConfigTools::tuneCur1V      (amac));
+      if(command=="all")
+	{
+	  config.merge_patch(PBv3ConfigTools::calibrateSlope (amac));
+	  config.merge_patch(PBv3ConfigTools::calibrateOffset(amac));
+	  config.merge_patch(PBv3ConfigTools::tuneVDDBG      (amac));
+	  config.merge_patch(PBv3ConfigTools::tuneAMBG       (amac));
+	  config.merge_patch(PBv3ConfigTools::tuneRampGain   (amac));
+	  config.merge_patch(PBv3ConfigTools::tuneCur10V     (amac));
+	  config.merge_patch(PBv3ConfigTools::tuneCur1V      (amac));
+	  config.merge_patch(PBv3ConfigTools::calibrateNTC   (amac));
+	}
     }
 
   //
