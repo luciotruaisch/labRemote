@@ -391,6 +391,7 @@ namespace PBv3TestTools {
 	  }
 	catch(EndeavourComException &e)
 	  {
+	    logger(logDEBUG) << e.what();
 	    //std::cout << e.what() << std::endl;
 	  }
       }
