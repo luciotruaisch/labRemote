@@ -101,6 +101,11 @@ int main(int argc, char* argv[])
   std::string fileName = outDir + "/" + PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()) + "_pbv3-test.json";
   logger(logINFO) << "Results stored in " << fileName;
   std::fstream outfile(fileName, std::ios::out);
+  if(!outfile.is_open())
+    {
+      logger(logERROR) << "Unable to create results file " << fileName;
+      return 2;
+    }
 
   // Prog ID set during init (require power-up to be set)
   unsigned short int amacid=0x0;
@@ -192,7 +197,7 @@ int main(int argc, char* argv[])
   testSum["config"] = config;
   testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 
-  testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());
+  testSum["tests"][test++] = PBv3TestTools::runBER(amac);
   testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get()  , dynamic_cast<GenericPs*>(&ps), &dc, &sm);
   testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
   testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);

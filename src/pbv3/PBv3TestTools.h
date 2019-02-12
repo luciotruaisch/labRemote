@@ -34,7 +34,7 @@ namespace PBv3TestTools
 
   //
   // AMAC tests
-  json runBER(AMACv2 *amac);
+  json runBER(std::shared_ptr<AMACv2> amac, uint32_t trails=1000);
   json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm);
   json calibrateAMACslope (std::shared_ptr<AMACv2> amac, double step, bool scanSettings=true);
   json calibrateAMACoffset(std::shared_ptr<AMACv2> amac,              bool scanSettings=true);

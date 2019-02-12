@@ -127,7 +127,7 @@ int main(int argc, char* argv[]) {
 	//Run efficiency once to get baseline current (ie powercycle)
 
 	uint32_t test=0;
-	try { testSum["tests"][test++] = PBv3TestTools::runBER(amac.get());                                                              } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
+	try { testSum["tests"][test++] = PBv3TestTools::runBER(amac);                                                                    } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 	try { testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);                    } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 	try { testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);                                                   } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }
 	try { testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);                                                 } catch(const EndeavourComException &e) { logger(logERROR) << e.what(); }

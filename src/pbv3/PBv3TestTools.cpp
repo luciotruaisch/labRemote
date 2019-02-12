@@ -365,7 +365,7 @@ namespace PBv3TestTools {
     return testSum;
   }
 
-  json runBER(AMACv2 *amac)
+  json runBER(std::shared_ptr<AMACv2> amac, uint32_t trails)
   {
     logger(logINFO) << "## Running Bit Error Rate Test ##";
     json testSum;
@@ -374,7 +374,6 @@ namespace PBv3TestTools {
     testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     // Run the test
-    uint trails=1000;
     uint good=0;
     for(uint i=0; i<trails; i++)
       {
@@ -400,6 +399,7 @@ namespace PBv3TestTools {
     // Store the results
     testSum["header"] = {"Reliability"};
     testSum["data"][0] = {reliability};
+    testSum["trails"] = trails;
     testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
     testSum["success"] = reliability==1;
 
