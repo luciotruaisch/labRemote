@@ -184,6 +184,7 @@ int main(int argc, char* argv[])
     amac->init();
     PBv3ConfigTools::configAMAC(amac, config, false);
     amac->initRegisters();
+    PBv3ConfigTools::saveConfigAMAC(amac, config);
   } catch(EndeavourComException &e) {
     logger(logERROR) << "Unable to initialize AMACv2";
     logger(logERROR) << e.what();

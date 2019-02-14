@@ -6,6 +6,9 @@ AMACv2Field::AMACv2Field()
 bool AMACv2Field::canBeWrittenField() const
 { return (m_rw != RO); }
 
+std::string AMACv2Field::getFieldName() const
+{ return m_fieldName; }
+
 void AMACv2Field::initReg(uint32_t* cfg, rw_t rw, uint32_t defaultVal, uint8_t width, uint8_t offset, uint8_t regNbr, const std::string& fieldName)
 {
   m_cfg = cfg;
@@ -658,6 +661,19 @@ void AMACv2Reg::init()
   WRNHiThCh14.initReg(m_cfg, RW, 0x3FF, 10, 20, 170, "WRNHiThCh14"); regMap["WRNHiThCh14"] = &AMACv2Reg::WRNHiThCh14;
   // 171 - WRNHiTh5
   WRNHiThCh15.initReg(m_cfg, RW, 0x3FF, 10, 0, 171, "WRNHiThCh15"); regMap["WRNHiThCh15"] = &AMACv2Reg::WRNHiThCh15;
+}
+
+std::vector<const AMACv2Field*> AMACv2Reg::getFields() const
+{
+  std::vector<const AMACv2Field*> fields;
+  fields.reserve(regMap.size());
+  for(const auto kv : regMap) fields.push_back(&(this->*kv.second));
+  return fields;
+}
+
+AMACv2Field* AMACv2Reg::findField(AMACv2Field AMACv2Reg::* ref)
+{
+  return &(this->*ref);
 }
 
 AMACv2Field* AMACv2Reg::findField(const std::string& fieldName)

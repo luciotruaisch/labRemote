@@ -344,7 +344,7 @@ namespace PBv3TestTools {
     double ADC3 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(3);
 
     std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
-      "Am900Bg [counts]]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
+      "Am900Bg [counts]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
       "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
       "HV_Vin [V]\tHV_Iin [A]\tADC0 [V]\tADC1 [V]\tADC2 [V]\tADC3 [V]" << std::endl;
     std::cout << Vdcdc << "\t" << VddLr << "\t" << DCDCin << "\t" << VDDREG << "\t" << AM900BG <<
@@ -392,7 +392,6 @@ namespace PBv3TestTools {
 	catch(EndeavourComException &e)
 	  {
 	    logger(logDEBUG) << e.what();
-	    //std::cout << e.what() << std::endl;
 	  }
       }
     float reliability=((float)good)/trails;

@@ -38,6 +38,18 @@ namespace PBv3ConfigTools
       }
   }
 
+  void saveConfigAMAC(std::shared_ptr<AMACv2> amac, json& config)
+  {
+    //
+    // Get register values
+    for(const AMACv2Field* field : amac->getFields())
+      {
+	//AMACv2Field* field=amac->findField(fieldRef);
+	std::cout << field << std::endl;
+	config["registers"][field->getFieldName()]=field->read();
+      }
+  }
+
   json tuneVDDBG(std::shared_ptr<AMACv2> amac)
   {
     logger(logINFO) << "## Tuning VDDREG ##";

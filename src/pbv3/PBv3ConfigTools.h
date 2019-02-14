@@ -48,6 +48,14 @@ namespace PBv3ConfigTools
    */
   void configAMAC(std::shared_ptr<AMACv2> amac, const json& config, bool write);
 
+  /**
+   * \brief Read current AMAC configuration and save it to a JSON object
+   *
+   * \param amac Pointer to the AMACv2 object
+   * \param config JSON configuration to update
+   */
+  void saveConfigAMAC(std::shared_ptr<AMACv2> amac, json& config);
+
   //
   // All helper functions for tuning the AMAC settings
 

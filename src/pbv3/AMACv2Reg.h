@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <map>
+#include <vector>
 #include <iostream>
 #include <stdint.h>
 #include <string>
@@ -25,6 +26,8 @@ public:
   AMACv2Field();
 
   bool canBeWrittenField() const;
+
+  std::string getFieldName() const;
 		
   void initReg(uint32_t* cfg, rw_t rw, uint32_t defaultVal, uint8_t width, uint8_t offset, uint8_t regNbr, const std::string& fieldName);
 
@@ -51,6 +54,9 @@ public:
 
   AMACv2Reg();
 
+  std::vector<const AMACv2Field*> getFields() const;
+
+  AMACv2Field* findField(AMACv2Field AMACv2Reg::* ref);
   AMACv2Field* findField(const std::string& fieldName);
 
   uint32_t getField(AMACv2Field AMACv2Reg::* ref);
