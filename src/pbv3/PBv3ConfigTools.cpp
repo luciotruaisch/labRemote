@@ -44,9 +44,8 @@ namespace PBv3ConfigTools
     // Get register values
     for(const AMACv2Field* field : amac->getFields())
       {
-	//AMACv2Field* field=amac->findField(fieldRef);
-	std::cout << field << std::endl;
-	config["registers"][field->getFieldName()]=field->read();
+	if(field->canBeReadField())
+	  config["registers"][field->getFieldName()]=field->read();
       }
   }
 
@@ -514,4 +513,57 @@ namespace PBv3ConfigTools
 
     return config;
   }
+
+  json calibrateCur10V(std::shared_ptr<AMACv2> amac)
+  {
+    logger(logINFO) << "## Calibrating input current monitor block ##";
+
+    json config;
+
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1); // Short the DCDCi inputs
+
+    amac->wrField(&AMACv2Reg::Ch12Mux , 0);
+
+    double DV=0;
+    for(uint i=0; i<100; i++)
+      {
+    	usleep(5e3);
+    	DV+=amac->getADC(12);
+      }
+    DV/=100;
+
+    config["calib"]["Cur10Voffset"] = DV;
+    configAMAC(amac, config, true);
+
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 0); // Separate the DCDCi inputs
+
+    return config;
+  }
+
+  json calibrateCur1V(std::shared_ptr<AMACv2> amac)
+  {
+    logger(logINFO) << "## Calibrating output current monitor block ##";
+
+    json config;
+
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1); // Short the DCDCo inputs
+
+    amac->wrField(&AMACv2Reg::Ch13Mux , 0);
+
+    double DV=0;
+    for(uint i=0; i<100; i++)
+      {
+    	usleep(5e3);
+    	DV+=amac->getADC(13);
+      }
+    DV/=100;
+
+    config["calib"]["Cur1Voffset"] = DV;
+    configAMAC(amac, config, true);
+
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 0); // Separate the DCDCo inputs
+
+    return config;
+  }
+
 }

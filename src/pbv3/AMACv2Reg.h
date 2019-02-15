@@ -26,6 +26,7 @@ public:
   AMACv2Field();
 
   bool canBeWrittenField() const;
+  bool canBeReadField() const;
 
   std::string getFieldName() const;
 		

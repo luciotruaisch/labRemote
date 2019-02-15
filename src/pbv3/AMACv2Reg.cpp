@@ -6,6 +6,9 @@ AMACv2Field::AMACv2Field()
 bool AMACv2Field::canBeWrittenField() const
 { return (m_rw != RO); }
 
+bool AMACv2Field::canBeReadField() const
+{ return (m_rw != WO); }
+
 std::string AMACv2Field::getFieldName() const
 { return m_fieldName; }
 

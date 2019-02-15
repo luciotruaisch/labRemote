@@ -180,6 +180,28 @@ namespace PBv3ConfigTools
    * \return updated json calibration
    */
   json calibrateNTC(std::shared_ptr<AMACv2> amac);
+
+  /**
+   * \brief Calibrate the input Current Monitor offset
+   *
+   * Updates the offset calibration for input CM
+   *
+   * \param amac Pointer to the AMACv2 object
+   *
+   * \return updated json calibration
+   */
+  json calibrateCur10V(std::shared_ptr<AMACv2> amac);
+
+  /**
+   * \brief Calibrate the output Current Monitor offset
+   *
+   * Updates the offset calibration for output CM
+   *
+   * \param amac Pointer to the AMACv2 object
+   *
+   * \return updated json calibration
+   */
+  json calibrateCur1V(std::shared_ptr<AMACv2> amac);
 }
 
 #endif
