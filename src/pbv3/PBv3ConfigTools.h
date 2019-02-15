@@ -31,6 +31,8 @@ using nlohmann::json;
  * All functions return a consistent configuration for the chip. For example,
  * tunning the AM bandgap changes the ADC response. Thus the result of the tuneAMBG
  * also contains updated calibration.
+ *
+ * The output format is compatible with the CONFIG test type in the ITk PD.
  */
 namespace PBv3ConfigTools
 {
@@ -55,6 +57,18 @@ namespace PBv3ConfigTools
    * \param config JSON configuration to update
    */
   void saveConfigAMAC(std::shared_ptr<AMACv2> amac, json& config);
+
+  /**
+   * \brief Decorate a JSON config object with information that can be saved to a database
+   *
+   * Adds the following fields:
+   *  - testType: "CONFIG"
+   *  - institution: "LBL"
+   *  - runNumber: "0-0" by default, increment lower number by 1 if already exists
+   *
+   * \param config JSON configuration to update
+   */
+  void decorateConfig(json& config);
 
   //
   // All helper functions for tuning the AMAC settings

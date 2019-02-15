@@ -11,9 +11,9 @@ namespace PBv3ConfigTools
   {
     //
     // Configure registers
-    if(config.count("registers"))
+    if(config.count("properties"))
       {
-	for(auto field : config["registers"].items())
+	for(auto field : config["properties"].items())
 	  {
 	    amac->findField(field.key())->setDefaultVal(field.value().get<uint32_t>());
 	    if(write)
@@ -23,18 +23,18 @@ namespace PBv3ConfigTools
 
     //
     // Configure ADC calibration
-    if(config.count("calib") && config["calib"].count("slope"))
+    if(config.count("results") && config["results"].count("AMSLOPE"))
       {
-	amac->setADCslope(config["calib"]["slope"].get<double>());
+	amac->setADCslope(config["results"]["AMSLOPE"].get<double>());
       }
 
     //
     // Configure ADC offset
-    if(config.count("calib") && config["calib"].count("offset"))
+    if(config.count("results") && config["results"].count("AMOFFSET"))
       {
-	for(uint i=0; i<config["calib"]["offset"].size(); i++)
-	  if(!config["calib"]["offset"][i].is_null())
-	    amac->setADCoffset(i, config["calib"]["offset"][i].get<uint32_t>());
+	for(uint i=0; i<config["results"]["AMOFFSET"].size(); i++)
+	  if(!config["results"]["AMOFFSET"][i].is_null())
+	    amac->setADCoffset(i, config["results"]["AMOFFSET"][i].get<uint32_t>());
       }
   }
 
@@ -45,8 +45,37 @@ namespace PBv3ConfigTools
     for(const AMACv2Field* field : amac->getFields())
       {
 	if(field->isReadWrite())
-	  config["registers"][field->getFieldName()]=field->read();
+	  config["properties"][field->getFieldName()]=field->read();
       }
+  }
+
+  void decorateConfig(json& config)
+  {
+    config["testType"]="CONFIG";
+    config["institution"]="LBL";
+
+    std::string runNumber="0-0";
+    if(config.count("runNumber")>0)
+      {
+	// Parse the existing version string
+	std::istringstream ss(config["runNumber"].get<std::string>());
+	std::vector<int32_t> tokens;
+	std::string token;
+	while(std::getline(ss, token, '-'))
+	  tokens.push_back(std::stoi(token)); // TODO: try-catch bad format
+
+	// Update version
+	if(tokens.size()>0)
+	  {
+	    runNumber="";
+	    for(uint32_t i=0;i<tokens.size();i++)
+	      {
+		if(i!=0) runNumber+="-";
+	 	runNumber+=(i!=tokens.size()-1)?(std::to_string(tokens[i])):(std::to_string(tokens[i]+1));
+	      }
+	  }
+      }
+    config["runNumber"]=runNumber;
   }
 
   json tuneVDDBG(std::shared_ptr<AMACv2> amac)
@@ -79,8 +108,9 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tVDDbg = " << bestVDDbg;
     logger(logINFO) << "\tVDDREG = " << bestVDDREG/1e3 << " V";
 
-    config["registers"]["VDDbgen"]=1;
-    config["registers"]["VDDbg"]  =bestVDDbg;
+    config["properties"]["VDDbgen"]=1;
+    config["properties"]["VDDbg"]  =bestVDDbg;
+    config["results"]["VDDREG"]    =bestVDDREG;
 
     configAMAC(amac, config, true);
 
@@ -122,8 +152,9 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tAMbg = " << bestAMbg;
     logger(logINFO) << "\tAM = " << bestAM << " mV";
 
-    config["registers"]["AMbgen"]=1;
-    config["registers"]["AMbg"]  =bestAMbg;
+    config["properties"]["AMbgen"]=1;
+    config["properties"]["AMbg"]  =bestAMbg;
+    config["results"]["AM"]=bestAM;
     config.merge_patch(bestSlope );
     config.merge_patch(bestOffset);
 
@@ -152,7 +183,7 @@ namespace PBv3ConfigTools
 
 	json slope=calibrateSlope(amac);
 
- 	if(bestSlope.is_null() || fabs(slope["calib"]["slope"].get<double>()-1)<fabs(bestSlope["calib"]["slope"].get<double>()-1))
+ 	if(bestSlope.is_null() || fabs(slope["results"]["AMSLOPE"].get<double>()-1)<fabs(bestSlope["results"]["AMSLOPE"].get<double>()-1))
 	  {
 	    bestSlope=slope;
 	    bestAMintCalib=AMintCalib;
@@ -163,9 +194,9 @@ namespace PBv3ConfigTools
     json bestOffset=calibrateOffset(amac);
 
     logger(logINFO) << "\tAMintCalib = " << bestAMintCalib;
-    logger(logINFO) << "\tslope = " << bestSlope["calib"]["slope"].get<double>()*1e3 << " mV/count";
+    logger(logINFO) << "\tslope = " << bestSlope["results"]["AMSLOPE"].get<double>()*1e3 << " mV/count";
 
-    config["registers"]["AMintCalib"]=bestAMintCalib;
+    config["properties"]["AMintCalib"]=bestAMintCalib;
     config.merge_patch(bestSlope );
     config.merge_patch(bestOffset);
 
@@ -214,8 +245,8 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tDCDCiOffset = " << bestOffset;
     logger(logINFO) << "\toffset = " << bestDV << " mV";
 
-    config["registers"]["DCDCiOffset"] = bestOffset;
-    config["calib"]["Cur10Voffset"] = bestDV;
+    config["properties"]["DCDCiOffset"] = bestOffset;
+    config["results"]["CUR10VOFFSET"] = bestDV;
     configAMAC(amac, config, true);
 
     //
@@ -302,8 +333,8 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tDCDCoOffset = " << bestOffset;
     logger(logINFO) << "\toffset = " << bestDV << " mV";
 
-    config["registers"]["DCDCoOffset"] = bestOffset;
-    config["calib"]["Cur1Voffset"] = bestDV;
+    config["properties"]["DCDCoOffset"] = bestOffset;
+    config["results"]["CUR1VOFFSET"] = bestDV;
     configAMAC(amac, config, true);
     
 
@@ -399,7 +430,7 @@ namespace PBv3ConfigTools
 
     logger(logDEBUG) << "\tm = " << m << ", b = " << b;
 
-    config["calib"]["slope"]=m*1e3;
+    config["results"]["AMSLOPE"]=m*1e3;
 
     configAMAC(amac, config, true);
 
@@ -421,54 +452,54 @@ namespace PBv3ConfigTools
     uint32_t counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch0Value );
-    config["calib"]["offset"][ 0] = counts;
+    config["results"]["AMOFFSET"][ 0] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch1Value );
-    config["calib"]["offset"][ 1] = counts;
+    config["results"]["AMOFFSET"][ 1] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch2Value );
-    config["calib"]["offset"][ 2] = counts;
+    config["results"]["AMOFFSET"][ 2] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch3Value );
-    config["calib"]["offset"][ 3] = counts;
+    config["results"]["AMOFFSET"][ 3] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch4Value );
-    config["calib"]["offset"][ 4] = counts;
+    config["results"]["AMOFFSET"][ 4] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch5Value );
-    config["calib"]["offset"][ 5] = counts;
+    config["results"]["AMOFFSET"][ 5] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch6Value );
-    config["calib"]["offset"][ 6] = counts;
+    config["results"]["AMOFFSET"][ 6] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch7Value );
-    config["calib"]["offset"][ 7] = counts;
+    config["results"]["AMOFFSET"][ 7] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch8Value );
-    config["calib"]["offset"][ 8] = counts;
+    config["results"]["AMOFFSET"][ 8] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch9Value );
-    config["calib"]["offset"][ 9] = counts;
+    config["results"]["AMOFFSET"][ 9] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch10Value);
-    config["calib"]["offset"][10] = counts;
+    config["results"]["AMOFFSET"][10] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch11Value);
-    config["calib"]["offset"][11] = counts;
+    config["results"]["AMOFFSET"][11] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch12Value);
-    config["calib"]["offset"][12] = counts;
+    config["results"]["AMOFFSET"][12] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch13Value);
-    config["calib"]["offset"][13] = counts;
+    config["results"]["AMOFFSET"][13] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch14Value);
-    config["calib"]["offset"][14] = counts;
+    config["results"]["AMOFFSET"][14] = counts;
 
     counts=amac->rdField(&AMACv2Reg::Ch15Value);
-    config["calib"]["offset"][15] = counts;
+    config["results"]["AMOFFSET"][15] = counts;
 
-    logger(logDEBUG) << config["calib"]["offset"];
+    logger(logDEBUG) << config["results"]["AMOFFSET"];
 
 
     // Disable offset calibration
@@ -500,9 +531,9 @@ namespace PBv3ConfigTools
     logger(logDEBUG) << "NTCy = " << NTCy << " mV";
     logger(logDEBUG) << "NTCpb= " << NTCpb<< " mV";
 
-    config["calib"]["NTCx"] = NTCx ;
-    config["calib"]["NTCy"] = NTCy ;
-    config["calib"]["NTCpb"]= NTCpb;
+    config["results"]["NTCX"] = NTCx ;
+    config["results"]["NTCY"] = NTCy ;
+    config["results"]["NTCPB"]= NTCpb;
 
     // Disable NTC calibration
     amac->wrField(&AMACv2Reg::NTCpbCal, 1);
@@ -532,7 +563,7 @@ namespace PBv3ConfigTools
       }
     DV/=100;
 
-    config["calib"]["Cur10Voffset"] = DV;
+    config["results"]["CUR10VOFFSET"] = DV;
     configAMAC(amac, config, true);
 
     amac->wrField(&AMACv2Reg::DCDCiZeroReading , 0); // Separate the DCDCi inputs
@@ -558,7 +589,7 @@ namespace PBv3ConfigTools
       }
     DV/=100;
 
-    config["calib"]["Cur1Voffset"] = DV;
+    config["results"]["CUR1VOFFSET"] = DV;
     configAMAC(amac, config, true);
 
     amac->wrField(&AMACv2Reg::DCDCoZeroReading , 0); // Separate the DCDCo inputs

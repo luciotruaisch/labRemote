@@ -30,6 +30,7 @@ std::string port("/dev/ttyUSB0");
 int gpib = 10;
 std::string outfile = "config.json";
 bool outappend=false;
+std::string serial = "DUMMY";
 //---------------
 
 void usage(char* argv[])
@@ -50,7 +51,8 @@ void usage(char* argv[])
   std::cerr << " -g, --gpib        Set GPIB adress to which the PS is connected to (default: " << gpib << ")" << std::endl;
   std::cerr << " -o, --output      File where to save the tuned configuration. (default: stdout)" << std::endl;
   std::cerr << " -a, --append      Modify existing output file instead of rewriting." << std::endl;
-  std::cerr << " --debug           Enable more verbose printout"  << std::endl;
+  std::cerr << " -s, --serial      Serial number of the powerboard. (default: " << serial << ")" << std::endl;
+  std::cerr << " -d, --debug       Enable more verbose printout"  << std::endl;
   std::cerr << "" << std::endl;
   std::cerr << "" << std::endl;
 
@@ -65,7 +67,6 @@ int main(int argc, char* argv[])
     }
 
   int c;
-  const int DEBUG_OPTION = 1000;
   while (1)
     {
       int option_index = 0;
@@ -74,12 +75,13 @@ int main(int argc, char* argv[])
 	  {"port",     required_argument, 0,  'p' },
 	  {"gpib",     required_argument, 0,  'g' },
 	  {"output",   required_argument, 0,  'o' },
-	  {"append",   no_argument     , 0,  'a' },
-	  {"debug",    no_argument     , 0,  DEBUG_OPTION },
+	  {"append",   no_argument      , 0,  'a' },
+	  {"debug",    no_argument      , 0,  'd' },
+	  {"serial",   required_argument, 0,  's' },
 	  {0,          0,              0,  0 }
 	};
 
-      c = getopt_long(argc, argv, "p:g:o:a", long_options, &option_index);
+      c = getopt_long(argc, argv, "p:g:o:as:", long_options, &option_index);
       if (c == -1)
 	break;
 
@@ -97,7 +99,10 @@ int main(int argc, char* argv[])
 	case 'a':
 	  outappend = true;
 	  break;
-	case DEBUG_OPTION:
+	case 's':
+	  serial = optarg;
+	  break;
+	case 'd':
 	  loglevel = logDEBUG;
 	  break;
 	default:
@@ -133,6 +138,8 @@ int main(int argc, char* argv[])
       if(fh_in.is_open())
 	fh_in >> config;
     }
+  PBv3ConfigTools::decorateConfig(config);
+  config["component"]=serial;
 
 
   //
