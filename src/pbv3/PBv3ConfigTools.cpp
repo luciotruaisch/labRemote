@@ -44,7 +44,7 @@ namespace PBv3ConfigTools
     // Get register values
     for(const AMACv2Field* field : amac->getFields())
       {
-	if(field->canBeReadField())
+	if(field->isReadWrite())
 	  config["registers"][field->getFieldName()]=field->read();
       }
   }

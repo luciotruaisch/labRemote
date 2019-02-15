@@ -27,6 +27,7 @@ public:
 
   bool canBeWrittenField() const;
   bool canBeReadField() const;
+  bool isReadWrite() const;
 
   std::string getFieldName() const;
 		
