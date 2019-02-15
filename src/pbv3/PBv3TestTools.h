@@ -19,6 +19,26 @@ using nlohmann::json;
 
 namespace PBv3TestTools
 {
+  //
+  // Helper functions for dealing with the result format
+  
+  /*
+   * \brief Format the common information for the json test result.
+   *
+   * Adds the following fields:
+   *  - component: From config json, DUMMY if not defined
+   *  - institution: "LBL"
+   *  - runNumber: from argument
+   *  - properties/CONFIG: pointer to the configuration runNumber, from the config json
+   *
+   * \param config json object with the configuration used during the run
+   * \param runNumber the run number to assign to this test
+   *
+   * \return The json object that can directly be merged with any test results
+   */
+  json testRunMetaData(json& config, const std::string& runNumber="0-0");
+
+  //
   // All helper functions expects all hardware to be on and initialised
 
   // LV tests

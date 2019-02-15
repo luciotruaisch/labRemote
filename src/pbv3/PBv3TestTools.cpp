@@ -6,6 +6,18 @@
  #include <memory>
 
 namespace PBv3TestTools {
+  json testRunMetaData(json& config, const std::string& runNumber)
+  {
+    json metadata;
+
+    metadata["component"]=(config.count("component"))?config["component"]:"DUMMY";
+    metadata["institution"]="LBL";
+    metadata["runNumber"]=runNumber;
+    metadata["properties"]["CONFIG"]=config["runNumber"];
+
+    return metadata;
+  }
+
     json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
         logger(logINFO) << "## LV Enable test ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
@@ -93,9 +105,8 @@ namespace PBv3TestTools {
     logger(logINFO) << "## Measuring DCDC efficiency ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
     json testSum;
 
-    testSum["name"] = "measure_efficiency";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["testType"] = "DCDCEFFICIENCY";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 	
     try {
       load->setCurrent(0);
@@ -123,7 +134,7 @@ namespace PBv3TestTools {
     
     logger(logINFO) << " --> Get baseline current: (" << ps->getCurrent() << ")A";
     double Iin_offset = std::stod(ps->getCurrent());
-    testSum["Iin_offset"] = Iin_offset;
+    testSum["results"]["IINOFFSET"] = Iin_offset;
 
     logger(logINFO) << " --> Turn on DCDC ...";
     try {
@@ -138,17 +149,13 @@ namespace PBv3TestTools {
     //unsigned dwell_time = .1; //s
     unsigned dwell_time_s = .005; //s
     unsigned dwell_time = 5; //s
-    testSum["dwellTime_long"] = dwell_time;
-    testSum["dwellTime_short"] = dwell_time_s;
+    testSum["properties"]["DWELLTIMELONG" ] = dwell_time;
+    testSum["properties"]["DWELLTIMESHORT"] = dwell_time_s;
 
     logger(logINFO) << " --> Starting measurement ...";
     std::cout << "Vin" << "\t" << "Iin" << "\t" << "Vout" << "\t" << "Iout" << "\t" << "Vdcdc"
 	      << "\t" << "VddLr" << "\t" << "DCDCin" << "\t" << "NTC" << "\t"
 	      << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
-    testSum["header"] = {"Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]",
-			 "VddLR [counts]", "DCDCin [counts]", "NTC [counts]",
-			 "Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"
-			 ,"Efficiency"};
     // Set sub-channel
     try {
       amac->wrField(&AMACv2::Ch12Mux, 0); //a
@@ -202,13 +209,23 @@ namespace PBv3TestTools {
       std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
 		<< "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
 		<< Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
-      testSum["data"][index++] = {Vin, Iin, Vout, iout, Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT, efficiency};
+      testSum["results"]["VIN"       ][index++] = Vin;
+      testSum["results"]["IIN"       ][index++] = Iin;
+      testSum["results"]["VOUT"      ][index++] = Vout*1e-3;
+      testSum["results"]["IOUT"      ][index++] = iout*1e-3;
+      testSum["results"]["AMACVDCDC" ][index++] = Vdcdc;
+      testSum["results"]["AMACVDDLR" ][index++] = VddLr;
+      testSum["results"]["AMACDCDCIN"][index++] = DCDCin;
+      testSum["results"]["AMACNTCPB" ][index++] = NTC;
+      testSum["results"]["AMACCUR10V"][index++] = Cur10V;
+      testSum["results"]["AMACCUR1V" ][index++] = Cur1V;
+      testSum["results"]["AMACPTAT"  ][index++] = PTAT;
+      testSum["results"]["EFFICIENCY"][index++] = efficiency;
     }
     logger(logINFO) << " --> Done!! Turng off load!";
     load->setCurrent(0);
 
-    testSum["success"] = true;
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     amac->initRegisters();
 

@@ -153,8 +153,8 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tAM = " << bestAM << " mV";
 
     config["properties"]["AMbgen"]=1;
-    config["properties"]["AMbg"]  =bestAMbg;
-    config["results"]["AM"]=bestAM;
+    config["properties"]["AMbg"  ]=bestAMbg;
+    config["results"   ]["AM"    ]=bestAM;
     config.merge_patch(bestSlope );
     config.merge_patch(bestOffset);
 

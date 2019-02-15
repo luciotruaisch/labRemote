@@ -28,6 +28,7 @@
 //------ SETTINGS
 loglevel_e loglevel = logINFO;
 std::string configfile = "config.json";
+std::string runNumber = "0-0";
 //---------------
 
 void usage(char* argv[])
@@ -35,7 +36,8 @@ void usage(char* argv[])
   std::cerr << "Usage: " << argv[0] << " [options] datadir BK85XX GPIB" << std::endl;
   std::cerr << "List of options:" << std::endl;
   std::cerr << " -c, --config      Config for initializing the AMAC. (default: " << configfile << ")" << std::endl;
-  std::cerr << " --debug           Enable more verbose printout"  << std::endl;
+  std::cerr << " -r, --runnumber   Run number to associate with the test results. (default: " << runNumber << ")" << std::endl;
+  std::cerr << " -d, --debug       Enable more verbose printout"  << std::endl;
   std::cerr << "" << std::endl;
   std::cerr << "" << std::endl;
 }
@@ -49,18 +51,18 @@ int main(int argc, char* argv[])
     }
 
   int c;
-  const int DEBUG_OPTION = 1000;
   while (1)
     {
       int option_index = 0;
       static struct option long_options[] =
 	{
-	  {"config",   required_argument, 0,  'c' },
-	  {"debug",    no_argument      , 0,  DEBUG_OPTION },
-	  {0,          0                , 0,  0 }
+	  {"config"   , required_argument, 0,  'c' },
+	  {"runnumber", required_argument, 0,  'r' },
+	  {"debug"    , no_argument      , 0,  'd' },
+	  {0          , 0                , 0,  0 }
 	};
 
-      c = getopt_long(argc, argv, "c:", long_options, &option_index);
+      c = getopt_long(argc, argv, "c:r:", long_options, &option_index);
       if (c == -1)
 	break;
 
@@ -69,7 +71,10 @@ int main(int argc, char* argv[])
 	case 'c':
 	  configfile = optarg;
 	  break;
-	case DEBUG_OPTION:
+	case 'r':
+	  runNumber = optarg;
+	  break;
+	case 'd':
 	  loglevel = logDEBUG;
 	  break;
 	default:
@@ -210,6 +215,13 @@ int main(int argc, char* argv[])
   testSum["tests"][test++] = PBv3TestTools::calibrateAMACcm    (amac, 10000);
 
   testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
+
+  //
+  // Decorate the test results with metadata
+  json metadata=PBv3TestTools::testRunMetaData(config, runNumber);
+  for(json& testResult : testSum["tests"])
+    testResult.merge_patch(metadata);
+
   outfile << std::setw(4) << testSum << std::endl;
 
   outfile.close();
