@@ -122,6 +122,9 @@ namespace PBv3TestTools {
       }
 
     testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    amac->initRegisters();
+
     return testSum;
   }
 
@@ -266,22 +269,25 @@ namespace PBv3TestTools {
     logger(logINFO) << " --> Turning everything off.";
 
     json testSum;
-    testSum["name"] = "hv_enable";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["config"]["CntSetHV0frq"] = frequency;
+    testSum["testType"] = "HV_ENABLE";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
-    try {
-      // Turn off HV enable from AMAC
-      amac->wrField(&AMACv2::CntSetHV0frq, frequency);
-      amac->wrField(&AMACv2::CntSetCHV0frq, frequency);
-      amac->wrField(&AMACv2::CntSetHV0en, 0);
-      amac->wrField(&AMACv2::CntSetCHV0en, 0);
-    } catch(EndeavourComException &e) {
-      logger(logERROR) << e.what();
-      testSum["error"] = e.what();
-      return testSum;
-    }
+    testSum["passed"] = false;
+
+    try
+      {
+	// Turn off HV enable from AMAC
+	amac->wrField(&AMACv2::CntSetHV0frq, frequency);
+	amac->wrField(&AMACv2::CntSetCHV0frq, frequency);
+	amac->wrField(&AMACv2::CntSetHV0en, 0);
+	amac->wrField(&AMACv2::CntSetCHV0en, 0);
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
+      }
 
     // Configure sourcemeter
     sm->turnOff();
@@ -290,7 +296,6 @@ namespace PBv3TestTools {
     //sm->setSource(KeithleyMode::VOLTAGE, 500, 500);
     //sm->setSense(KeithleyMode::CURRENT, 1.27e-3, 1.27e-3);
 
-    testSum["header"] = {"HV Enable", "Voltage [V]", "Current [A]"};
     // See what we see
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     sm->turnOn();
@@ -298,37 +303,52 @@ namespace PBv3TestTools {
     double hv_v_off = std::stod(sm->sense(KeithleyMode::VOLTAGE));
     double hv_i_off = std::stod(sm->sense(KeithleyMode::CURRENT));
     logger(logINFO) << " Seeing " << hv_v_off << "V and " << hv_i_off << "A in off state.";
-    testSum["data"][0] = {0, hv_v_off, hv_i_off};
+
+    testSum["results"]["CntSetHV0frq"][0] = frequency;
+    testSum["results"]["HVENABLE"    ][0] = false;
+    testSum["results"]["V"           ][0] = hv_v_off;
+    testSum["results"]["I"           ][0] = hv_i_off;
 
     // Turn on HV
     logger(logINFO) << " --> Turn on HV enable.";
-    try {
-      amac->wrField(&AMACv2::CntSetHV0en, 1);
-      amac->wrField(&AMACv2::CntSetCHV0en, 1);
-    } catch(EndeavourComException &e) {
-      logger(logERROR) << e.what();
-      testSum["error"] = e.what();
-      return testSum;
-    }
+    try
+      {
+	amac->wrField(&AMACv2::CntSetHV0en, 1);
+	amac->wrField(&AMACv2::CntSetCHV0en, 1);
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
+      }
     std::this_thread::sleep_for(std::chrono::seconds(5));
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     double hv_v_on = std::stod(sm->sense(KeithleyMode::VOLTAGE));
     double hv_i_on = std::stod(sm->sense(KeithleyMode::CURRENT));
     logger(logINFO) << " Seeing " << hv_v_on << "V and " << hv_i_on << "A in on state.";
-    testSum["data"][1] = {1, hv_v_on, hv_i_on};
+
+    testSum["results"]["CntSetHV0frq"][1] = frequency;
+    testSum["results"]["HVENABLE"    ][1] = true;
+    testSum["results"]["V"           ][1] = hv_v_on;
+    testSum["results"]["I"           ][1] = hv_i_on;
 
     // TODO interpret
-    if (hv_v_off > 350.0 && hv_i_off < 2e-6 && hv_v_on > 250 && hv_i_on > 0.4e-3) {
-      logger(logINFO) << " --> Test successful!";
-    } else {
-      logger(logERROR) << " --> Something wrong with HV enable!";
-    }
+    if (hv_v_off > 350.0 && hv_i_off < 2e-6 && hv_v_on > 250 && hv_i_on > 0.4e-3)
+      {
+	logger(logINFO) << " --> Test successful!";
+	testSum["passed"] = true;
+      }
+    else
+      {
+	logger(logERROR) << " --> Something wrong with HV enable!";
+	testSum["passed"] = false;
+      }
 
     sm->turnOff();
 
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
-
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
     amac->initRegisters();
   
     return testSum;
