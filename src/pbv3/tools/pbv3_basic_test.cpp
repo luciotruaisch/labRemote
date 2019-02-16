@@ -200,6 +200,7 @@ int main(int argc, char* argv[])
   // Start testing
   json testSum;
   testSum["program"] = argv[0];
+  testSum["runNumber"] = runNumber;
   testSum["config"] = config;
   testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 
@@ -215,12 +216,6 @@ int main(int argc, char* argv[])
   testSum["tests"][test++] = PBv3TestTools::calibrateAMACcm    (amac, 10000);
 
   testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
-
-  //
-  // Decorate the test results with metadata
-  json metadata=PBv3TestTools::testRunMetaData(config, runNumber);
-  for(json& testResult : testSum["tests"])
-    testResult.merge_patch(metadata);
 
   outfile << std::setw(4) << testSum << std::endl;
 

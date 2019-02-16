@@ -6,18 +6,6 @@
  #include <memory>
 
 namespace PBv3TestTools {
-  json testRunMetaData(json& config, const std::string& runNumber)
-  {
-    json metadata;
-
-    metadata["component"]=(config.count("component"))?config["component"]:"DUMMY";
-    metadata["institution"]="LBL";
-    metadata["runNumber"]=runNumber;
-    metadata["properties"]["CONFIG"]=config["runNumber"];
-
-    return metadata;
-  }
-
     json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
         logger(logINFO) << "## LV Enable test ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
@@ -386,9 +374,11 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Running Bit Error Rate Test ##";
     json testSum;
-    testSum["name"] = "amac_ber";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["testType"] = "BER";
+    testSum["passed"] = false;
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
+    testSum["properties"]["TRAILS"] = trails;
 
     // Run the test
     uint good=0;
@@ -414,16 +404,15 @@ namespace PBv3TestTools {
     float reliability=((float)good)/trails;
 
     // Store the results
-    testSum["header"] = {"Reliability"};
-    testSum["data"][0] = {reliability};
-    testSum["trails"] = trails;
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = reliability==1;
+    testSum["results"]["RELIABILITY"] = reliability;
+
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = reliability==1;
 
     if(reliability!=1) { logger(logERROR) << "Reliability = " << reliability; }
 
     return testSum;
-    }
+  }
 
   json calibrateAMACoffset(std::shared_ptr<AMACv2> amac, bool scanSettings)
   {
