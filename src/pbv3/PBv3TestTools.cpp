@@ -6,93 +6,131 @@
  #include <memory>
 
 namespace PBv3TestTools {
-    json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) {
-        logger(logINFO) << "## LV Enable test ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  json testLvEnable(AMACv2 *amac, GenericPs *ps, Bk85xx *load) 
+  {
+    logger(logINFO) << "## LV Enable test ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
-        json testSum;
-        testSum["name"] = "lv_enable";
-        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        testSum["success"] = false;
-        // Init stuff
-        try {
-            load->setCurrent(0);
-            load->turnOn();
-        } catch(std::string &s) {
-            logger(logERROR) << s;
-            testSum["error"] = s;
-            return testSum;
-        }
+    json testSum;
+    testSum["testType"] = "LV_ENABLE";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
-        try {
-            amac->wrField(&AMACv2::DCDCen, 0);
-            amac->wrField(&AMACv2::DCDCenC, 0);
-        } catch(EndeavourComException &e) {
-            logger(logERROR) << e.what();
-            testSum["error"] = e.what();
-            return testSum;
-        }
+    testSum["passed"] = false;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    // Init stuff
+    try
+      {
+	load->setCurrent(0);
+	load->turnOn();
+      }
+    catch(std::string &s)
+      {
+	logger(logERROR) << s;
+	testSum["error"] = s;
+	return testSum;
+      }
 
-        testSum["header"] = {"DCDC Enable","Vin [V]", "Iin [A]", "Vout [V]", "Iout [mA]", "Vdcdc [counts]", "VddLR [counts]", "DCDCin [counts]", "NTC [counts]","Cur10V [counts]", "Cur1V [counts]", "PTAT [counts]"};
+    try
+      {
+	amac->wrField(&AMACv2::DCDCen, 0);
+	amac->wrField(&AMACv2::DCDCenC, 0);
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
+      }
 
-        double lv_off = load->getValues().vol;//mV
-	double Iin  = std::stod(ps->getCurrent());
-        double Vin  = std::stod(ps->getVoltage());
-        double iout = load->getValues().cur;
-        int Vdcdc   = amac->rdField(&AMACv2::Ch0Value);
-        int VddLr   = amac->rdField(&AMACv2::Ch1Value);
-        int DCDCin  = amac->rdField(&AMACv2::Ch2Value);
-        int NTC     = amac->rdField(&AMACv2::Ch9Value);
-        int Cur10V  = amac->rdField(&AMACv2::Ch12Value);
-        int Cur1V   = amac->rdField(&AMACv2::Ch13Value);
-        int PTAT    = amac->rdField(&AMACv2::Ch15Value);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-        logger(logINFO) << " --> Reading " << lv_off << "mV in off state.";
-        testSum["data"][0] = {0,Vin, Iin, lv_off, iout, Vdcdc, VddLr, DCDCin,NTC, Cur10V, Cur1V, PTAT};
-        logger(logINFO) << " --> Trying to turn on DCDC ...";
-        try {
-            amac->wrField(&AMACv2::DCDCen, 1);
-            amac->wrField(&AMACv2::DCDCenC, 1);
-        } catch(EndeavourComException &e) {
-            logger(logERROR) << e.what();
-            testSum["error"] = e.what();
-	    return testSum;
-        }
+    double lv_off = load->getValues().vol;//mV
+    double Iin  = std::stod(ps->getCurrent());
+    double Vin  = std::stod(ps->getVoltage());
+    double iout = load->getValues().cur;
+    int Vdcdc   = amac->rdField(&AMACv2::Ch0Value);
+    int VddLr   = amac->rdField(&AMACv2::Ch1Value);
+    int DCDCin  = amac->rdField(&AMACv2::Ch2Value);
+    int NTC     = amac->rdField(&AMACv2::Ch9Value);
+    int Cur10V  = amac->rdField(&AMACv2::Ch12Value);
+    int Cur1V   = amac->rdField(&AMACv2::Ch13Value);
+    int PTAT    = amac->rdField(&AMACv2::Ch15Value);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	Iin = std::stod(ps->getCurrent());
-	Vin = std::stod(ps->getVoltage());
-	double lv_on = load->getValues().vol;//mV
-	iout   = load->getValues().cur;
-	Vdcdc  = amac->rdField(&AMACv2::Ch0Value);
-	VddLr  = amac->rdField(&AMACv2::Ch1Value);
-	DCDCin = amac->rdField(&AMACv2::Ch2Value);
-	NTC    = amac->rdField(&AMACv2::Ch9Value);
-	Cur10V = amac->rdField(&AMACv2::Ch12Value);
-	Cur1V  = amac->rdField(&AMACv2::Ch13Value);
-	PTAT   = amac->rdField(&AMACv2::Ch15Value);
-	logger(logINFO) << " --> Reading " << lv_on << "mV in on state.";
-        testSum["data"][1] = {1,Vin, Iin, lv_on, iout, Vdcdc, VddLr, DCDCin,NTC, Cur10V, Cur1V, PTAT};
+    logger(logINFO) << " --> Reading " << lv_off << "mV in off state.";
 
-        if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3)) {
-            logger(logERROR) << " --> LV enable not working! " << lv_on << " " << lv_off;
-            return testSum;
-        } else {
-            logger(logINFO) << " --> LV enable good!";
-        }
-        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        testSum["success"] = true;
-        return testSum;
+    testSum["results"]["LVENABLE"  ][0] = false;
+    testSum["results"]["VIN"       ][0] = Vin;
+    testSum["results"]["IIN"       ][0] = Iin;
+    testSum["results"]["VOUT"      ][0] = lv_off*1e-3;
+    testSum["results"]["IOUT"      ][0] = iout*1e-3;
+    testSum["results"]["AMACVDCDC" ][0] = Vdcdc;
+    testSum["results"]["AMACVDDLR" ][0] = VddLr;
+    testSum["results"]["AMACDCDCIN"][0] = DCDCin;
+    testSum["results"]["AMACNTCPB" ][0] = NTC;
+    testSum["results"]["AMACCUR10V"][0] = Cur10V;
+    testSum["results"]["AMACCUR1V" ][0] = Cur1V;
+    testSum["results"]["AMACPTAT"  ][0] = PTAT;
 
-    }
+    logger(logINFO) << " --> Trying to turn on DCDC ...";
+    try
+      {
+	amac->wrField(&AMACv2::DCDCen, 1);
+	amac->wrField(&AMACv2::DCDCenC, 1);
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
+      }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    Iin = std::stod(ps->getCurrent());
+    Vin = std::stod(ps->getVoltage());
+    double lv_on = load->getValues().vol;//mV
+    iout   = load->getValues().cur;
+    Vdcdc  = amac->rdField(&AMACv2::Ch0Value);
+    VddLr  = amac->rdField(&AMACv2::Ch1Value);
+    DCDCin = amac->rdField(&AMACv2::Ch2Value);
+    NTC    = amac->rdField(&AMACv2::Ch9Value);
+    Cur10V = amac->rdField(&AMACv2::Ch12Value);
+    Cur1V  = amac->rdField(&AMACv2::Ch13Value);
+    PTAT   = amac->rdField(&AMACv2::Ch15Value);
+    logger(logINFO) << " --> Reading " << lv_on << "mV in on state.";
+
+    testSum["results"]["LVENABLE"  ][1] = true;
+    testSum["results"]["VIN"       ][1] = Vin;
+    testSum["results"]["IIN"       ][1] = Iin;
+    testSum["results"]["VOUT"      ][1] = lv_on*1e-3;
+    testSum["results"]["IOUT"      ][1] = iout*1e-3;
+    testSum["results"]["AMACVDCDC" ][1] = Vdcdc;
+    testSum["results"]["AMACVDDLR" ][1] = VddLr;
+    testSum["results"]["AMACDCDCIN"][1] = DCDCin;
+    testSum["results"]["AMACNTCPB" ][1] = NTC;
+    testSum["results"]["AMACCUR10V"][1] = Cur10V;
+    testSum["results"]["AMACCUR1V" ][1] = Cur1V;
+    testSum["results"]["AMACPTAT"  ][1] = PTAT;
+
+    if (!(lv_on > 1.4e3 && lv_on < 1.6e3 && lv_off < 0.1e3))
+      {
+	logger(logERROR) << " --> LV enable not working! " << lv_on << " " << lv_off;
+	testSum["passed"] = false;
+      }
+    else
+      {
+	logger(logINFO) << " --> LV enable good!";
+	testSum["passed"] = true;
+      }
+
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    return testSum;
+  }
 
   // Range is iout in mA
   json measureEfficiency(AMACv2 *amac, GenericPs *ps, Bk85xx *load,  int step, int min, int max, double VinSet) 
   {
     logger(logINFO) << "## Measuring DCDC efficiency ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    json testSum;
 
+    json testSum;
     testSum["testType"] = "DCDCEFFICIENCY";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 	
