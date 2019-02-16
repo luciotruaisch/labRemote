@@ -197,18 +197,19 @@ namespace PBv3TestTools {
       std::cout << Vin << "\t" << Iin << "\t" << Vout << "\t" << iout << "\t" << Vdcdc
 		<< "\t" << VddLr << "\t" << DCDCin << "\t" << NTC << "\t"
 		<< Cur10V << "\t" << Cur1V << "\t" << PTAT << "\t" << efficiency << std::endl;
-      testSum["results"]["VIN"       ][index++] = Vin;
-      testSum["results"]["IIN"       ][index++] = Iin;
-      testSum["results"]["VOUT"      ][index++] = Vout*1e-3;
-      testSum["results"]["IOUT"      ][index++] = iout*1e-3;
-      testSum["results"]["AMACVDCDC" ][index++] = Vdcdc;
-      testSum["results"]["AMACVDDLR" ][index++] = VddLr;
-      testSum["results"]["AMACDCDCIN"][index++] = DCDCin;
-      testSum["results"]["AMACNTCPB" ][index++] = NTC;
-      testSum["results"]["AMACCUR10V"][index++] = Cur10V;
-      testSum["results"]["AMACCUR1V" ][index++] = Cur1V;
-      testSum["results"]["AMACPTAT"  ][index++] = PTAT;
-      testSum["results"]["EFFICIENCY"][index++] = efficiency;
+      testSum["results"]["VIN"       ][index] = Vin;
+      testSum["results"]["IIN"       ][index] = Iin;
+      testSum["results"]["VOUT"      ][index] = Vout*1e-3;
+      testSum["results"]["IOUT"      ][index] = iout*1e-3;
+      testSum["results"]["AMACVDCDC" ][index] = Vdcdc;
+      testSum["results"]["AMACVDDLR" ][index] = VddLr;
+      testSum["results"]["AMACDCDCIN"][index] = DCDCin;
+      testSum["results"]["AMACNTCPB" ][index] = NTC;
+      testSum["results"]["AMACCUR10V"][index] = Cur10V;
+      testSum["results"]["AMACCUR1V" ][index] = Cur1V;
+      testSum["results"]["AMACPTAT"  ][index] = PTAT;
+      testSum["results"]["EFFICIENCY"][index] = efficiency;
+      index++;
     }
     logger(logINFO) << " --> Done!! Turng off load!";
     load->setCurrent(0);
