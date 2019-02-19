@@ -137,43 +137,51 @@ namespace PBv3TestTools {
     testSum["testType"] = "DCDCEFFICIENCY";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 	
-    try {
-      load->setCurrent(0);
-      load->turnOn();
-    } catch(std::string &s) {
-      logger(logERROR) << s;
-      testSum["error"] = s;
-      return testSum;
-    }
+    try
+      {
+	load->setCurrent(0);
+	load->turnOn();
+      }
+    catch(std::string &s)
+      {
+	logger(logERROR) << s;
+	testSum["error"] = s;
+	return testSum;
+      }
 
     logger(logINFO) << " --> Vin = " << VinSet << "V";
     ps->setVoltage(VinSet);
 
     logger(logINFO) << " --> Turn off DCDC ..";
-    try {
-      amac->wrField(&AMACv2::DCDCen, 0);
-      amac->wrField(&AMACv2::DCDCenC, 0);
-    } catch(EndeavourComException &e) {
-      logger(logERROR) << e.what();
-      testSum["error"] = e.what();
-      return testSum;
-    }
+    try
+      {
+	amac->wrField(&AMACv2::DCDCen, 0);
+	amac->wrField(&AMACv2::DCDCenC, 0);
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
+      }
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
     
     logger(logINFO) << " --> Get baseline current: (" << ps->getCurrent() << ")A";
     double Iin_offset = std::stod(ps->getCurrent());
     testSum["results"]["IINOFFSET"] = Iin_offset;
 
     logger(logINFO) << " --> Turn on DCDC ...";
-    try {
-      amac->wrField(&AMACv2::DCDCen, 1);
-      amac->wrField(&AMACv2::DCDCenC, 1);
-    } catch(EndeavourComException &e) {
-      logger(logERROR) << e.what();
-      testSum["error"] = e.what();
-      return testSum;
-    }
+    try
+      {
+	amac->wrField(&AMACv2::DCDCen, 1);
+	amac->wrField(&AMACv2::DCDCenC, 1);
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	testSum["error"] = e.what();
+	return testSum;
+      }
 
     //unsigned dwell_time = .1; //s
     unsigned dwell_time_s = .005; //s
@@ -186,52 +194,62 @@ namespace PBv3TestTools {
 	      << "\t" << "VddLr" << "\t" << "DCDCin" << "\t" << "NTC" << "\t"
 	      << "Cur10V" << "\t" << "Cur1V" << "\t" << "PTAT" << "\t" << "Efficiency" << std::endl;
     // Set sub-channel
-    try {
-      amac->wrField(&AMACv2::Ch12Mux, 0); //a
-      amac->wrField(&AMACv2::Ch13Mux, 0); //a
-    } catch(EndeavourComException &e) {
-      logger(logERROR) << e.what();
-      return testSum;
-    } 
+    try
+      {
+	amac->wrField(&AMACv2::Ch12Mux, 0); //a
+	amac->wrField(&AMACv2::Ch13Mux, 0); //a
+      }
+    catch(EndeavourComException &e)
+      {
+	logger(logERROR) << e.what();
+	return testSum;
+      }
 
     // Loop over currents
     int index = 0;
 
-    for (int iout=min;iout<=max;iout+=step){
-      //allowing system to reach thermal equilibrium
-      std::this_thread::sleep_for(std::chrono::seconds(dwell_time));
-      logger(logDEBUG) << " --> Setting " << iout << "mA load!";
-      // Set Current
-      load->setCurrent(iout);
-      // Wait for temp and everything to settle
-      std::this_thread::sleep_for(std::chrono::seconds(dwell_time_s));
-      // Read AMAC values
-      int Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT;
-      try {
-	Vdcdc  = amac->rdField(&AMACv2::Ch0Value);
-	VddLr  = amac->rdField(&AMACv2::Ch1Value);
-	DCDCin = amac->rdField(&AMACv2::Ch2Value);
-	NTC    = amac->rdField(&AMACv2::Ch9Value);
-	Cur10V = amac->rdField(&AMACv2::Ch12Value);
-	Cur1V  = amac->rdField(&AMACv2::Ch13Value);
-	PTAT   = amac->rdField(&AMACv2::Ch15Value);
-      } catch(EndeavourComException &e) {
-	logger(logERROR) << e.what();
-	testSum["error"] = e.what();
-	return testSum;
-      }
+    for (int iout=min;iout<=max;iout+=step)
+      {
+	//allowing system to reach thermal equilibrium
+	std::this_thread::sleep_for(std::chrono::seconds(dwell_time));
+	logger(logDEBUG) << " --> Setting " << iout << "mA load!";
+	// Set Current
+	load->setCurrent(iout);
+	// Wait for temp and everything to settle
+	std::this_thread::sleep_for(std::chrono::seconds(dwell_time_s));
+	// Read AMAC values
+	int Vdcdc, VddLr, DCDCin, NTC, Cur10V, Cur1V, PTAT;
+	try
+	  {
+	    Vdcdc  = amac->rdField(&AMACv2::Ch0Value);
+	    VddLr  = amac->rdField(&AMACv2::Ch1Value);
+	    DCDCin = amac->rdField(&AMACv2::Ch2Value);
+	    NTC    = amac->rdField(&AMACv2::Ch9Value);
+	    Cur10V = amac->rdField(&AMACv2::Ch12Value);
+	    Cur1V  = amac->rdField(&AMACv2::Ch13Value);
+	    PTAT   = amac->rdField(&AMACv2::Ch15Value);
+	  }
+	catch(EndeavourComException &e)
+	  {
+	    logger(logERROR) << e.what();
+	    testSum["error"] = e.what();
+	    return testSum;
+	  }
 
       double Vin = std::stod(ps->getVoltage());
       double Iin = std::stod(ps->getCurrent());
 
       double Vout = 0;
-      try {
-	Vout = load->getValues().vol;
-      } catch(std::string &s) {
-	logger(logERROR) << s;
-	testSum["error"] = s;
-	return testSum;
-      }
+      try
+	{
+	  Vout = load->getValues().vol;
+	}
+      catch(std::string &s)
+	{
+	  logger(logERROR) << s;
+	  testSum["error"] = s;
+	  return testSum;
+	}
 
       double efficiency = (Vout*iout*1e-6)/(Vin*(Iin-Iin_offset));
       //double efficiency = (1.5*iout*1e-3)/(Vin*(Iin-Iin_offset));
@@ -306,8 +324,8 @@ namespace PBv3TestTools {
 
     testSum["results"]["CntSetHV0frq"][0] = frequency;
     testSum["results"]["HVENABLE"    ][0] = false;
-    testSum["results"]["V"           ][0] = hv_v_off;
-    testSum["results"]["I"           ][0] = hv_i_off;
+    testSum["results"]["HVVIN"       ][0] = hv_v_off;
+    testSum["results"]["HVIIN"       ][0] = hv_i_off;
 
     // Turn on HV
     logger(logINFO) << " --> Turn on HV enable.";
@@ -330,8 +348,8 @@ namespace PBv3TestTools {
 
     testSum["results"]["CntSetHV0frq"][1] = frequency;
     testSum["results"]["HVENABLE"    ][1] = true;
-    testSum["results"]["V"           ][1] = hv_v_on;
-    testSum["results"]["I"           ][1] = hv_i_on;
+    testSum["results"]["HVVIN"       ][1] = hv_v_on;
+    testSum["results"]["HVIIN"       ][1] = hv_i_on;
 
     // TODO interpret
     if (hv_v_off > 350.0 && hv_i_off < 2e-6 && hv_v_on > 250 && hv_i_on > 0.4e-3)
@@ -358,22 +376,8 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Reading current status ##";
     json testSum;
-    testSum["name"] = "amac_status";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-
-    // Control reg status
-    int HVcurGain = amac->rdField(&AMACv2::HVcurGain);
-    int RingOscFrq = amac->rdField(&AMACv2::RingOscFrq);
-    int VDDbg = amac->rdField(&AMACv2::VDDbg);
-    int AMbg = amac->rdField(&AMACv2::AMbg);
-    int AMintCalib = amac->rdField(&AMACv2::AMintCalib);
-
-    testSum["config"]["HvcurGain"] = HVcurGain;
-    testSum["config"]["RingOscFrq"] = RingOscFrq;
-    testSum["config"]["VDDbg"] = VDDbg;
-    testSum["config"]["AMbg"] = AMbg;
-    testSum["config"]["AMinCalib"] = AMintCalib;
+    testSum["testType"] = "STATUS";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     // ADCs
     int Vdcdc = amac->rdField(&AMACv2::Ch0Value);
@@ -416,15 +420,30 @@ namespace PBv3TestTools {
       "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
       Iout << "\t" << HV_Vin << "\t" << HV_Iin << "\t" << ADC0 << "\t" << ADC1 << "\t" << ADC2 << "\t" << ADC3 << std::endl;
 
-    testSum["header"] = {"Vdcdc [counts]", "VddLr [counts]", "DCDCin [counts]", "VddReg [counts]",
-			 "Am900Bg [counts]", "Am600Bg [counts]", "Cal [counts]", "NTC [counts]", "Cur10V [counts]",
-			 "Cur1V [counts]", "HVret [counts]", "PTAT [counts]", "Vin [V]", "Iin [A]", "Vout [mV]", "Iout [mA]",
-			 "HV_Vin [V]", "HV_Iin [A]", "ADC0 [V]", "ADC1 [V]", "ADC2 [V]", "ADC3 [V]"};
-    testSum["data"][0] = {Vdcdc, VddLr, DCDCin, VDDREG, AM900BG, AM600BG, CALin, NTC, Cur10V, Cur1V, HVret, PTAT,
-			  Vin, Iin, Vout, Iout, HV_Vin, HV_Iin, ADC0, ADC1, ADC2, ADC3};
+    testSum["results"]["AMACVDCDC"  ]=Vdcdc;
+    testSum["results"]["AMACVDDLR"  ]=VddLr;
+    testSum["results"]["AAMCDCDCIN" ]=DCDCin;
+    testSum["results"]["AMACVDDREG" ]=VDDREG;
+    testSum["results"]["AMACAM900BG"]=AM900BG;
+    testSum["results"]["AMACAM600BG"]=AM600BG;
+    testSum["results"]["AMACCAL"    ]=CALin;
+    testSum["results"]["AMACNTCPB"  ]=NTC;
+    testSum["results"]["AMACCUR10V" ]=Cur10V;
+    testSum["results"]["AMACCUR1V"  ]=Cur1V;
+    testSum["results"]["AMACHVRET"  ]=HVret;
+    testSum["results"]["AMACPTAT"   ]=PTAT;
+    testSum["results"]["VIN"        ]=Vin;
+    testSum["results"]["IIN"        ]=Iin;
+    testSum["results"]["VOUT"       ]=Vout*1e-3;
+    testSum["results"]["IOUT"       ]=Iout*1e-3;
+    testSum["results"]["HVVIN"      ]=HV_Vin;
+    testSum["results"]["HVIIN"      ]=HV_Iin;
+    testSum["results"]["ADC0"       ]=ADC0;
+    testSum["results"]["ADC1"       ]=ADC1;
+    testSum["results"]["ADC2"       ]=ADC2;
+    testSum["results"]["ADC3"       ]=ADC3;
 
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     return testSum;
   }
@@ -477,9 +496,9 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Calibrating AMAC offset ##";
     json testSum;
-    testSum["name"] = "amac_calibrate_offset";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["testType"] = "AMOFFSET";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+
     int counts;
 
     amac->wrField(&AMACv2Reg::AMzeroCalib, 1);
@@ -494,17 +513,49 @@ namespace PBv3TestTools {
       {
 	amac->wrField(&AMACv2Reg::AMintCalib, gain_set);
 	usleep(5e3);
-	counts = amac->rdField(&AMACv2Reg::Ch4Value);
-	testSum["data"][index++] = {gain_set,counts}; 
+
+	counts = amac->rdField(&AMACv2Reg::Ch0Value );
+	testSum["results"][ "CH0"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch1Value );
+	testSum["results"][ "CH1"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch2Value );
+	testSum["results"][ "CH2"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch3Value );
+	testSum["results"][ "CH3"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch4Value );
+	testSum["results"][ "CH4"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch5Value );
+	testSum["results"][ "CH5"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch6Value );
+	testSum["results"][ "CH6"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch7Value );
+	testSum["results"][ "CH7"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch8Value );
+	testSum["results"][ "CH8"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch9Value );
+	testSum["results"][ "CH9"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch10Value);
+	testSum["results"]["CH10"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch11Value);
+	testSum["results"]["CH11"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch12Value);
+	testSum["results"]["CH12"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch13Value);
+	testSum["results"]["CH13"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch14Value);
+	testSum["results"]["CH14"][index] = {counts};
+	counts = amac->rdField(&AMACv2Reg::Ch15Value);
+	testSum["results"]["CH15"][index] = {counts};
+
+	testSum["results"]["AMintCalib"][index] = {gain_set};
+
+	index++;
       }
-    testSum["header"] = {"gain_set","counts"};
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
 
-    amac->wrField(&AMACv2Reg::AMzeroCalib, 0);
-    amac->wrField(&AMACv2Reg::AMzeroCalibC, 0);
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
     amac->initRegisters();
-
+  
     return testSum;
   }
 
@@ -512,9 +563,8 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Calibrating AMAC slope ##";
     json testSum;
-    testSum["name"] = "amac_calibrate_ext";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["testType"] = "AMSLOPE";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     std::cout << "CAL" << "\t" << "BG" << "\t" << "RampGain" << "\t" << "ADCvalue" << std::endl;
 
@@ -550,16 +600,19 @@ namespace PBv3TestTools {
 		usleep(5e3);
 		CALamac = amac->rdField(&AMACv2Reg::Ch4Value);
 
-		testSum["data"][index++] = {CALact, CALamac,bg_set, gain_set};
+		testSum["results"]["CALIN"     ][index] = CALact;
+		testSum["results"]["AMACCAL"   ][index] = CALamac;
+		testSum["results"]["AMintCalib"][index] = gain_set;
+		testSum["results"]["AMbg"      ][index] = bg_set;
+		index++;
 		std::cout << CALact << "\t" << bg_set << "\t" << gain_set << "\t" << CALamac << std::endl;
 	      }
 	  } //end cycling through voltages
       } //end cycling through bandgap
     // Store the results
-    testSum["header"] = {"CAL","Counts","BandGap","gain_set"};
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
 
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
     amac->initRegisters();
 
     return testSum;
@@ -569,10 +622,9 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Test OF ##";
     json testSum;
-    testSum["name"] = "amac_of";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-
+    testSum["testType"] = "OF";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = false;
 
     logger(logINFO) << " --> Disabling OF";
     dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->setOF(false);
@@ -580,20 +632,27 @@ namespace PBv3TestTools {
     double Iin = (ps)?std::stod(ps->getCurrent()):0;
     double Vin = (ps)?std::stod(ps->getVoltage()):0;
     double ADC0 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(0);
-    testSum["data"][0] = {0, Vin, Iin, ADC0};
+    testSum["results"]["OF"     ][0] = 0;
+    testSum["results"]["VIN"    ][0] = Vin;
+    testSum["results"]["IIN"    ][0] = Iin;
+    testSum["results"]["linPOLV"][0] = ADC0;
     bool OFoff_success=ADC0>1.3;
     logger(logINFO) << " ---> Input power: " << Vin << " V, " << Iin << " A";
     if(OFoff_success)
       logger(logINFO) << " ---> linPOL12V:  " << ADC0 << " V";
     else
       logger(logERROR) << " ---> linPOL12V:  " << ADC0 << " V";
+
     logger(logINFO) << " --> Enabling OF";
     dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->setOF(true);
-    sleep(10);
+    sleep(1);
     Iin = (ps)?std::stod(ps->getCurrent()):0;
     Vin = (ps)?std::stod(ps->getVoltage()):0;
     ADC0 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(0);
-    testSum["data"][1] = {1, Vin, Iin, ADC0};
+    testSum["results"]["OF"     ][1] = 1;
+    testSum["results"]["VIN"    ][1] = Vin;
+    testSum["results"]["IIN"    ][1] = Iin;
+    testSum["results"]["linPOLV"][1] = ADC0;
     bool OFon_success =ADC0<0.1;
     logger(logINFO) << " ---> Input power: " << Vin << " V, " << Iin << " A";
     if(OFon_success)
@@ -601,12 +660,13 @@ namespace PBv3TestTools {
     else
       logger(logERROR) << " ---> linPOL12V:  " << ADC0 << " V";
 
+    logger(logINFO) << " --> Disabling OF";
     dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->setOF(false);
 
-    testSum["header"] = {"OF","Vin","Iin","ADC0"};
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = OFon_success && OFoff_success;
 
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = OFon_success && OFoff_success;
+  
     amac->initRegisters();
 
     return testSum;
@@ -627,9 +687,8 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Measure HV sense ##";
     json testSum;
-    testSum["name"] = "measure_hv_sense";
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = false;
+    testSum["testType"] = "HVSENSE";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     double ileak_min = 0;
     double ileak_max = 1.0e-3;
@@ -678,76 +737,82 @@ namespace PBv3TestTools {
 	    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	    val[i] = amac->rdField(&AMACv2::Ch14Value);
 	  }
-	std::cout << ileak << "\t\t" << ileak*resist<< "\t\t" << hv_v << "\t" << hv_i << "\t\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
-	testSum["data"][index] ={ileak, hv_v, hv_i, val[0], val[1],val[2],val[3],val[4]};
+	std::cout << ileak << "\t" << ileak*resist<< "\t" << hv_v << "\t" << hv_i << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
+	testSum["data"]["ILEAK"    ][index]=ileak;
+	testSum["data"]["HVV"      ][index]=hv_v;
+	testSum["data"]["HVI"      ][index]=hv_i;
+	testSum["data"]["AMACGAIN0"][index]=val[0];
+	testSum["data"]["AMACGAIN1"][index]=val[1];
+	testSum["data"]["AMACGAIN2"][index]=val[2];
+	testSum["data"]["AMACGAIN4"][index]=val[3];
+	testSum["data"]["AMACGAIN8"][index]=val[4];
+	index++;
       }
-    testSum["header"] = {"HV_i_set","HV_v","HV_i","Gain0","Gain1","Gain2","Gain4","Gain8"};
+
     // sm->setSource(KeithleyMode::VOLTAGE, 500, 500);
     // sm->setSense(KeithleyMode::CURRENT, 1.27e-6, 1.27e-6);
     sm->setSource(KeithleyMode::CURRENT, 1.e-6, 1.e-6);
     sm->setSense(KeithleyMode::VOLTAGE, 500, 500);
     sm->turnOff();
 
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
-
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
     amac->initRegisters();
 
     return testSum;
   }
 
-    json measureLvIV(GenericPs *ps) {
-        logger(logINFO) << "## Measure LV IV ##";
-        json testSum;
-        testSum["name"] = "measure_lv_iv";
-        testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        testSum["success"] = false;
-        
-        double v_start = 2.0;
-        double v_end = 6.0;
-        double v_step = 0.1;
-        logger(logINFO) << " --> Running from " << v_start << "V to " << v_end << "V in steps of " << v_step << "V";
-        ps->turnOff();
-        ps->setVoltage(v_start);
-        ps->setCurrent(1.0);
-        ps->turnOn();
+  json measureLvIV(GenericPs *ps)
+  {
+    logger(logINFO) << "## Measure LV IV ##";
+    json testSum;
+    testSum["testType"] = "VINIIN";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
-        testSum["header"] = {"Vset [V]", "Vread [V]", "Iread [A]"};
-        std::cout << "Vset\tVread\tIread" << std::endl;
-        int index = 0;
-        for (double vset = v_start; vset<=v_end; vset+=v_step) {
-            ps->setVoltage(vset);
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            double v_read = std::stod(ps->getVoltage());
-            double i_read = std::stod(ps->getCurrent());
+    double v_start = 2.0;
+    double v_end = 6.0;
+    double v_step = 0.1;
+    logger(logINFO) << " --> Running from " << v_start << "V to " << v_end << "V in steps of " << v_step << "V";
+    ps->turnOff();
+    ps->setVoltage(v_start);
+    ps->setCurrent(1.0);
+    ps->turnOn();
 
-            std::cout << vset << "\t" << v_read << "\t" << i_read << std::endl;
-            testSum["data"][index++] = {vset, v_read, i_read};
-        }
+    std::cout << "Vset\tVread\tIread" << std::endl;
+    int index = 0;
+    for (double vset = v_start; vset<=v_end; vset+=v_step)
+      {
+	ps->setVoltage(vset);
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	double v_read = std::stod(ps->getVoltage());
+	double i_read = std::stod(ps->getCurrent());
+	
+	std::cout << vset << "\t" << v_read << "\t" << i_read << std::endl;
+	testSum["results"]["VINSET"][index] = vset;
+	testSum["results"]["VIN"   ][index] = v_read;
+	testSum["results"]["IIN"   ][index] = i_read;
+	index++;
+      }
 
-        logger(logINFO) << " --> Done!";
+    logger(logINFO) << " --> Done!";
 
-        testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-        testSum["success"] = true;
-        return testSum;
-    }
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
+    return testSum;
+  }
 
   json calibVinResponse(AMACv2 *amac, GenericPs *ps)
   {
     logger(logINFO) << "## Measure LV IV ##";
     json testSum;
-    testSum["name"] = "calib_vin_response";
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = false;
+    testSum["testType"] = "VIN";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     double v_start = 6.0;
     double v_end = 11.0;
     double v_step = 0.1;
     logger(logINFO) << " --> Running from " << v_start << "V to " << v_end << "V in steps of " << v_step << "V";
-    ps->setVoltage(v_start);
-    ps->turnOn();
 
-    testSum["header"] = {"Vset [V]", "Vread [V]", "Iread [A]", "DCDCin [counts]"};
     std::cout << "Vset\tVread\tIread\tDCDCin [counts]" << std::endl;
     int index = 0;
     for (double vset = v_start; vset<=v_end; vset+=v_step)
@@ -770,13 +835,19 @@ namespace PBv3TestTools {
 	double i_read = std::stod(ps->getCurrent());
                 
 	std::cout << vset << "\t" << v_read << "\t" << i_read << "\t" << DCDCin <<  std::endl;
-	testSum["data"][index++] = {vset, v_read, i_read, DCDCin};
+	testSum["results"]["VINSET"    ][index] = vset;
+	testSum["results"]["VIN"       ][index] = v_read;
+	testSum["results"]["IIN"       ][index] = i_read;
+	testSum["results"]["AMACDCDCIN"][index] = DCDCin;
+	index++;
       }
 
     ps->setVoltage(11.0);
 
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-    testSum["success"] = true;
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
+    amac->initRegisters();
+
     return testSum;
   }
 
@@ -784,10 +855,8 @@ namespace PBv3TestTools {
   {
     logger(logINFO) << "## Calibrating CM block ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
     json testSum;
-
-    testSum["name"] = "amac_calibrate_cm";
-    testSum["success"] = false;
-    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["testType"] = "CMOFFSET";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
     logger(logINFO) << " --> Turn on DCDC ...";
     try {
@@ -801,7 +870,6 @@ namespace PBv3TestTools {
 
     logger(logINFO) << " --> Starting measurement ...";
     //std::cout << "Cur10V" << "\t" << "Cur1V" << std::endl;
-    testSum["header"] = { "Cur10V [counts]", "Cur1V [counts]" };
     // Set sub-channel
     try {
       amac->wrField(&AMACv2::Ch12Mux, 0); //a
@@ -833,16 +901,16 @@ namespace PBv3TestTools {
 	  }
 
 	//if(i%=(tests/10)==0) std::cout << Cur10V << "\t" << Cur1V << std::endl;
-	testSum["data"][i] = {Cur10V, Cur1V};
+	testSum["results"]["AMACCUR10V"][i] = Cur10V;
+	testSum["results"]["AMACCUR1V"][i] = Cur1V;
       }
 
     // Separate the P/N
     amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1);
     amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1);
 
-    testSum["success"] = true;
-    testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
     amac->initRegisters();
 
     return testSum;
