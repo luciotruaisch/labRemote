@@ -213,6 +213,8 @@ int main(int argc, char* argv[])
   testSum["tests"][test++] = PBv3TestTools::measureEfficiency(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc, 100, 0, 3500);
   testSum["tests"][test++] = PBv3TestTools::calibrateAMACoffset(amac,       false);
   testSum["tests"][test++] = PBv3TestTools::calibrateAMACslope (amac, 0.01, false);
+  testSum["tests"][test++] = PBv3TestTools::calibrateAMACCur10V(amac,10);
+  testSum["tests"][test++] = PBv3TestTools::calibrateAMACCur1V (amac,10);
   testSum["tests"][test++] = PBv3TestTools::measureLvIV(&ps);
 
   testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 

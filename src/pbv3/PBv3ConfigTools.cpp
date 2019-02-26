@@ -245,47 +245,74 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tDCDCiOffset = " << bestOffset;
     logger(logINFO) << "\toffset = " << bestDV << " mV";
 
-    config["properties"]["DCDCiOffset"] = bestOffset;
-    config["results"]["CUR10VOFFSET"] = bestDV;
-    configAMAC(amac, config, true);
+    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 0); // Separate the DCDCi inputs
 
     //
     // Tune the current mirrors (does not do anything other than write values)
+    
+    logger(logDEBUG) << "Tuning input CM mirror";
+    double bestCMDV=-666;
+    uint32_t bestidcdcP=0, bestidcdcN=0; 
 
-    double Vout=0;
-    for(uint i=0;i<100;i++)
+    uint32_t trails=2;
+    for(uint32_t idcdcP=0;idcdcP<pow(2,3);idcdcP++)
       {
-	usleep(5e3);
-	Vout+=amac->rdField(&AMACv2Reg::Ch12Value);
+	amac->wrField(&AMACv2Reg::DCDCiP, idcdcP);
+	for(uint32_t idcdcN=0;idcdcN<pow(2,3);idcdcN++)
+	  {
+	    amac->wrField(&AMACv2Reg::DCDCiN, idcdcN);
+
+	    sleep(1);
+
+	    amac->wrField(&AMACv2Reg::Ch12Mux , 0); // Read the mid point
+	    double Vout=0;
+	    for(uint i=0;i<trails;i++)
+	      {
+		usleep(5e3);
+		Vout+=amac->getADC(12);
+	      }
+	    Vout/=trails;
+
+	    amac->wrField(&AMACv2Reg::Ch12Mux , 1); // Read the low point
+	    double VtestL=0;
+	    for(uint i=0;i<trails;i++)
+	      {
+		usleep(5e3);
+		VtestL+=amac->getADC(12);
+	      }
+	    VtestL/=trails;
+
+	    amac->wrField(&AMACv2Reg::Ch12Mux , 2); // Read the high point
+	    double VtestH=0;
+	    for(uint i=0;i<trails;i++)
+	      {
+		usleep(5e3);
+		VtestH+=amac->getADC(12);
+	      }
+	    VtestH/=trails;
+
+	    logger(logDEBUG) << "idcdcP,idcdcN,Vout,VtestL,VtestH = " << idcdcP << "\t" << idcdcN << "\t" << Vout << "\t" << VtestL << "\t" << VtestH;
+
+	    double CMDV=VtestH-VtestL;
+	    if(bestCMDV==-666 || fabs(CMDV-0)<fabs(bestCMDV-0))
+	      {
+		bestCMDV=CMDV;
+		bestidcdcP=idcdcP;
+		bestidcdcN=idcdcN;
+	      }
+	  }
       }
-    Vout/=100;
 
-    amac->wrField(&AMACv2Reg::Ch12Mux , 1); // Read the low point
-    double VtestL=0;
-    for(uint i=0;i<100;i++)
-      {
-	usleep(5e3);
-	VtestL+=amac->rdField(&AMACv2Reg::Ch12Value);
-      }
-    VtestL/=100;
+    logger(logINFO) << "\tDCDCiP/NidcdcP/N = " << bestidcdcP<<","<<bestidcdcN;
+    logger(logINFO) << "\toffset = " << bestCMDV << " mV";
 
-    amac->wrField(&AMACv2Reg::Ch12Mux , 2); // Read the high point
-    usleep(5e3);
-    double VtestH=0;
-    for(uint i=0;i<100;i++)
-      {
-	usleep(5e3);
-	VtestH+=amac->rdField(&AMACv2Reg::Ch12Value);
-      }
-    VtestH/=100;
-
-    logger(logDEBUG) << "Vout   = " << Vout << " counts";
-    logger(logDEBUG) << "VtestL = " << VtestL << " counts";
-    logger(logDEBUG) << "VtestH = " << VtestH << " counts";
-
-    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 0); // Short the DCDCo inputs
-
-    //configAMAC(amac, config, true);
+    // Save values
+    config["properties"]["DCDCiOffset"] = bestOffset;
+    config["properties"]["DCDCiP"] = bestidcdcP;
+    config["properties"]["DCDCiN"] = bestidcdcN;
+    config["results"]["CUR10VOFFSET"] = bestDV;
+    config["results"]["CUR10VCM"] = bestCMDV;
+    configAMAC(amac, config, true);
 
     return config;
   }
@@ -333,48 +360,76 @@ namespace PBv3ConfigTools
     logger(logINFO) << "\tDCDCoOffset = " << bestOffset;
     logger(logINFO) << "\toffset = " << bestDV << " mV";
 
-    config["properties"]["DCDCoOffset"] = bestOffset;
-    config["results"]["CUR1VOFFSET"] = bestDV;
-    configAMAC(amac, config, true);
-    
+    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 0); // separate the DCDCo inputs
 
     //
     // Tune the current mirrors (does not do anything other than write values)
-    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 0); // separate the DCDCo inputs
 
-    double Vout=0;
-    for(uint i=0;i<10;i++)
+    logger(logDEBUG) << "Tuning input CM mirror";
+    double bestCMDV=-666;
+    uint32_t bestodcdcP=0, bestodcdcN=0; 
+
+    uint32_t trails=2;
+    for(uint32_t odcdcP=0;odcdcP<2;odcdcP++)
       {
-	usleep(5e3);
-	Vout+=amac->rdField(&AMACv2Reg::Ch13Value);
-      }
-    Vout/=10;
+	amac->wrField(&AMACv2Reg::DCDCoP, odcdcP);
+	for(uint32_t odcdcN=0;odcdcN<2;odcdcN++)
+	  {
+	    amac->wrField(&AMACv2Reg::DCDCoN, odcdcN);
 
-    amac->wrField(&AMACv2Reg::Ch13Mux , 1); // Read the low point
-    double VtestL=0;
-    for(uint i=0;i<10;i++)
-      {
-	usleep(5e3);
-	VtestL+=amac->rdField(&AMACv2Reg::Ch13Value);
-      }
-    VtestL/=10;
+	    sleep(1);
 
-    amac->wrField(&AMACv2Reg::Ch13Mux , 2); // Read the high point
-    usleep(5e3);
-    double VtestH=0;
-    for(uint i=0;i<10;i++)
-      {
-	usleep(5e3);
-	VtestH+=amac->rdField(&AMACv2Reg::Ch13Value);
-      }
-    VtestH/=10;
+	    amac->wrField(&AMACv2Reg::Ch13Mux , 0); // Read the mid point
+	    double Vout=0;
+	    for(uint i=0;i<trails;i++)
+	      {
+		usleep(5e3);
+		Vout+=amac->getADC(13);
+	      }
+	    Vout/=trails;
 
-    logger(logDEBUG) << "Vout   = " << Vout << " counts";
-    logger(logDEBUG) << "VtestL = " << VtestL << " counts";
-    logger(logDEBUG) << "VtestH = " << VtestH << " counts";
+	    amac->wrField(&AMACv2Reg::Ch13Mux , 1); // Read the low point
+	    double VtestL=0;
+	    for(uint i=0;i<trails;i++)
+	      {
+		usleep(5e3);
+		VtestL+=amac->getADC(13);
+	      }
+	    VtestL/=trails;
+
+	    amac->wrField(&AMACv2Reg::Ch13Mux , 2); // Read the high point
+	    double VtestH=0;
+	    for(uint i=0;i<trails;i++)
+	      {
+		usleep(5e3);
+		VtestH+=amac->getADC(13);
+	      }
+	    VtestH/=trails;
+
+	    logger(logDEBUG) << "odcdcP,odcdcN,Vout,VtestL,VtestH = " << odcdcP << "\t" << odcdcN << "\t" << Vout << "\t" << VtestL << "\t" << VtestH;
+
+	    double CMDV=VtestH-VtestL;
+	    if(bestCMDV==-666 || fabs(CMDV-0)<fabs(bestCMDV-0))
+	      {
+		bestCMDV=CMDV;
+		bestodcdcP=odcdcP;
+		bestodcdcN=odcdcN;
+	      }
+	  }
+      }
+
+    logger(logINFO) << "\tDCDCoP/N = " << bestodcdcP<<","<<bestodcdcN;
+    logger(logINFO) << "\toffset = " << bestCMDV << " mV";
 
     amac->wrField(&AMACv2Reg::DCDCen, 0);
     amac->wrField(&AMACv2Reg::DCDCenC, 0);
+
+    config["properties"]["DCDCoOffset"] = bestOffset;
+    config["properties"]["DCDCoP"] = bestodcdcP;
+    config["properties"]["DCDCoN"] = bestodcdcN;
+    config["results"]["CUR1VOFFSET"] = bestDV;
+    config["results"]["CUR1VCM"] = bestCMDV;
+    configAMAC(amac, config, true);
 
     return config;
   }

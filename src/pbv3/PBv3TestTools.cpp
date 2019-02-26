@@ -13,7 +13,6 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "LV_ENABLE";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-
     testSum["passed"] = false;
 
     // Init stuff
@@ -136,6 +135,7 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "DCDCEFFICIENCY";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 	
     try
       {
@@ -289,7 +289,6 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "HV_ENABLE";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
-
     testSum["passed"] = false;
 
     try
@@ -372,76 +371,80 @@ namespace PBv3TestTools {
     return testSum;
   }
 
-  json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm)
+  json readStatus(AMACv2 *amac, GenericPs *ps, Bk85xx *load, Keithley24XX *sm, uint32_t tests)
   {
     logger(logINFO) << "## Reading current status ##";
     json testSum;
     testSum["testType"] = "STATUS";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
-    // ADCs
-    int Vdcdc = amac->rdField(&AMACv2::Ch0Value);
-    int VddLr = amac->rdField(&AMACv2::Ch1Value);
-    int DCDCin = amac->rdField(&AMACv2::Ch2Value);
-    amac->wrField(&AMACv2::Ch3Mux, 0); //a
-    int VDDREG = amac->rdField(&AMACv2::Ch3Value);
-    amac->wrField(&AMACv2::Ch3Mux, 2); //c
-    int AM900BG = amac->rdField(&AMACv2::Ch3Value);
-    amac->wrField(&AMACv2::Ch4Mux, 0); //a
-    int AM600BG = amac->rdField(&AMACv2::Ch4Value);
-    amac->wrField(&AMACv2::Ch4Mux, 1); //b
-    int CALin = amac->rdField(&AMACv2::Ch4Value);
-    int NTC = amac->rdField(&AMACv2::Ch9Value);
-    int Cur10V = amac->rdField(&AMACv2::Ch12Value);
-    int Cur1V = amac->rdField(&AMACv2::Ch13Value);
-    int HVret = amac->rdField(&AMACv2::Ch14Value);
-    int PTAT = amac->rdField(&AMACv2::Ch15Value);
+    for(uint32_t index=0; index<tests; index++)
+      {
+	// ADCs
+	int Vdcdc = amac->rdField(&AMACv2::Ch0Value);
+	int VddLr = amac->rdField(&AMACv2::Ch1Value);
+	int DCDCin = amac->rdField(&AMACv2::Ch2Value);
+	amac->wrField(&AMACv2::Ch3Mux, 0); //a
+	int VDDREG = amac->rdField(&AMACv2::Ch3Value);
+	amac->wrField(&AMACv2::Ch3Mux, 2); //c
+	int AM900BG = amac->rdField(&AMACv2::Ch3Value);
+	amac->wrField(&AMACv2::Ch4Mux, 0); //a
+	int AM600BG = amac->rdField(&AMACv2::Ch4Value);
+	amac->wrField(&AMACv2::Ch4Mux, 1); //b
+	int CALin = amac->rdField(&AMACv2::Ch4Value);
+	int NTC = amac->rdField(&AMACv2::Ch9Value);
+	int Cur10V = amac->rdField(&AMACv2::Ch12Value);
+	int Cur1V = amac->rdField(&AMACv2::Ch13Value);
+	int HVret = amac->rdField(&AMACv2::Ch14Value);
+	int PTAT = amac->rdField(&AMACv2::Ch15Value);
 
-    double Vin = std::stod(ps->getVoltage());
-    double Iin = std::stod(ps->getCurrent());
+	double Vin = std::stod(ps->getVoltage());
+	double Iin = std::stod(ps->getCurrent());
 
-    double Vout = load->getValues().vol;
-    double Iout = load->getValues().cur;
+	double Vout = load->getValues().vol;
+	double Iout = load->getValues().cur;
 
-    double HV_Vin = std::stod(sm->sense(KeithleyMode::VOLTAGE));
-    double HV_Iin = std::stod(sm->sense(KeithleyMode::CURRENT));
+	double HV_Vin = std::stod(sm->sense(KeithleyMode::VOLTAGE));
+	double HV_Iin = std::stod(sm->sense(KeithleyMode::CURRENT));
 
-    double ADC0 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(0);
-    double ADC1 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(1);
-    double ADC2 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(2);
-    double ADC3 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(3);
+	double ADC0 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(0);
+	double ADC1 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(1);
+	double ADC2 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(2);
+	double ADC3 = dynamic_cast<EndeavourRawFTDI*>(amac->raw().get())->getADC()->read(3);
 
-    std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
-      "Am900Bg [counts]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
-      "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
-      "HV_Vin [V]\tHV_Iin [A]\tADC0 [V]\tADC1 [V]\tADC2 [V]\tADC3 [V]" << std::endl;
-    std::cout << Vdcdc << "\t" << VddLr << "\t" << DCDCin << "\t" << VDDREG << "\t" << AM900BG <<
-      "\t" << AM600BG << "\t" << CALin << "\t" << NTC << "\t" << Cur10V << "\t" << Cur1V << 
-      "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
-      Iout << "\t" << HV_Vin << "\t" << HV_Iin << "\t" << ADC0 << "\t" << ADC1 << "\t" << ADC2 << "\t" << ADC3 << std::endl;
+	std::cout << "Vdcdc [counts]\tVddLr [counts]\tDCDCin [counts]\tVddReg [counts]\t" <<
+	  "Am900Bg [counts]\tAm600Bg [counts]\tCal [counts]\tNTC [counts]\tCur10V [counts]\t" <<
+	  "Cur1V [counts]\tHVret [counts]\tPTAT [counts]\tVin [V]\tIin [A]\tVout [mV]\tIout [mA]\t" <<
+	  "HV_Vin [V]\tHV_Iin [A]\tADC0 [V]\tADC1 [V]\tADC2 [V]\tADC3 [V]" << std::endl;
+	std::cout << Vdcdc << "\t" << VddLr << "\t" << DCDCin << "\t" << VDDREG << "\t" << AM900BG <<
+	  "\t" << AM600BG << "\t" << CALin << "\t" << NTC << "\t" << Cur10V << "\t" << Cur1V << 
+	  "\t" << HVret << "\t" << PTAT << "\t" << Vin << "\t" << Iin << "\t" << Vout << "\t" << 
+	  Iout << "\t" << HV_Vin << "\t" << HV_Iin << "\t" << ADC0 << "\t" << ADC1 << "\t" << ADC2 << "\t" << ADC3 << std::endl;
 
-    testSum["results"]["AMACVDCDC"  ]=Vdcdc;
-    testSum["results"]["AMACVDDLR"  ]=VddLr;
-    testSum["results"]["AAMCDCDCIN" ]=DCDCin;
-    testSum["results"]["AMACVDDREG" ]=VDDREG;
-    testSum["results"]["AMACAM900BG"]=AM900BG;
-    testSum["results"]["AMACAM600BG"]=AM600BG;
-    testSum["results"]["AMACCAL"    ]=CALin;
-    testSum["results"]["AMACNTCPB"  ]=NTC;
-    testSum["results"]["AMACCUR10V" ]=Cur10V;
-    testSum["results"]["AMACCUR1V"  ]=Cur1V;
-    testSum["results"]["AMACHVRET"  ]=HVret;
-    testSum["results"]["AMACPTAT"   ]=PTAT;
-    testSum["results"]["VIN"        ]=Vin;
-    testSum["results"]["IIN"        ]=Iin;
-    testSum["results"]["VOUT"       ]=Vout*1e-3;
-    testSum["results"]["IOUT"       ]=Iout*1e-3;
-    testSum["results"]["HVVIN"      ]=HV_Vin;
-    testSum["results"]["HVIIN"      ]=HV_Iin;
-    testSum["results"]["ADC0"       ]=ADC0;
-    testSum["results"]["ADC1"       ]=ADC1;
-    testSum["results"]["ADC2"       ]=ADC2;
-    testSum["results"]["ADC3"       ]=ADC3;
+	testSum["results"]["AMACVDCDC"  ][index]=Vdcdc;
+	testSum["results"]["AMACVDDLR"  ][index]=VddLr;
+	testSum["results"]["AAMCDCDCIN" ][index]=DCDCin;
+	testSum["results"]["AMACVDDREG" ][index]=VDDREG;
+	testSum["results"]["AMACAM900BG"][index]=AM900BG;
+	testSum["results"]["AMACAM600BG"][index]=AM600BG;
+	testSum["results"]["AMACCAL"    ][index]=CALin;
+	testSum["results"]["AMACNTCPB"  ][index]=NTC;
+	testSum["results"]["AMACCUR10V" ][index]=Cur10V;
+	testSum["results"]["AMACCUR1V"  ][index]=Cur1V;
+	testSum["results"]["AMACHVRET"  ][index]=HVret;
+	testSum["results"]["AMACPTAT"   ][index]=PTAT;
+	testSum["results"]["VIN"        ][index]=Vin;
+	testSum["results"]["IIN"        ][index]=Iin;
+	testSum["results"]["VOUT"       ][index]=Vout*1e-3;
+	testSum["results"]["IOUT"       ][index]=Iout*1e-3;
+	testSum["results"]["HVVIN"      ][index]=HV_Vin;
+	testSum["results"]["HVIIN"      ][index]=HV_Iin;
+	testSum["results"]["ADC0"       ][index]=ADC0;
+	testSum["results"]["ADC1"       ][index]=ADC1;
+	testSum["results"]["ADC2"       ][index]=ADC2;
+	testSum["results"]["ADC3"       ][index]=ADC3;
+      }
 
     testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 
@@ -453,8 +456,8 @@ namespace PBv3TestTools {
     logger(logINFO) << "## Running Bit Error Rate Test ##";
     json testSum;
     testSum["testType"] = "BER";
-    testSum["passed"] = false;
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = false;
 
     testSum["properties"]["TRAILS"] = trails;
 
@@ -498,6 +501,7 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "AMOFFSET";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
     int counts;
 
@@ -515,39 +519,39 @@ namespace PBv3TestTools {
 	usleep(5e3);
 
 	counts = amac->rdField(&AMACv2Reg::Ch0Value );
-	testSum["results"][ "CH0"][index] = {counts};
+	testSum["results"][ "CH0"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch1Value );
-	testSum["results"][ "CH1"][index] = {counts};
+	testSum["results"][ "CH1"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch2Value );
-	testSum["results"][ "CH2"][index] = {counts};
+	testSum["results"][ "CH2"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch3Value );
-	testSum["results"][ "CH3"][index] = {counts};
+	testSum["results"][ "CH3"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch4Value );
-	testSum["results"][ "CH4"][index] = {counts};
+	testSum["results"][ "CH4"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch5Value );
-	testSum["results"][ "CH5"][index] = {counts};
+	testSum["results"][ "CH5"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch6Value );
-	testSum["results"][ "CH6"][index] = {counts};
+	testSum["results"][ "CH6"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch7Value );
-	testSum["results"][ "CH7"][index] = {counts};
+	testSum["results"][ "CH7"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch8Value );
-	testSum["results"][ "CH8"][index] = {counts};
+	testSum["results"][ "CH8"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch9Value );
-	testSum["results"][ "CH9"][index] = {counts};
+	testSum["results"][ "CH9"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch10Value);
-	testSum["results"]["CH10"][index] = {counts};
+	testSum["results"]["CH10"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch11Value);
-	testSum["results"]["CH11"][index] = {counts};
+	testSum["results"]["CH11"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch12Value);
-	testSum["results"]["CH12"][index] = {counts};
+	testSum["results"]["CH12"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch13Value);
-	testSum["results"]["CH13"][index] = {counts};
+	testSum["results"]["CH13"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch14Value);
-	testSum["results"]["CH14"][index] = {counts};
+	testSum["results"]["CH14"][index] = counts;
 	counts = amac->rdField(&AMACv2Reg::Ch15Value);
-	testSum["results"]["CH15"][index] = {counts};
+	testSum["results"]["CH15"][index] = counts;
 
-	testSum["results"]["AMintCalib"][index] = {gain_set};
+	testSum["results"]["AMintCalib"][index] = gain_set;
 
 	index++;
       }
@@ -565,6 +569,7 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "AMSLOPE";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
     std::cout << "CAL" << "\t" << "BG" << "\t" << "RampGain" << "\t" << "ADCvalue" << std::endl;
 
@@ -689,6 +694,7 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "HVSENSE";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
     double ileak_min = 0;
     double ileak_max = 1.0e-3;
@@ -715,11 +721,11 @@ namespace PBv3TestTools {
 
     int counter = 0;
     int index = 0;  
-    for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step,index++)
+    for (double ileak=ileak_min; ileak<=ileak_max; ileak += ileak_step)
       {
 	counter++;
 	if (counter%10 == 0)
-	ileak_step = ileak_step*10;
+	  ileak_step = ileak_step*10;
 	//sm->setSource(KeithleyMode::VOLTAGE, ileak >= 1e-6 ? ileak : (1e-6)*resist, ileak*resist);
 	sm->setSource(KeithleyMode::CURRENT, ileak >= 1e-6 ? ileak : (1e-6), ileak);
 	std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -738,14 +744,14 @@ namespace PBv3TestTools {
 	    val[i] = amac->rdField(&AMACv2::Ch14Value);
 	  }
 	std::cout << ileak << "\t" << ileak*resist<< "\t" << hv_v << "\t" << hv_i << "\t" << val[0] << "\t" << val[1] << "\t" << val[2] << "\t" << val[3] << "\t" << val[4] << std::endl;
-	testSum["data"]["ILEAK"    ][index]=ileak;
-	testSum["data"]["HVV"      ][index]=hv_v;
-	testSum["data"]["HVI"      ][index]=hv_i;
-	testSum["data"]["AMACGAIN0"][index]=val[0];
-	testSum["data"]["AMACGAIN1"][index]=val[1];
-	testSum["data"]["AMACGAIN2"][index]=val[2];
-	testSum["data"]["AMACGAIN4"][index]=val[3];
-	testSum["data"]["AMACGAIN8"][index]=val[4];
+	testSum["results"]["ILEAK"    ][index]=ileak;
+	testSum["results"]["HVV"      ][index]=hv_v;
+	testSum["results"]["HVI"      ][index]=hv_i;
+	testSum["results"]["AMACGAIN0"][index]=val[0];
+	testSum["results"]["AMACGAIN1"][index]=val[1];
+	testSum["results"]["AMACGAIN2"][index]=val[2];
+	testSum["results"]["AMACGAIN4"][index]=val[3];
+	testSum["results"]["AMACGAIN8"][index]=val[4];
 	index++;
       }
 
@@ -768,6 +774,7 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "VINIIN";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
     double v_start = 2.0;
     double v_end = 6.0;
@@ -807,6 +814,7 @@ namespace PBv3TestTools {
     json testSum;
     testSum["testType"] = "VIN";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
     double v_start = 6.0;
     double v_end = 11.0;
@@ -851,12 +859,96 @@ namespace PBv3TestTools {
     return testSum;
   }
 
-  json calibrateAMACcm(std::shared_ptr<AMACv2> amac, uint32_t tests) 
+  json calibrateAMACCur10V(std::shared_ptr<AMACv2> amac, uint32_t tests) 
   {
-    logger(logINFO) << "## Calibrating CM block ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    logger(logINFO) << "## Calibrating input CM block ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
     json testSum;
-    testSum["testType"] = "CMOFFSET";
+    testSum["testType"] = "CUR10V";
     testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
+
+    logger(logINFO) << " --> Starting measurement ...";
+    // Set sub-channel
+    try {
+    } catch(EndeavourComException &e) {
+      logger(logERROR) << e.what();
+      return testSum;
+    }
+
+    uint32_t index=0;
+    uint32_t Cur10V, Cur10VTPL, Cur10VTPH;
+
+    // Short the P/N
+    for(uint DCDCiZeroReading=0;DCDCiZeroReading<2;DCDCiZeroReading++)
+      {
+	amac->wrField(&AMACv2Reg::DCDCiZeroReading , DCDCiZeroReading);
+	logger(logDEBUG) << "Set DCDCiZeroReading = " << DCDCiZeroReading;
+	for(uint DCDCiOffset=0;DCDCiOffset<pow(2,4);DCDCiOffset++)
+	  {
+	    amac->wrField(&AMACv2Reg::DCDCiOffset, DCDCiOffset);
+	    logger(logDEBUG) << "Set DCDCiOffset = " << DCDCiOffset;
+	    for(uint32_t DCDCiP=0;DCDCiP<pow(2,3);DCDCiP++)
+	      {
+		amac->wrField(&AMACv2Reg::DCDCiP, DCDCiP);
+		logger(logDEBUG) << "Set DCDCiP = " << DCDCiP;
+		for(uint32_t DCDCiN=0;DCDCiN<pow(2,3);DCDCiN++)
+		  {
+		    amac->wrField(&AMACv2Reg::DCDCiN, DCDCiN);
+		    logger(logDEBUG) << "Set DCDCiN = " << DCDCiN;
+
+		    for (uint32_t i=0; i<tests; i++)
+		      {
+			try
+			  {
+			    amac->wrField(&AMACv2::Ch12Mux, 0); //a
+			    usleep(2e3);
+			    Cur10V = amac->rdField(&AMACv2::Ch12Value);
+
+			    amac->wrField(&AMACv2::Ch12Mux, 1); //b
+			    usleep(2e3);
+			    Cur10VTPL = amac->rdField(&AMACv2::Ch12Value);
+
+			    amac->wrField(&AMACv2::Ch12Mux, 2); //c
+			    usleep(2e3);
+			    Cur10VTPH = amac->rdField(&AMACv2::Ch12Value);
+
+			    testSum["results"]["DCDCiZeroReading"][index] = DCDCiZeroReading;
+			    testSum["results"]["DCDCiOffset"     ][index] = DCDCiOffset;
+			    testSum["results"]["DCDCiP"          ][index] = DCDCiP;
+			    testSum["results"]["DCDCiN"          ][index] = DCDCiN;
+			    testSum["results"]["AMACCUR10V"      ][index] = Cur10V;
+			    testSum["results"]["AMACCUR10VTPL"   ][index] = Cur10VTPL;
+			    testSum["results"]["AMACCUR10VTPH"   ][index] = Cur10VTPH;
+			    index++;
+			  }
+			catch(EndeavourComException &e)
+			  {
+			    logger(logERROR) << e.what();
+			    testSum["error"] = e.what();
+			    return testSum;
+			  }
+
+			//if(i%=(tests/10)==0) std::cout << Cur10V << "\t" << Cur1V << std::endl;
+		      }
+		  }
+	      }
+	  }
+      }
+
+    testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+  
+    amac->initRegisters();
+
+    return testSum;
+  }
+
+  json calibrateAMACCur1V(std::shared_ptr<AMACv2> amac, uint32_t tests) 
+  {
+    logger(logINFO) << "## Calibrating output CM block ## " << PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    json testSum;
+    testSum["testType"] = "CUR1V";
+    testSum["results"]["TIMESTART"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
+    testSum["passed"] = true;
 
     logger(logINFO) << " --> Turn on DCDC ...";
     try {
@@ -869,45 +961,70 @@ namespace PBv3TestTools {
     }
 
     logger(logINFO) << " --> Starting measurement ...";
-    //std::cout << "Cur10V" << "\t" << "Cur1V" << std::endl;
     // Set sub-channel
     try {
-      amac->wrField(&AMACv2::Ch12Mux, 0); //a
-      amac->wrField(&AMACv2::Ch13Mux, 0); //a
     } catch(EndeavourComException &e) {
       logger(logERROR) << e.what();
       return testSum;
-    } 
+    }
 
-    // Short the P/N
-    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1);
-    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1);
+    uint32_t index=0;
+    uint32_t Cur1V, Cur1VTPL, Cur1VTPH;
 
-    // Take many measurements
-    for (uint32_t i=0; i<tests; i++)
+    for(uint DCDCoZeroReading=0;DCDCoZeroReading<2;DCDCoZeroReading++)
       {
-	int32_t Cur10V, Cur1V;
-	usleep(2e3);
-	try
+	amac->wrField(&AMACv2Reg::DCDCoZeroReading , DCDCoZeroReading);
+	logger(logDEBUG) << "Set DCDCoZeroReading = " << DCDCoZeroReading;
+	for(uint DCDCoOffset=0;DCDCoOffset<pow(2,4);DCDCoOffset++)
 	  {
-	    Cur10V = amac->rdField(&AMACv2::Ch12Value);
-	    Cur1V  = amac->rdField(&AMACv2::Ch13Value);
-	  }
-	catch(EndeavourComException &e)
-	  {
-	    logger(logERROR) << e.what();
-	    testSum["error"] = e.what();
-	    return testSum;
-	  }
+	    amac->wrField(&AMACv2Reg::DCDCoOffset, DCDCoOffset);
+	    logger(logDEBUG) << "Set DCDCoOffset = " << DCDCoOffset;
+	    for(uint32_t DCDCoP=0;DCDCoP<2;DCDCoP++)
+	      {
+		amac->wrField(&AMACv2Reg::DCDCoP, DCDCoP);
+		logger(logDEBUG) << "Set DCDCoP = " << DCDCoP;
+		for(uint32_t DCDCoN=0;DCDCoN<2;DCDCoN++)
+		  {
+		    amac->wrField(&AMACv2Reg::DCDCoN, DCDCoN);
+		    logger(logDEBUG) << "Set DCDCoN = " << DCDCoN;
 
-	//if(i%=(tests/10)==0) std::cout << Cur10V << "\t" << Cur1V << std::endl;
-	testSum["results"]["AMACCUR10V"][i] = Cur10V;
-	testSum["results"]["AMACCUR1V"][i] = Cur1V;
+		    for (uint32_t i=0; i<tests; i++)
+		      {
+			try
+			  {
+			    amac->wrField(&AMACv2::Ch13Mux, 0); //a
+			    usleep(2e3);
+			    Cur1V = amac->rdField(&AMACv2::Ch13Value);
+
+			    amac->wrField(&AMACv2::Ch13Mux, 1); //b
+			    usleep(2e3);
+			    Cur1VTPL = amac->rdField(&AMACv2::Ch13Value);
+
+			    amac->wrField(&AMACv2::Ch13Mux, 2); //c
+			    usleep(2e3);
+			    Cur1VTPH = amac->rdField(&AMACv2::Ch13Value);
+
+			    testSum["results"]["DCDCoZeroReading"][index] = DCDCoZeroReading;
+			    testSum["results"]["DCDCoOffset"     ][index] = DCDCoOffset;
+			    testSum["results"]["DCDCoP"          ][index] = DCDCoP;
+			    testSum["results"]["DCDCoN"          ][index] = DCDCoN;
+			    testSum["results"]["AMACCUR1V"       ][index] = Cur1V;
+			    testSum["results"]["AMACCUR1VTPL"    ][index] = Cur1VTPL;
+			    testSum["results"]["AMACCUR1VTPH"    ][index] = Cur1VTPH;
+			    index++;
+			  }
+			catch(EndeavourComException &e)
+			  {
+			    logger(logERROR) << e.what();
+			    testSum["error"] = e.what();
+			    return testSum;
+			  }
+		      }
+		  }
+	      }
+	  }
       }
 
-    // Separate the P/N
-    amac->wrField(&AMACv2Reg::DCDCiZeroReading , 1);
-    amac->wrField(&AMACv2Reg::DCDCoZeroReading , 1);
 
     testSum["results"]["TIMEEND"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
   
