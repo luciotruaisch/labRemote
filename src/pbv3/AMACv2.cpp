@@ -55,7 +55,6 @@ uint32_t AMACv2::rdField(AMACv2Field AMACv2Reg::* ref)
 {
   uint32_t ret = EndeavourCom::read_reg(getAddr(ref));  
   setReg(getAddr(ref), ret);
-  usleep(1e4);
   return getField(ref);
 }
 
@@ -63,7 +62,6 @@ uint32_t AMACv2::rdField(const std::string& fieldName)
 {
   uint32_t ret = EndeavourCom::read_reg(getAddr(fieldName));  
   setReg(getAddr(fieldName), ret);
-  usleep(1e4);
   return getField(fieldName);
 }
 
