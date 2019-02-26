@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iomanip>
+#include <bitset>
 #include <unistd.h>
 #include <stdint.h>
 
@@ -238,41 +239,59 @@ void EndeavourRawFTDI::sendData(unsigned long long int data, unsigned int size)
   //   std::cout << (uint32_t)x << std::endl;
   // std::cout << std::dec;
 
+  //
+  // Convert the stream into bits
+  std::bitset<2048*8> thebits;
+  uint32_t thebitssize=0;
+
+  for(const auto& x : ftdidata)
+    {
+      for(uint8_t i=8;i>0;i--)
+	{
+	  bool bit=(x>>(i-1))&0x1;
+	  thebits.set(thebitssize,bit);
+	  thebitssize++;
+	}
+    }
+
+  //
+  // Deglitch the stream
+  for(uint32_t i=1;i<thebitssize-1;i++)
+    if(thebits[i-1]==thebits[i+1])
+      thebits.set(i,thebits[i+1]);
+
+  //
+  // Parse the stream
   m_readData=0;
   m_readSize=0;
   uint32_t countbit=0;
   bool lastBit=0;
   //std::cout << "reading" << std::hex << std::endl;
-  for(const auto& x : ftdidata)
+  for(uint32_t i=0;i<thebitssize;i++)
     {
-      //std::cout << (uint32_t)x << std::endl;
-      for(uint8_t i=8;i>0;i--)
+      bool bit=thebits[i];
+      if(bit!=lastBit) // something new is happening
 	{
-	  bool bit=(x>>(i-1))&0x1;
-	  if(bit!=lastBit) // something new is happening
+	  if(lastBit==1) // Finished an endeavour bit
 	    {
-	      if(lastBit==1) // Finished an endeavour bit
+	      if(m_DIT_MIN<countbit && countbit<m_DIT_MAX)
 		{
-		  if(m_DIT_MIN<countbit && countbit<m_DIT_MAX)
-		    {
-		      m_readData<<=1;
-		      m_readData|=0;
-		      m_readSize++;
-		    }
-		  else if(m_DAH_MIN<countbit && countbit<m_DAH_MAX)
-		    {
-		      m_readData<<=1;
-		      m_readData|=1;
-		      m_readSize++;
-		    }
+		  m_readData<<=1;
+		  m_readData|=0;
+		  m_readSize++;
 		}
-	      countbit=0;
+	      else if(m_DAH_MIN<countbit && countbit<m_DAH_MAX)
+		{
+		  m_readData<<=1;
+		  m_readData|=1;
+		  m_readSize++;
+		}
 	    }
-	  countbit++;
-	  lastBit=bit;
+	  countbit=0;
 	}
+      countbit++;
+      lastBit=bit;
     }
-  //std::cout << std::dec << std::endl;
 }
 
 void EndeavourRawFTDI::readData(unsigned long long int& data, unsigned int& size)
