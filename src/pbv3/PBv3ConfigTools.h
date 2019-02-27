@@ -216,6 +216,15 @@ namespace PBv3ConfigTools
    * \return updated json calibration
    */
   json calibrateCur1V(std::shared_ptr<AMACv2> amac);
+
+/**
+   *Calls all brief calibration functions simultaneously,
+   *
+   * Writes outputs to single json object
+   **/
+
+  json calibrateAll(std::shared_ptr<AMACv2> amac);
+ 
 }
 
 #endif
