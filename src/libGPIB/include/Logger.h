@@ -58,7 +58,7 @@ class logIt {
 
 extern loglevel_e loglevel;
 
-#define log(level) \
+#define logger(level) \
     if (level > loglevel) ; \
     else logIt(level)
 

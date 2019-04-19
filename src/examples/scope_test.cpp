@@ -15,7 +15,7 @@ loglevel_e loglevel = logINFO;
 int main()
 {
 #ifndef SCOPE
-  log(logERROR) << "Missing libScope";
+  logger(logERROR) << "Missing libScope";
 #else // SCOPE
 
   PicoScope *pico=new PS6000();

@@ -1,5 +1,6 @@
 # add global dependencies
 include_directories( ../libGPIB/include )
+include_directories( ../libDevCom )
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 if( ${ENABLE_FTDI} )
@@ -21,11 +22,13 @@ foreach(target ${tools})
   get_filename_component(srcfile ${target} NAME)
 
   add_executable(${execname} ${srcfile})
-  target_link_libraries(${execname} -lGPIB)
-  add_dependencies(${execname} GPIB)
+  target_link_libraries(${execname} -lGPIB -lDevCom)
+  add_dependencies(${execname} GPIB DevCom)
+
   if( ${ENABLE_SCOPE} )
-    add_dependencies(${execname} Scope)
     target_link_libraries(${execname} -lScope)
+    add_dependencies(${execname} Scope)
   endif()
+
 endforeach()
 

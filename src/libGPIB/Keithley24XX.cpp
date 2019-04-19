@@ -17,7 +17,7 @@ Keithley24XX::~Keithley24XX() {
 // TODO send/receive should be in prologix class
 void Keithley24XX::send(std::string cmd) {
   m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-  log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+  logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
   cmd += "\r\n";
   m_com->write(cmd);
   std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
@@ -25,14 +25,14 @@ void Keithley24XX::send(std::string cmd) {
 
 std::string Keithley24XX::receive(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     m_com->write("++read eoi\n\r");
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
     std::string buf;
     m_com->read(buf);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
     return buf;
 }
 
@@ -43,7 +43,7 @@ void Keithley24XX::init() {
         return !std::isspace(ch);
       }).base(), idn.end());
 
-  if(idn.find("KEITHLEY INSTRUMENTS INC.,MODEL 2410,0692306,C12")==std::string::npos)
+  if(idn.find("KEITHLEY INSTRUMENTS INC.,MODEL 2410")==std::string::npos)
     throw "Unknown power supply: "+idn;
   return;
   // Prepare everything else
@@ -65,16 +65,16 @@ void Keithley24XX::setSource(enum KeithleyMode mode, double range, double value)
     switch (mode) {
         case KeithleyMode::VOLTAGE:
             this->send(":SOURCE:FUNC VOLT");
-            this->send(":SOURCE:VOLT:RANGE " + std::to_string(range));
-            this->send(":SOURCE:VOLT " + std::to_string(value));
+            this->send(":SOURCE:VOLT:RANGE " + to_string_with_precision<double>(range, 8));
+            this->send(":SOURCE:VOLT " + to_string_with_precision<double>(value, 8));
             break;
         case KeithleyMode::CURRENT:
             this->send(":SOURCE:FUNC CURR");
-            this->send(":SOURCE:CURR:RANGE " + std::to_string(range));
-            this->send(":SOURCE:CURR " + std::to_string(value));
+            this->send(":SOURCE:CURR:RANGE " + to_string_with_precision<double>(range, 8));
+            this->send(":SOURCE:CURR " + to_string_with_precision<double>(value, 8));
             break;
         default:
-            log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+            logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
             break;
     }
 }
@@ -94,26 +94,35 @@ void Keithley24XX::setSense(enum KeithleyMode mode, double range, double protect
             this->send(":FORMAT:ELEMENTS CURR");
             break;
         default:
-            log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+            logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
             break;
     }
 }
 
-std::string Keithley24XX::sense(enum KeithleyMode mode) {
-  switch (mode) {
-  case KeithleyMode::VOLTAGE:
-    this->send(":SENSE:FUNC \"VOLT\"");
-    this->send(":FORMAT:ELEMENTS VOLT");
-    break;
-  case KeithleyMode::CURRENT:
-    this->send(":SENSE:FUNC \"CURR\"");
-    this->send(":FORMAT:ELEMENTS CURR");
-    break;
-  default:
-    log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
-    break;
-  }
+std::string Keithley24XX::sense(enum KeithleyMode mode) 
+{
+  if(!isOn()) return "0";
+
+  switch (mode)
+    {
+    case KeithleyMode::VOLTAGE:
+      this->send(":SENSE:FUNC \"VOLT\"");
+      this->send(":FORMAT:ELEMENTS VOLT");
+      break;
+    case KeithleyMode::CURRENT:
+      this->send(":SENSE:FUNC \"CURR\"");
+      this->send(":FORMAT:ELEMENTS CURR");
+      break;
+    default:
+      logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+      break;
+    }
 
   return this->receive(":READ?").substr(0, 13);
+}
+
+bool Keithley24XX::isOn()
+{
+  return std::stoi(this->receive("OUTPUT:STAT?"))==1;
 }
 

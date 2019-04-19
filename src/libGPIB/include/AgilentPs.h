@@ -14,8 +14,9 @@
 #include <chrono>
 
 #include "SerialCom.h"
+#include "GenericPs.h"
 
-class AgilentPs {
+class AgilentPs : public GenericPs {
     public:
         AgilentPs(std::string dev, unsigned addr);
         ~AgilentPs();

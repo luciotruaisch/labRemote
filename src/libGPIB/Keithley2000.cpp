@@ -14,7 +14,7 @@ Keithley2000::~Keithley2000() {
 // TODO send/receive should be in prologix class
 void Keithley2000::send(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
@@ -22,14 +22,14 @@ void Keithley2000::send(std::string cmd) {
 
 std::string Keithley2000::receive(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     m_com->write("++read eoi\n\r");
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
     std::string buf;
     m_com->read(buf);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
     return buf;
 }
 
@@ -48,7 +48,7 @@ void Keithley2000::setSense(enum KeithleyMode mode) {
             this->send(":SENSE:FUNC \"CURR\"");
             break;
         default:
-            log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+            logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
             break;
     }
 }

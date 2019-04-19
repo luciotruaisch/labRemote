@@ -13,20 +13,20 @@ RigolDP832::~RigolDP832() {
 }
 
 void RigolDP832::send(std::string cmd) {
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     //cmd += "\n\r";
     m_com->write(cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
 }
 
 std::string RigolDP832::receive(std::string cmd) {
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     //cmd += "\n\r";
     m_com->write(cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
     std::string buf;
     m_com->read(buf);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
     return buf;
 }
 
