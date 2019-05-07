@@ -12,6 +12,7 @@ set(SrcFiles AgilentPs.cpp
   RigolDP832.cpp
   TTIMX180TPPs.cpp
   TTITSX1820PPs.cpp
+  TTILD400P.cpp		
   SerialCom.cpp)
 
 add_library(GPIB SHARED ${SrcFiles}) 
