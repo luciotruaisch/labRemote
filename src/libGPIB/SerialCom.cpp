@@ -1,6 +1,10 @@
 #include "SerialCom.h"
 #include "Logger.h"
 
+#include <cerrno>
+#include <cstring>
+
+
 SerialCom::SerialCom(std::string name) {
 	m_dev = 0;
     m_deviceName = name;
@@ -27,13 +31,13 @@ void SerialCom::init() {
 }
 
 void SerialCom::config() {
-    log(logDEBUG3) << __PRETTY_FUNCTION__;
+    logger(logDEBUG3) << __PRETTY_FUNCTION__;
     
     //Asynchronous read
 	fcntl(m_dev, F_SETFL, O_NONBLOCK);
     
 	if (tcgetattr(m_dev, &tty)){
-		log(logERROR) << __PRETTY_FUNCTION__ << " -> Could not get tty attributes!";
+		logger(logERROR) << __PRETTY_FUNCTION__ << " -> Could not get tty attributes!";
         m_good = false;
 	}
 
@@ -55,7 +59,7 @@ void SerialCom::config() {
 	tcflush(m_dev, TCIFLUSH);		// Empty buffers
 
 	if (tcsetattr(m_dev, TCSANOW, &tty)){
-		log(logERROR) << __PRETTY_FUNCTION__ << " -> Could not set tty attributes!";
+		logger(logERROR) << __PRETTY_FUNCTION__ << " -> Could not set tty attributes!";
         m_good = false;
 	}
 }
@@ -76,11 +80,16 @@ int SerialCom::write(std::string buf) {
     return ::write(m_dev, buf.c_str(), buf.size());
 }
 
-int SerialCom::read(std::string &buf) {
-    char *tmp = new char[MAX_READ];
-    unsigned n_read = ::read(m_dev, tmp, MAX_READ);
+int SerialCom::read(std::string &buf) 
+{
+  char *tmp = new char[MAX_READ];
+  int n_read = ::read(m_dev, tmp, MAX_READ);
+  if(n_read>=0)
     buf = std::string(tmp, n_read);
-    return n_read;
+  else
+    logger(logERROR) << std::strerror(errno);
+
+  return n_read;
 }
 
 bool SerialCom::is_open() {

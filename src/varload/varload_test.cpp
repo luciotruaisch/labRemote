@@ -7,7 +7,7 @@
 #include <dirent.h>
 
 #ifdef FTDI
-#include "FTDICom.h"
+#include "I2CFTDICom.h"
 #endif
 
 #include "Logger.h"
@@ -18,7 +18,7 @@ loglevel_e loglevel = logINFO;
 
 int main(int argc, char* argv[]) {
 #ifndef FTDI
-  log(logERROR) << "FTDI support not enabled.";
+  logger(logERROR) << "FTDI support not enabled.";
   return -1;
 #else 
   // Output log
@@ -32,27 +32,22 @@ int main(int argc, char* argv[]) {
   ps.setCurrent(3);
 
   // Initialize I2C (for DAC comm)
-  std::unique_ptr<FTDICom> i2c(new FTDICom());
-  i2c->enableI2C();
+  std::shared_ptr<I2CCom> i2c=std::make_shared<I2CFTDICom>(0x48);
 
   // Turn on and scan currents
   ps.turnOn();
 
- char data[2];
+  uint16_t data;
   for(uint i=0;i<=0xAF;i++)
     {
-      data[0]=i;
-      data[1]=0x0;
-      i2c->writeI2C(0x48, 0x0, data, 2);
+      i2c->write_reg16(0x0, i);
       usleep(100);
-      data[0]=0;
-      data[1]=0;
-      i2c->readI2C(0x48, 0x0, data, 2);
+      data=i2c->read_reg16(0x0);
       sleep(1);
 
       std::string curr=ps.getCurrent();
-      std::cout << "0x" << std::hex << (uint)data[0] << std::dec << " " << curr << std::endl;
-      logfile << "0x" << std::hex << (uint)data[0] << std::dec << " " << curr << std::endl;
+      std::cout << "0x" << std::hex << (uint)data << std::dec << " " << curr << std::endl;
+      logfile << "0x" << std::hex << (uint)data << std::dec << " " << curr << std::endl;
     }
 
   ps.turnOff();
