@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <fstream>
 
 #include "Logger.h"
@@ -117,9 +117,9 @@ int main(int argc, char* argv[])
 
   // Init Agilent
   logger(logINFO) << "Init Agilent PS";
-  //AgilentPs ps(agiDev, 10);
+  AgilentPs ps(agiDev, 10);
   //logger(logINFO) << "Init TTITSX PS";
-  TTIMX180TPPs ps(agiDev, 10);
+  //TTIMX180TPPs ps(agiDev, 10);
   //TTITSX1820PPs ps(agiDev, 10);
   try
     {
@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
 
   testSum["tests"][test++] = PBv3TestTools::runBER(amac);
   testSum["tests"][test++] = PBv3TestTools::readStatus(amac.get()  , dynamic_cast<GenericPs*>(&ps), &dc, &sm);
-  /*testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
+  testSum["tests"][test++] = PBv3TestTools::testLvEnable(amac.get(), dynamic_cast<GenericPs*>(&ps), &dc);
   testSum["tests"][test++] = PBv3TestTools::testHvEnable(amac.get(), &sm);
   testSum["tests"][test++] = PBv3TestTools::calibVinResponse(amac.get(), dynamic_cast<GenericPs*>(&ps));
   testSum["tests"][test++] = PBv3TestTools::measureHvSense(amac.get(), &sm);
@@ -216,7 +216,7 @@ int main(int argc, char* argv[])
   testSum["tests"][test++] = PBv3TestTools::calibrateAMACCur10V(amac,10);
   testSum["tests"][test++] = PBv3TestTools::calibrateAMACCur1V (amac,10);
   testSum["tests"][test++] = PBv3TestTools::measureLvIV(&ps);
-  */
+
   testSum["time"]["end"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now()); 
 
   outfile << std::setw(4) << testSum << std::endl;

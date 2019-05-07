@@ -8,7 +8,7 @@
 FIND_PATH(LIBFTDI_INCLUDE_DIR ftdi.h
   HINTS /usr/include/libftdi1 /usr/local/include/libftdi1 )
 
-FIND_LIBRARY(LIBFTDI_LIBRARY NAMES ftdi1 libftdi1
+FIND_LIBRARY(LIBFTDI_LIBRARY NAMES ftdi1 libftdi1 libftdi
   HINTS /usr/lib64 /usr/local/lib /usr/lib/x86_64-linux-gnu )
 
 INCLUDE(FindPackageHandleStandardArgs)

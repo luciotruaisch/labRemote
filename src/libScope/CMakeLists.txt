@@ -1,11 +1,12 @@
-#
-# Look for dependencies
 
+#
 # Find libpico
 find_package(Pico)
 
-if (NOT ${ENABLE_SCOPE} )
-  message("Disabling libScope due to missing libpico")
+set(ENABLE_SCOPE ${LIBPICO_FOUND} CACHE BOOL "Enable libScope")
+
+if ( NOT "${ENABLE_SCOPE}" )
+  message("Disabling libScope due to missing libpico")  
   return()
 endif()
 

@@ -1,5 +1,11 @@
+if ( NOT ${LIBFTDI_FOUND} )
+  message("Disabling pbv3 due to missing libftdi1")  
+  return()
+endif()
+
+
 # add global dependencies
-include_directories( ../libDevCom ../libGPIB/include /usr/local/Cellar/nlohmann_json/3.1.2/include/nlohmann)
+include_directories( ../libDevCom ../libGPIB/include)
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 set(SrcFiles
@@ -27,10 +33,7 @@ if ( ${LIBFTDI_FOUND} )
 endif()
 
 add_library(pbv3 SHARED ${SrcFiles})
-if ( ${LIBFTDI_FOUND} )
-  target_link_libraries(pbv3 ${LIBFTDI_LIBRARIES})
-endif()
-target_link_libraries(pbv3 -lGPIB -lDevCom)
+target_link_libraries(pbv3 -lGPIB -lDevCom ${LIBFTDI_LIBRARIES})
 add_dependencies(pbv3 DevCom GPIB)
 
 add_subdirectory(tools)
