@@ -1,5 +1,9 @@
 # Small library to control and read out lab equipment.
 
+## Commiting code
+Create new branch with your initials and short description, for example `jd_mybranch`. When creating merge request make sure to check the box with delete branch after merging.
+
+## Compile code
 To start with:
 ```shell
 mkdir build; cd build
@@ -7,6 +11,13 @@ cmake ..
 make -j4
 ```
 
+## New projects
+You can add labRemote as a submodule and create a new project.
+All projects should be [labRemote-apps](https://gitlab.cern.ch/berkeleylab/labremote-apps)
+Example project is:
+[ExampleLabRemoteProject](https://gitlab.cern.ch/berkeleylab/labremote-apps/examplelabremoteproject)
+
+## Probe Station
 
 Requirements for probe station controller:
  * Qt 5.9.2 [link](https://www.qt.io/download-qt-for-application-development)
