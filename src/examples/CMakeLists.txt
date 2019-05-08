@@ -31,4 +31,3 @@ foreach(target ${tools})
   endif()
 
 endforeach()
-

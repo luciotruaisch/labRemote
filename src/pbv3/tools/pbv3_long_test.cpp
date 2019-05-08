@@ -194,7 +194,7 @@ int main(int argc, char* argv[])
 	// Run the long tests
 
 	//Run all calibrations
-	json calib_all;// = PBv3ConfigTools::calibrateAll(amac);
+	json calib_all = PBv3ConfigTools::calibrateAll(amac);
 	// Prepare the output structure
 	json testSum;
 	testSum["program"] = argv[0];
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
 
 	    // Prepare the output structure
 	    json testSum;
-	    testSum["calibrate"]; // =  PBv3ConfigTools::calibrateAll(amac);
+	    testSum["calibrate"] =  PBv3ConfigTools::calibrateAll(amac);
 	    testSum["program"] = argv[0];
 	    testSum["time"]["start"] = PBv3TestTools::getTimeAsString(std::chrono::system_clock::now());
 

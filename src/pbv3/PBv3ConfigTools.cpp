@@ -652,4 +652,23 @@ namespace PBv3ConfigTools
     return config;
   }
 
+  json calibrateAll(std::shared_ptr<AMACv2> amac)
+  {
+    // json config_ntc;
+    // json config_offset;
+    // json config_slope;
+    // json config_cm;
+    json config;
+
+    config["config_ntc"] = calibrateNTC(amac);
+    config["config_slope"] = calibrateSlope(amac);
+    config["config_offset"] = calibrateOffset(amac);
+    config["config_Cur10V"] = calibrateCur10V(amac);
+    config["config_Cur1V"] = calibrateCur1V(amac);
+    
+    
+    return config;
+    
+  }
+  
 }
