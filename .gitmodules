@@ -1,3 +1,0 @@
-[submodule "image_process/opencv_helper"]
-	path = image_process/opencv_helper
-	url = https://github.com/xju2/opencv_helper.git
