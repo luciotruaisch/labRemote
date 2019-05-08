@@ -14,7 +14,7 @@ Fluke8842::~Fluke8842() {
 // TODO send/receive should be in prologix class
 void Fluke8842::send(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
@@ -22,14 +22,14 @@ void Fluke8842::send(std::string cmd) {
 
 std::string Fluke8842::receive(std::string cmd) {
     m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
     cmd += "\r\n";
     m_com->write(cmd);
     m_com->write("++read eoi\n\r");
     std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
     std::string buf;
     m_com->read(buf);
-    log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+    logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
     return buf;
 }
 
@@ -52,7 +52,7 @@ void Fluke8842::setSense(enum FlukeMode mode) {
             this->send("F6 R0 S1 T2");
             break;
         default:
-            log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+            logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
             break;
     }
 }

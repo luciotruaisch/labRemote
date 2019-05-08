@@ -30,16 +30,11 @@ class Keithley24XX {
         void init();
         void turnOn();
         void turnOff();
+        bool isOn();
         void setSource(enum KeithleyMode, double range, double value);
         void setSense(enum KeithleyMode, double range, double protection);
-<<<<<<< HEAD
-=======
-
-	bool isOn();
-
->>>>>>> master
         std::string sense(enum KeithleyMode);
-	void setCompl(enum KeithleyMode, double protection);
+        void setCompl(enum KeithleyMode, double protection);
 
 
     private:

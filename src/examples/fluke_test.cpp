@@ -13,7 +13,7 @@ int main(int argc, char*argv[]) {
   meter.setSense(FlukeMode::VOLTAGEDC);
 
   for (unsigned i=0; i<10; i++) {
-    log(logINFO) << meter.sense();
+    logger(logINFO) << meter.sense();
     //std::cout<<meter.sense()<<std::endl;
     sleep(1);
   }
