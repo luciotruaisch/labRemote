@@ -11,7 +11,7 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 else()
   message(WARNING "You are using an unsupported compiler! Compilation has only been tested with Clang and GCC.")
 endif()
-                          
+
 if(CMAKE_BUILD_TYPE MATCHES Debug)
   add_compile_options(-g)
 else()
@@ -57,9 +57,4 @@ add_subdirectory(libScope)
 
 #
 # Add binaries
-add_subdirectory(prober)
-add_subdirectory(pbv2)
-add_subdirectory(pbv3)
-add_subdirectory(linpol)
-add_subdirectory(varload)
 add_subdirectory(examples)

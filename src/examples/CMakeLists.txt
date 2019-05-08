@@ -1,6 +1,10 @@
 # add global dependencies
 include_directories( ../libGPIB/include )
 include_directories( ../libDevCom )
+include_directories( ../libGalil )
+include_directories( ../libZaber )
+include_directories( ../libWaferProb )
+
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
 if( ${ENABLE_FTDI} )
