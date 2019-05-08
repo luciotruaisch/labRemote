@@ -10,7 +10,8 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libUtils )
 set(SrcFiles
   Keithley2000.cpp
   Fluke8842.cpp
-  HP3478A.cpp)
+  HP3478A.cpp
+  PM6680)
 
 add_library(METER SHARED ${SrcFiles})
 add_dependencies(METER COM)

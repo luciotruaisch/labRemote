@@ -56,6 +56,7 @@ add_subdirectory(libImageRec)
 add_subdirectory(libZaber)
 add_subdirectory(libWaferProb)
 add_subdirectory(libScope)
+add_subdirectory(libWaveFormGen)
 add_subdirectory(libUtils)
 
 #
