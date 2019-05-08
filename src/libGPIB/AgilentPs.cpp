@@ -46,8 +46,9 @@ void AgilentPs::init() {
                 return !std::isspace(ch);
                 }).base(), idn.end());
 
-    if(idn!="HEWLETT-PACKARD,E3633A,0,2.4-6.1-2.1")
-        throw "Unknown power supply: "+idn;
+    if(idn!="HEWLETT-PACKARD,E3633A,0,2.4-6.1-2.1" && idn.find("E3644A") == std::string::npos ){
+      throw "Unknown power supply: "+idn;
+    }
 
     // Prepare everything else
     this->send("OUTPUT OFF");
