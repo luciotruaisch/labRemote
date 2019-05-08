@@ -1,9 +1,14 @@
 # add global dependencies
-include_directories( ../libGPIB/include )
+include_directories( ../libCom )
+include_directories( ../libPs )
+include_directories( ../libUtils )
+include_directories( ../libMeter )
+include_directories( ../libLoad )
 include_directories( ../libDevCom )
 include_directories( ../libGalil )
 include_directories( ../libZaber )
 include_directories( ../libWaferProb )
+include_directories( ../libScope )
 
 link_directories( ${CMAKE_BINARY_DIR}/lib )
 
@@ -26,8 +31,8 @@ foreach(target ${tools})
   get_filename_component(srcfile ${target} NAME)
 
   add_executable(${execname} ${srcfile})
-  target_link_libraries(${execname} -lGPIB -lDevCom)
-  add_dependencies(${execname} GPIB DevCom)
+  target_link_libraries(${execname} -lCOM -lPS -lMETER -lLOAD -lDevCom)
+  add_dependencies(${execname} COM PS METER LOAD DevCom)
 
   if( ${ENABLE_SCOPE} )
     target_link_libraries(${execname} -lScope)

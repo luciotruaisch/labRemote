@@ -3,9 +3,8 @@
 
 # Add the headers
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libUtils/ )
 
 # Add all *.c* files as source code
-set(SrcFiles SerialCom.cpp)
+#set(SrcFiles )
 
-add_library(COM SHARED ${SrcFiles})
+#add_library(UTILS SHARED ${SrcFiles})

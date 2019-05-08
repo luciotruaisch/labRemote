@@ -1,12 +1,12 @@
 if ( ${libGalil_FOUND} AND ${libZaber_FOUND} )
   # Add the headers
-  include_directories( include )
-  include_directories( ../libGalil/include )
-  include_directories( ../libZaber/include )
+  include_directories( ./ )
+  include_directories( ../libGalil )
+  include_directories( ../libZaber )
 
   # Add all *.c* files as source code
   file(GLOB SrcFiles *.c*)
-  add_library(WaferProb SHARED ${SrcFiles}) 
+  add_library(WaferProb SHARED ${SrcFiles})
   target_link_libraries(WaferProb Galil Zaber)
 
   # Tell rest of labRemote that the library exists

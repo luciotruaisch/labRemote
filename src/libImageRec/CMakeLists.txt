@@ -14,11 +14,11 @@ endif()
 
 if ( ${OpenCV_FOUND} AND ${OpenCV_xfeatures2d_FOUND} )
   # Add the headers
-  include_directories( include )
+  include_directories( ./ )
 
   # Add all *.c* files as source code
   file(GLOB SrcFiles *.c*)
-  add_library(ImageRec SHARED ${SrcFiles}) 
+  add_library(ImageRec SHARED ${SrcFiles})
   target_link_libraries(ImageRec ${OpenCV_LIBS})
 
   # Tell rest of labRemote that the library exists

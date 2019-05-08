@@ -4,6 +4,7 @@
 #include <cerrno>
 #include <cstring>
 
+loglevel_e loglevel;
 
 SerialCom::SerialCom(std::string name) {
 	m_dev = 0;

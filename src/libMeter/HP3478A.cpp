@@ -18,7 +18,7 @@ HP3478A::~HP3478A() {
 // TODO send/receive should be in prologix class
 void HP3478A::send(std::string cmd) {
 	m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-	log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+	logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
 	cmd += "\r\n";
 	m_com->write(cmd);
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
@@ -27,14 +27,14 @@ void HP3478A::send(std::string cmd) {
 
 std::string HP3478A::receive(std::string cmd) {
 	m_com->write("++addr " + std::to_string(m_addr) + "\n\r");
-	log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
+	logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Sending: " << cmd;
 	cmd += "\r\n";
 	m_com->write(cmd);
 	m_com->write("++read eoi\n\r");
 	std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
 	std::string buf;
 	m_com->read(buf);
-	log(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
+	logger(logDEBUG2) << __PRETTY_FUNCTION__ << " -> Received: " << buf;
 	return buf;
 }
 
@@ -83,7 +83,7 @@ std::string HP3478A::setSense(enum HPMode mode) {
 			return this->receive("++read 10\n\r");
 			break;
 		default:
-			log(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
+			logger(logERROR) << __PRETTY_FUNCTION__ << " : Unknown mode!";
 			break;
 	}
 }
