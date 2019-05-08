@@ -7,15 +7,8 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include )
 # Add all *.c* files as source code
 set(SrcFiles AgilentPs.cpp
   SorensenPs.cpp
-  Bk85xx.cpp
-  Keithley24XX.cpp
-  Keithley2000.cpp
-  Fluke8842.cpp
   RigolDP832.cpp
   TTIMX180TPPs.cpp
-  TTITSX1820PPs.cpp
-  Tektronix654C.cpp
-  TTILD400P.cpp		
-  SerialCom.cpp)
+  TTITSX1820PPs.cpp)
 
-add_library(GPIB SHARED ${SrcFiles}) 
+add_library(PS SHARED ${SrcFiles})

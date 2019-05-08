@@ -47,13 +47,17 @@ endif()
 
 #
 # Add libraries
-add_subdirectory(libGPIB)
+add_subdirectory(libPs)
+add_subdirectory(libMeter)
+add_subdirectory(libLoad)
+add_subdirectory(libCom)
 add_subdirectory(libDevCom)
 add_subdirectory(libGalil)
 add_subdirectory(libImageRec)
 add_subdirectory(libZaber)
 add_subdirectory(libWaferProb)
 add_subdirectory(libScope)
+add_subdirectory(libUtils)
 
 #
 # Add binaries
