@@ -28,7 +28,6 @@ add_compile_options(-I/usr/include/root)
 
 #
 # Check dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 
 # Find libFTDI1
