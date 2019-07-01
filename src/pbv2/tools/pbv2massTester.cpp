@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     }
   std::shared_ptr<PBv2TB> tb=std::make_shared<PBv2TB>();
 
-  for(uint pbidx=0; pbidx<3; pbidx++)
+  for(uint pbidx=2; pbidx<3; pbidx++)
     {
       PBv2Test test(TestName+"_"+PBNames[pbidx], tb, pbidx, ps);
 
@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
       //test.runVin();
       //test.runVinIn();
     }
+  
 
   // Power-off
   ps->turnOff();

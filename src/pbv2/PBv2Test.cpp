@@ -67,16 +67,23 @@ bool PBv2Test::runHVEnable()
 {
   //Activate the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x1);
-  std::this_thread::sleep_for(std::chrono::seconds(10));
-  double hv_on = m_tb->getHVout(m_pbidx);
-  std::cout << "HV switch on =" << hv_on << std::endl;
-  std::this_thread::sleep_for(std::chrono::seconds(2));
+
+  for(unsigned i=0;i<20;i++)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      double hv_on = m_tb->getHVout(m_pbidx);
+      std::cout << "HV switch on =" << hv_on << std::endl;
+    }
+
   //Turn off the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x0);
-  std::this_thread::sleep_for(std::chrono::seconds(5));
-  double hv_off = m_tb->getHVout(m_pbidx);
-  std::this_thread::sleep_for(std::chrono::seconds(2));
-  std::cout << "HV switch off =" << hv_off << std::endl;
+  for(unsigned i=0;i<20;i++)
+    {
+      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      double hv_off = m_tb->getHVout(m_pbidx);
+      std::cout << "HV switch off =" << hv_off << std::endl;
+    }
+
   return true;
 }
 
