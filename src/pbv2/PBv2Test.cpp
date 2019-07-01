@@ -208,7 +208,19 @@ bool PBv2Test::runLeakage()
   //Measure Leakage current
   double hv = m_tb->getHVout(m_pbidx);
   double Ileak = hv/(30*pow(10.0,3.0));
-  std::cout << "Measured leakage is:" << Ileak << endl;
+  std::cout << "Measured leakage is:" << Ileak << std::endl;
 
   //Compare Measured Leakage with AMAC Leakage
-  for (
+  for (unsigned i=0; i<16; i++)
+    {
+      //Set the Gain of Leakage measure
+      m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      //Read voltage value for Leakage measure
+      unsigned Leak_count;
+      m_pb->read(AMACreg::VALUE_LEFT_CH6, Leak_count);
+      std::cout << "Gain is :" << i << " and Leakage is:" << Leak_count << std::endl;
+    }
+  return true;
+}

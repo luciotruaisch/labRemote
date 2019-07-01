@@ -78,7 +78,8 @@ int main(int argc, char* argv[])
 
       //test.runGeneral();
       //test.runLVEnable();
-      test.runHVEnable(29.66);
+      test.runHVEnable(34.9);
+      test.runLeakage();
       //test.runDCDCEfficiency();
       //test.runVin();
       //test.runVinIn();
