@@ -213,9 +213,15 @@ bool PBv2Test::runLeakage()
   //Compare Measured Leakage with AMAC Leakage
   for (unsigned i=0; i<16; i++)
     {
+      //Open the calibrate file
+      fstream i_calibrate;
+      i_calibrate.open("AMAC_I_leakage/icalib_AMAC_A01.csv",ios::out);
+
       //Set the Gain of Leakage measure
       m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+      //Read coefficent from csv file??
 
       //Read voltage value for Leakage measure
       unsigned Leak_count;
