@@ -1,6 +1,7 @@
 #include "PBv2Test.h"
 
 #include <fstream>
+#include <cmath>
 
 #include "Logger.h"
 loglevel_e loglevel = logINFO;
@@ -63,27 +64,38 @@ bool PBv2Test::runLVEnable()
 }
 
 //Test the fonctioning of HV switch
-bool PBv2Test::runHVEnable()
+bool PBv2Test::runHVEnable(double InHV)
 {
   //Activate the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x1);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  
+  //Measure the voltage
+  double hv_on = m_tb->getHVout(m_pbidx);
 
-  for(unsigned i=0;i<20;i++)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      double hv_on = m_tb->getHVout(m_pbidx);
-      std::cout << "HV switch on =" << hv_on << std::endl;
-    }
 
   //Turn off the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x0);
-  for(unsigned i=0;i<20;i++)
-    {
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      double hv_off = m_tb->getHVout(m_pbidx);
-      std::cout << "HV switch off =" << hv_off << std::endl;
-    }
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
+  //Measure the voltage
+  double hv_off = m_tb->getHVout(m_pbidx);
+
+  //Check if the resulted voltage is good
+  double R1 = 520*pow(10.0,3.0);
+  double R2 = 30*pow(10.0,3.0);
+  
+  //For power ON
+  double HV_out_ON = hv_on*(R2+R1)/R2;
+  //For powr OFF
+  double HV_out_OFF = hv_off*(R2+R1)/R2;
+
+  if(!(HV_out_ON<(InHV+0.5) && HV_out_ON>(InHV-0.5) && HV_out_OFF<0.5 && HV_out_OFF>(-0.5)))
+    {
+      logger(logERROR) << "++ HV enable not working! " << HV_out_ON << " " << HV_out_OFF;
+      return false;
+    }
+  logger(logINFO) << " ++ HV enable good! " << HV_out_ON << " " << HV_out_OFF;
   return true;
 }
 
@@ -186,3 +198,17 @@ bool PBv2Test::runVinIn()
 
   return true;
 }
+
+bool PBv2Test::runLeakage()
+{
+  //Activate the HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x1);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  //Measure Leakage current
+  double hv = m_tb->getHVout(m_pbidx);
+  double Ileak = hv/(30*pow(10.0,3.0));
+  std::cout << "Measured leakage is:" << Ileak << endl;
+
+  //Compare Measured Leakage with AMAC Leakage
+  for (

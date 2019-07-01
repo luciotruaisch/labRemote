@@ -15,10 +15,11 @@ public:
 
   bool runGeneral();
   bool runLVEnable();
-  bool runHVEnable();
+  bool runHVEnable(double InHV);
   bool runDCDCEfficiency();
   bool runVin();
   bool runVinIn();
+  bool runLeakage();
   
 private:
   std::string m_name;
