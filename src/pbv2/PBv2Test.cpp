@@ -210,12 +210,11 @@ bool PBv2Test::runLeakage()
   double Ileak = hv/(30*pow(10.0,3.0));
   std::cout << "Measured leakage is:" << Ileak << std::endl;
 
-  //Compare Measured Leakage with AMAC Leakage
+  AMAC_calibrate AMAC_A01("B01",AMAC_calibrate::CH0_L,15,2);
+
+  /* //Compare Measured Leakage with AMAC Leakage
   for (unsigned i=0; i<16; i++)
     {
-      //Open the calibrate file
-      fstream i_calibrate;
-      i_calibrate.open("AMAC_I_leakage/icalib_AMAC_A01.csv",ios::out);
 
       //Set the Gain of Leakage measure
       m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
@@ -227,6 +226,6 @@ bool PBv2Test::runLeakage()
       unsigned Leak_count;
       m_pb->read(AMACreg::VALUE_LEFT_CH6, Leak_count);
       std::cout << "Gain is :" << i << " and Leakage is:" << Leak_count << std::endl;
-    }
+      }*/
   return true;
 }

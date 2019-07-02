@@ -28,6 +28,18 @@ iostream
 I2CCom.h
 ../src/pbv2/../libDevCom/I2CCom.h
 
+../src/pbv2/../libDevCom/AMAC_calibrate.h
+cstdint
+-
+string
+-
+fstream
+-
+iostream
+-
+AMAC.h
+../src/pbv2/../libDevCom/AMAC.h
+
 ../src/pbv2/../libDevCom/DACDevice.h
 cstdint
 -
@@ -115,6 +127,8 @@ PBv2TB.h
 ../src/pbv2/tools/../../pbv2/PBv2TB.h
 SorensenPs.h
 ../src/pbv2/tools/../../pbv2/SorensenPs.h
+AMAC_calibrate.h
+../src/pbv2/tools/../../pbv2/AMAC_calibrate.h
 
 /home/ltruaisch/labRemote/src/pbv2/tools/pbv2activeTester.cpp
 memory

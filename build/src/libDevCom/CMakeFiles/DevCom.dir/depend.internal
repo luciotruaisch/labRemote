@@ -22,6 +22,12 @@ src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o
  /home/ltruaisch/labRemote/src/libDevCom/AMAC.h
  /home/ltruaisch/labRemote/src/libDevCom/DeviceCom.h
  /home/ltruaisch/labRemote/src/libDevCom/I2CCom.h
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
+ /home/ltruaisch/labRemote/src/libDevCom/AMAC.h
+ /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp
+ /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.h
+ /home/ltruaisch/labRemote/src/libDevCom/DeviceCom.h
+ /home/ltruaisch/labRemote/src/libDevCom/I2CCom.h
 src/libDevCom/CMakeFiles/DevCom.dir/ClimateSensor.cpp.o
  /home/ltruaisch/labRemote/src/libDevCom/ClimateSensor.cpp
  /home/ltruaisch/labRemote/src/libDevCom/ClimateSensor.h

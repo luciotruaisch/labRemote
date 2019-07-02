@@ -58,6 +58,24 @@ iostream
 I2CCom.h
 /home/ltruaisch/labRemote/src/libDevCom/I2CCom.h
 
+/home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp
+AMAC_calibrate.h
+/home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.h
+limits
+-
+
+/home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.h
+cstdint
+-
+string
+-
+fstream
+-
+iostream
+-
+AMAC.h
+/home/ltruaisch/labRemote/src/libDevCom/AMAC.h
+
 /home/ltruaisch/labRemote/src/libDevCom/ClimateSensor.cpp
 ClimateSensor.h
 /home/ltruaisch/labRemote/src/libDevCom/ClimateSensor.h

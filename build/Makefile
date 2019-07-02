@@ -228,32 +228,6 @@ pbv2burnin/fast:
 .PHONY : pbv2burnin/fast
 
 #=============================================================================
-# Target rules for targets named pbv2adc
-
-# Build rule for target.
-pbv2adc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 pbv2adc
-.PHONY : pbv2adc
-
-# fast build rule for target.
-pbv2adc/fast:
-	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2adc.dir/build.make src/pbv2/tools/CMakeFiles/pbv2adc.dir/build
-.PHONY : pbv2adc/fast
-
-#=============================================================================
-# Target rules for targets named pbv2Calib
-
-# Build rule for target.
-pbv2Calib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 pbv2Calib
-.PHONY : pbv2Calib
-
-# fast build rule for target.
-pbv2Calib/fast:
-	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build.make src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build
-.PHONY : pbv2Calib/fast
-
-#=============================================================================
 # Target rules for targets named pbv2loadMonitor
 
 # Build rule for target.
@@ -278,6 +252,19 @@ pbv2Icalibrate: cmake_check_build_system
 pbv2Icalibrate/fast:
 	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2Icalibrate.dir/build.make src/pbv2/tools/CMakeFiles/pbv2Icalibrate.dir/build
 .PHONY : pbv2Icalibrate/fast
+
+#=============================================================================
+# Target rules for targets named pbv2Calib
+
+# Build rule for target.
+pbv2Calib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pbv2Calib
+.PHONY : pbv2Calib
+
+# fast build rule for target.
+pbv2Calib/fast:
+	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build.make src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build
+.PHONY : pbv2Calib/fast
 
 #=============================================================================
 # Target rules for targets named pbv2calibrate
@@ -330,6 +317,19 @@ pbv2activeOn: cmake_check_build_system
 pbv2activeOn/fast:
 	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/build.make src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/build
 .PHONY : pbv2activeOn/fast
+
+#=============================================================================
+# Target rules for targets named pbv2adc
+
+# Build rule for target.
+pbv2adc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pbv2adc
+.PHONY : pbv2adc
+
+# fast build rule for target.
+pbv2adc/fast:
+	$(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2adc.dir/build.make src/pbv2/tools/CMakeFiles/pbv2adc.dir/build
+.PHONY : pbv2adc/fast
 
 #=============================================================================
 # Target rules for targets named test_agilent_bk85
@@ -491,14 +491,14 @@ help:
 	@echo "... pbv2i2c"
 	@echo "... pbv2dac"
 	@echo "... pbv2burnin"
-	@echo "... pbv2adc"
-	@echo "... pbv2Calib"
 	@echo "... pbv2loadMonitor"
 	@echo "... pbv2Icalibrate"
+	@echo "... pbv2Calib"
 	@echo "... pbv2calibrate"
 	@echo "... pbv2Vcalibrate"
 	@echo "... pbv2activeTester"
 	@echo "... pbv2activeOn"
+	@echo "... pbv2adc"
 	@echo "... test_agilent_bk85"
 	@echo "... pbv2_i2c"
 	@echo "... measure_efficiency"

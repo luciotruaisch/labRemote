@@ -186,36 +186,6 @@ pbv2burnin/fast:
 .PHONY : pbv2burnin/fast
 
 # Convenience name for target.
-src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule
-.PHONY : src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule
-
-# Convenience name for target.
-pbv2adc: src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule
-
-.PHONY : pbv2adc
-
-# fast build rule for target.
-pbv2adc/fast:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2adc.dir/build.make src/pbv2/tools/CMakeFiles/pbv2adc.dir/build
-.PHONY : pbv2adc/fast
-
-# Convenience name for target.
-src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule
-.PHONY : src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule
-
-# Convenience name for target.
-pbv2Calib: src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule
-
-.PHONY : pbv2Calib
-
-# fast build rule for target.
-pbv2Calib/fast:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build.make src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build
-.PHONY : pbv2Calib/fast
-
-# Convenience name for target.
 src/pbv2/tools/CMakeFiles/pbv2loadMonitor.dir/rule:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2loadMonitor.dir/rule
 .PHONY : src/pbv2/tools/CMakeFiles/pbv2loadMonitor.dir/rule
@@ -244,6 +214,21 @@ pbv2Icalibrate: src/pbv2/tools/CMakeFiles/pbv2Icalibrate.dir/rule
 pbv2Icalibrate/fast:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2Icalibrate.dir/build.make src/pbv2/tools/CMakeFiles/pbv2Icalibrate.dir/build
 .PHONY : pbv2Icalibrate/fast
+
+# Convenience name for target.
+src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule
+.PHONY : src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule
+
+# Convenience name for target.
+pbv2Calib: src/pbv2/tools/CMakeFiles/pbv2Calib.dir/rule
+
+.PHONY : pbv2Calib
+
+# fast build rule for target.
+pbv2Calib/fast:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build.make src/pbv2/tools/CMakeFiles/pbv2Calib.dir/build
+.PHONY : pbv2Calib/fast
 
 # Convenience name for target.
 src/pbv2/tools/CMakeFiles/pbv2calibrate.dir/rule:
@@ -291,21 +276,6 @@ pbv2activeTester/fast:
 .PHONY : pbv2activeTester/fast
 
 # Convenience name for target.
-src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/rule:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/rule
-.PHONY : src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/rule
-
-# Convenience name for target.
-pbv2HVtest: src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/rule
-
-.PHONY : pbv2HVtest
-
-# fast build rule for target.
-pbv2HVtest/fast:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/build.make src/pbv2/tools/CMakeFiles/pbv2HVtest.dir/build
-.PHONY : pbv2HVtest/fast
-
-# Convenience name for target.
 src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/rule:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/rule
 .PHONY : src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/rule
@@ -319,6 +289,21 @@ pbv2activeOn: src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/rule
 pbv2activeOn/fast:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/build.make src/pbv2/tools/CMakeFiles/pbv2activeOn.dir/build
 .PHONY : pbv2activeOn/fast
+
+# Convenience name for target.
+src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f CMakeFiles/Makefile2 src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule
+.PHONY : src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule
+
+# Convenience name for target.
+pbv2adc: src/pbv2/tools/CMakeFiles/pbv2adc.dir/rule
+
+.PHONY : pbv2adc
+
+# fast build rule for target.
+pbv2adc/fast:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/pbv2/tools/CMakeFiles/pbv2adc.dir/build.make src/pbv2/tools/CMakeFiles/pbv2adc.dir/build
+.PHONY : pbv2adc/fast
 
 pbv2Calib.o: pbv2Calib.cpp.o
 
@@ -683,16 +668,15 @@ help:
 	@echo "... pbv2i2c"
 	@echo "... pbv2dac"
 	@echo "... pbv2burnin"
-	@echo "... pbv2adc"
-	@echo "... pbv2Calib"
 	@echo "... pbv2loadMonitor"
 	@echo "... pbv2Icalibrate"
+	@echo "... pbv2Calib"
 	@echo "... pbv2calibrate"
 	@echo "... pbv2Vcalibrate"
 	@echo "... pbv2activeTester"
 	@echo "... edit_cache"
-	@echo "... pbv2HVtest"
 	@echo "... pbv2activeOn"
+	@echo "... pbv2adc"
 	@echo "... pbv2Calib.o"
 	@echo "... pbv2Calib.i"
 	@echo "... pbv2Calib.s"

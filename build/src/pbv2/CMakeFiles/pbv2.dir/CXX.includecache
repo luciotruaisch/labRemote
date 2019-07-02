@@ -40,6 +40,18 @@ iostream
 I2CCom.h
 ../src/pbv2/../libDevCom/I2CCom.h
 
+../src/pbv2/../libDevCom/AMAC_calibrate.h
+cstdint
+-
+string
+-
+fstream
+-
+iostream
+-
+AMAC.h
+../src/pbv2/../libDevCom/AMAC.h
+
 ../src/pbv2/../libDevCom/DAC5574.h
 memory
 -
@@ -213,4 +225,6 @@ PBv2TB.h
 /home/ltruaisch/labRemote/src/pbv2/PBv2TB.h
 SorensenPs.h
 /home/ltruaisch/labRemote/src/pbv2/SorensenPs.h
+AMAC_calibrate.h
+/home/ltruaisch/labRemote/src/pbv2/AMAC_calibrate.h
 

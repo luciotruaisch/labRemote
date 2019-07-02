@@ -206,6 +206,33 @@ AMAC.cpp.s:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.s
 .PHONY : AMAC.cpp.s
 
+AMAC_calibrate.o: AMAC_calibrate.cpp.o
+
+.PHONY : AMAC_calibrate.o
+
+# target to build an object file
+AMAC_calibrate.cpp.o:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
+.PHONY : AMAC_calibrate.cpp.o
+
+AMAC_calibrate.i: AMAC_calibrate.cpp.i
+
+.PHONY : AMAC_calibrate.i
+
+# target to preprocess a source file
+AMAC_calibrate.cpp.i:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i
+.PHONY : AMAC_calibrate.cpp.i
+
+AMAC_calibrate.s: AMAC_calibrate.cpp.s
+
+.PHONY : AMAC_calibrate.s
+
+# target to generate assembly for a file
+AMAC_calibrate.cpp.s:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s
+.PHONY : AMAC_calibrate.cpp.s
+
 ClimateSensor.o: ClimateSensor.cpp.o
 
 .PHONY : ClimateSensor.o
@@ -764,6 +791,9 @@ help:
 	@echo "... AMAC.o"
 	@echo "... AMAC.i"
 	@echo "... AMAC.s"
+	@echo "... AMAC_calibrate.o"
+	@echo "... AMAC_calibrate.i"
+	@echo "... AMAC_calibrate.s"
 	@echo "... ClimateSensor.o"
 	@echo "... ClimateSensor.i"
 	@echo "... ClimateSensor.s"

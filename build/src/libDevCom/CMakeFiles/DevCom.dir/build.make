@@ -465,9 +465,33 @@ src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o.provides: src/libDevCom/CMakeFile
 src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o.provides.build: src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o
 
 
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/AMAC_calibrate.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o"
+	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp
+
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i"
+	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp > CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i
+
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s"
+	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp -o CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s
+
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires:
+
+.PHONY : src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires
+
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires
+	$(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides.build
+.PHONY : src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides
+
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides.build: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
+
+
 src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
 src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o: ../src/libDevCom/DeviceCalibration.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/DeviceCalibration.cpp
 
 src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.i: cmake_force
@@ -491,7 +515,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o.provides.build: src/
 
 src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
 src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o: ../src/libDevCom/DummyCalibration.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/DummyCalibration.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/DummyCalibration.cpp
 
 src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.i: cmake_force
@@ -515,7 +539,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o.provides.build: src/l
 
 src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
 src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o: ../src/libDevCom/LinearCalibration.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/LinearCalibration.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/LinearCalibration.cpp
 
 src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.i: cmake_force
@@ -539,7 +563,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o.provides.build: src/
 
 src/libDevCom/CMakeFiles/DevCom.dir/LineCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
 src/libDevCom/CMakeFiles/DevCom.dir/LineCalibration.cpp.o: ../src/libDevCom/LineCalibration.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/LineCalibration.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/LineCalibration.cpp.o"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/LineCalibration.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/LineCalibration.cpp
 
 src/libDevCom/CMakeFiles/DevCom.dir/LineCalibration.cpp.i: cmake_force
@@ -563,7 +587,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/LineCalibration.cpp.o.provides.build: src/li
 
 src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
 src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.o: ../src/libDevCom/GainCalibration.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.o"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/GainCalibration.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/GainCalibration.cpp
 
 src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.i: cmake_force
@@ -587,7 +611,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.o.provides.build: src/li
 
 src/libDevCom/CMakeFiles/DevCom.dir/FileCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
 src/libDevCom/CMakeFiles/DevCom.dir/FileCalibration.cpp.o: ../src/libDevCom/FileCalibration.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/FileCalibration.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/FileCalibration.cpp.o"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/FileCalibration.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/FileCalibration.cpp
 
 src/libDevCom/CMakeFiles/DevCom.dir/FileCalibration.cpp.i: cmake_force
@@ -628,6 +652,7 @@ DevCom_OBJECTS = \
 "CMakeFiles/DevCom.dir/MAX11619.cpp.o" \
 "CMakeFiles/DevCom.dir/MCP3428.cpp.o" \
 "CMakeFiles/DevCom.dir/AMAC.cpp.o" \
+"CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o" \
 "CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o" \
 "CMakeFiles/DevCom.dir/DummyCalibration.cpp.o" \
 "CMakeFiles/DevCom.dir/LinearCalibration.cpp.o" \
@@ -655,6 +680,7 @@ lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AD799X.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/MAX11619.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/MCP3428.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o
+lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o
@@ -663,7 +689,7 @@ lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/GainCalibration.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/FileCalibration.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/build.make
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Linking CXX shared library ../../lib/libDevCom.so"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Linking CXX shared library ../../lib/libDevCom.so"
 	cd /home/ltruaisch/labRemote/build/src/libDevCom && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/DevCom.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -688,6 +714,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.di
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/MAX11619.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/MCP3428.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o.requires
+src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o.requires

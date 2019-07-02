@@ -22,6 +22,12 @@ src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o: ../src/libDevCom/AMAC.h
 src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o: ../src/libDevCom/DeviceCom.h
 src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o: ../src/libDevCom/I2CCom.h
 
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/AMAC.h
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/AMAC_calibrate.cpp
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/AMAC_calibrate.h
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/DeviceCom.h
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/I2CCom.h
+
 src/libDevCom/CMakeFiles/DevCom.dir/ClimateSensor.cpp.o: ../src/libDevCom/ClimateSensor.cpp
 src/libDevCom/CMakeFiles/DevCom.dir/ClimateSensor.cpp.o: ../src/libDevCom/ClimateSensor.h
 
