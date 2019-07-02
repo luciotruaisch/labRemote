@@ -2,10 +2,11 @@
 #define PBV2TEST_H
 
 #include <memory>
+#include <string>
 
 #include "PBv2TB.h"
 #include "SorensenPs.h"
-#include "AMAC_calibrate.h"
+#include "AMAC_icalibrate.h"
 
 class PBv2Test
 {
@@ -20,7 +21,7 @@ public:
   bool runDCDCEfficiency();
   bool runVin();
   bool runVinIn();
-  bool runLeakage();
+  bool runLeakage(std::string AMAC_ID);
   
 private:
   std::string m_name;

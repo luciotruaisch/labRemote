@@ -31,7 +31,7 @@ set(SrcFiles DeviceCom.cpp
   #AD5160.cpp
 
   AMAC.cpp
-  AMAC_calibrate.cpp
+  AMAC_icalibrate.cpp
 
   DeviceCalibration.cpp
   DummyCalibration.cpp

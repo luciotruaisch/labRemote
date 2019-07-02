@@ -465,28 +465,28 @@ src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o.provides: src/libDevCom/CMakeFile
 src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o.provides.build: src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o
 
 
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o: ../src/libDevCom/AMAC_calibrate.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o"
-	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o: ../src/libDevCom/AMAC_icalibrate.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ltruaisch/labRemote/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o"
+	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o -c /home/ltruaisch/labRemote/src/libDevCom/AMAC_icalibrate.cpp
 
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i"
-	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp > CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.i"
+	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ltruaisch/labRemote/src/libDevCom/AMAC_icalibrate.cpp > CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.i
 
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s"
-	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp -o CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.s"
+	cd /home/ltruaisch/labRemote/build/src/libDevCom && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ltruaisch/labRemote/src/libDevCom/AMAC_icalibrate.cpp -o CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.s
 
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires:
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.requires:
 
-.PHONY : src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires
+.PHONY : src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.requires
 
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires
-	$(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides.build
-.PHONY : src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.provides: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.requires
+	$(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.provides.build
+.PHONY : src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.provides
 
-src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.provides.build: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
+src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.provides.build: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o
 
 
 src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o: src/libDevCom/CMakeFiles/DevCom.dir/flags.make
@@ -652,7 +652,7 @@ DevCom_OBJECTS = \
 "CMakeFiles/DevCom.dir/MAX11619.cpp.o" \
 "CMakeFiles/DevCom.dir/MCP3428.cpp.o" \
 "CMakeFiles/DevCom.dir/AMAC.cpp.o" \
-"CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o" \
+"CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o" \
 "CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o" \
 "CMakeFiles/DevCom.dir/DummyCalibration.cpp.o" \
 "CMakeFiles/DevCom.dir/LinearCalibration.cpp.o" \
@@ -680,7 +680,7 @@ lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AD799X.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/MAX11619.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/MCP3428.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o
-lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
+lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o
 lib/libDevCom.so: src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o
@@ -714,7 +714,7 @@ src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.di
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/MAX11619.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/MCP3428.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.o.requires
-src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o.requires
+src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/DummyCalibration.cpp.o.requires
 src/libDevCom/CMakeFiles/DevCom.dir/requires: src/libDevCom/CMakeFiles/DevCom.dir/LinearCalibration.cpp.o.requires

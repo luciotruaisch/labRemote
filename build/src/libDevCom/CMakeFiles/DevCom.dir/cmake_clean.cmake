@@ -16,7 +16,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/DevCom.dir/MAX11619.cpp.o"
   "CMakeFiles/DevCom.dir/MCP3428.cpp.o"
   "CMakeFiles/DevCom.dir/AMAC.cpp.o"
-  "CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o"
+  "CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o"
   "CMakeFiles/DevCom.dir/DeviceCalibration.cpp.o"
   "CMakeFiles/DevCom.dir/DummyCalibration.cpp.o"
   "CMakeFiles/DevCom.dir/LinearCalibration.cpp.o"

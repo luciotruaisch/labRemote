@@ -206,32 +206,32 @@ AMAC.cpp.s:
 	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC.cpp.s
 .PHONY : AMAC.cpp.s
 
-AMAC_calibrate.o: AMAC_calibrate.cpp.o
+AMAC_icalibrate.o: AMAC_icalibrate.cpp.o
 
-.PHONY : AMAC_calibrate.o
+.PHONY : AMAC_icalibrate.o
 
 # target to build an object file
-AMAC_calibrate.cpp.o:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.o
-.PHONY : AMAC_calibrate.cpp.o
+AMAC_icalibrate.cpp.o:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.o
+.PHONY : AMAC_icalibrate.cpp.o
 
-AMAC_calibrate.i: AMAC_calibrate.cpp.i
+AMAC_icalibrate.i: AMAC_icalibrate.cpp.i
 
-.PHONY : AMAC_calibrate.i
+.PHONY : AMAC_icalibrate.i
 
 # target to preprocess a source file
-AMAC_calibrate.cpp.i:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.i
-.PHONY : AMAC_calibrate.cpp.i
+AMAC_icalibrate.cpp.i:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.i
+.PHONY : AMAC_icalibrate.cpp.i
 
-AMAC_calibrate.s: AMAC_calibrate.cpp.s
+AMAC_icalibrate.s: AMAC_icalibrate.cpp.s
 
-.PHONY : AMAC_calibrate.s
+.PHONY : AMAC_icalibrate.s
 
 # target to generate assembly for a file
-AMAC_calibrate.cpp.s:
-	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_calibrate.cpp.s
-.PHONY : AMAC_calibrate.cpp.s
+AMAC_icalibrate.cpp.s:
+	cd /home/ltruaisch/labRemote/build && $(MAKE) -f src/libDevCom/CMakeFiles/DevCom.dir/build.make src/libDevCom/CMakeFiles/DevCom.dir/AMAC_icalibrate.cpp.s
+.PHONY : AMAC_icalibrate.cpp.s
 
 ClimateSensor.o: ClimateSensor.cpp.o
 
@@ -791,9 +791,9 @@ help:
 	@echo "... AMAC.o"
 	@echo "... AMAC.i"
 	@echo "... AMAC.s"
-	@echo "... AMAC_calibrate.o"
-	@echo "... AMAC_calibrate.i"
-	@echo "... AMAC_calibrate.s"
+	@echo "... AMAC_icalibrate.o"
+	@echo "... AMAC_icalibrate.i"
+	@echo "... AMAC_icalibrate.s"
 	@echo "... ClimateSensor.o"
 	@echo "... ClimateSensor.i"
 	@echo "... ClimateSensor.s"

@@ -58,13 +58,13 @@ iostream
 I2CCom.h
 /home/ltruaisch/labRemote/src/libDevCom/I2CCom.h
 
-/home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.cpp
-AMAC_calibrate.h
-/home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.h
+/home/ltruaisch/labRemote/src/libDevCom/AMAC_icalibrate.cpp
+AMAC_icalibrate.h
+/home/ltruaisch/labRemote/src/libDevCom/AMAC_icalibrate.h
 limits
 -
 
-/home/ltruaisch/labRemote/src/libDevCom/AMAC_calibrate.h
+/home/ltruaisch/labRemote/src/libDevCom/AMAC_icalibrate.h
 cstdint
 -
 string

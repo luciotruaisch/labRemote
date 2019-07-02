@@ -1,5 +1,5 @@
-#ifndef AMAC_CALIBRATE_H
-#define AMAC_CALIBRATE_H
+#ifndef AMAC_ICALIBRATE_H
+#define AMAC_ICALIBRATE_H
 
 #include <cstdint>
 #include <string>
@@ -9,26 +9,28 @@
 #include "AMAC.h"
 
 //The class is used to store information about AMAC calibration
-class AMAC_calibrate {
+class AMAC_icalibrate {
  public:
 
   enum Channel
-    {CH0_L,CH0_R,CH1_R,CH2_R,CH3_LGain1,CH3_L_Gain23,CH3_R_Gain1,CH3_R_Gain23};
+  {LEFT,RIGHT};
 
-  AMAC_calibrate(std::string ID, Channel CH, uint8_t BandgapControl, uint8_t RampGain);
-  ~AMAC_calibrate();
+  AMAC_icalibrate(std::string ID, Channel CH, uint8_t BandgapControl, uint8_t RampGain, uint8_t OpAmpGain);
+  ~AMAC_icalibrate();
   
   //Change parameter for calibrate
-  //void setParameter(Channel CH, uint8_t BandgapControl, uint8_t RampGain);
+  void setParameter(Channel CH, uint8_t BandgapControl, uint8_t RampGain, uint8_t OpAmpGain);
 
   //Measure of Leakage current
-  // double Leakage_calibrate(int count); 
+  double Leakage_calibrate(unsigned count); 
 
  private:
 
   std::string m_ID;
   double m_m;
   double m_b;
+  double m_Voff;
+  double m_RI;
 };
 
 void Go2Line(std::fstream& file, unsigned int num);

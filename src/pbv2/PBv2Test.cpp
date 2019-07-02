@@ -199,7 +199,7 @@ bool PBv2Test::runVinIn()
   return true;
 }
 
-bool PBv2Test::runLeakage()
+bool PBv2Test::runLeakage(std::string AMAC_ID)
 {
   //Activate the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x1);
@@ -210,22 +210,71 @@ bool PBv2Test::runLeakage()
   double Ileak = hv/(30*pow(10.0,3.0));
   std::cout << "Measured leakage is:" << Ileak << std::endl;
 
-  AMAC_calibrate AMAC_A01("B01",AMAC_calibrate::CH0_L,15,2);
+  //Read BandGapControl
+  unsigned BandGap;
+  m_pb->read(AMACreg::BANDGAP_CONTROL,BandGap);
 
-  /* //Compare Measured Leakage with AMAC Leakage
-  for (unsigned i=0; i<16; i++)
+  //Read RampGain
+  unsigned RampGain;
+  m_pb->read(AMACreg::LEFT_RAMP_GAIN,RampGain);
+
+  //Leakage current from AMAC
+  double I_leak;
+
+  AMAC_icalibrate AMAC_Leakage(AMAC_ID,AMAC_icalibrate::LEFT,0,0,0);
+
+  //Choose the OpAmpGain to use for the measure
+  unsigned OpAmpGain_init= 0;
+  unsigned OpAmpGainMax = 0;
+ 
+  if(Ileak < 20e-6)
     {
+      OpAmpGain_init = 0;
+      OpAmpGainMax = 2;
+    }      
+  else if((Ileak >= 20e-6)&&(Ileak < 1e-3))
+    {
+      OpAmpGain_init = 2;
+      OpAmpGainMax = 4;
+    }
+  else if ((Ileak >= 1e-3)&&(Ileak < 7e-3))
+    {
+      OpAmpGain_init = 4;
+      OpAmpGainMax = 16;
+    }
+  else
+    {
+      OpAmpGain_init = 0;
+      OpAmpGainMax = 16;
+      std::cout << "Measured Leakage current is not in the range" << std::endl;
+    }
 
-      //Set the Gain of Leakage measure
-      m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  //Do a mean value of the measured leakage current
+  double I_gain = 0.0;
+  for(unsigned i=OpAmpGain_init;i<OpAmpGainMax;i++)
+  {
+    AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,i);
 
-      //Read coefficent from csv file??
+    //Set the Gain of Leakage measure
+    m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-      //Read voltage value for Leakage measure
-      unsigned Leak_count;
-      m_pb->read(AMACreg::VALUE_LEFT_CH6, Leak_count);
-      std::cout << "Gain is :" << i << " and Leakage is:" << Leak_count << std::endl;
-      }*/
+    //Set Paramater for conversion
+    AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,i);
+
+    //Read voltage value for Leakage measure
+    unsigned Leak_count = 0;
+    m_pb->read(AMACreg::VALUE_LEFT_CH6, Leak_count);
+
+    //Convert in current value
+    I_gain += AMAC_Leakage.Leakage_calibrate(Leak_count);
+  }
+
+  //Do the mean of the leakage current
+  I_leak = I_gain/(OpAmpGainMax-OpAmpGain_init);
+  std::cout << "AMAC Leakage current = " << I_leak  << " A" << std::endl;
+
+  //Turn OFF HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x0);
   return true;
 }

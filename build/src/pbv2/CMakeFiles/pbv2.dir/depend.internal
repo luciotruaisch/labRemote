@@ -23,7 +23,7 @@ src/pbv2/CMakeFiles/pbv2.dir/PBv2TB.cpp.o
 src/pbv2/CMakeFiles/pbv2.dir/PBv2Test.cpp.o
  ../src/pbv2/../libDevCom/ADCDevice.h
  ../src/pbv2/../libDevCom/AMAC.h
- ../src/pbv2/../libDevCom/AMAC_calibrate.h
+ ../src/pbv2/../libDevCom/AMAC_icalibrate.h
  ../src/pbv2/../libDevCom/DACDevice.h
  ../src/pbv2/../libDevCom/DeviceCalibration.h
  ../src/pbv2/../libDevCom/DeviceCom.h
