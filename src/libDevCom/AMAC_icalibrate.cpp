@@ -12,6 +12,10 @@ void Go2Line(std::fstream& file, unsigned num)
     }
 }
 
+AMAC_icalibrate::AMAC_icalibrate(std::string ID):m_ID(ID)
+{
+}
+
 AMAC_icalibrate::AMAC_icalibrate(std::string ID, Channel CH, uint8_t BandgapControl, uint8_t RampGain, uint8_t OpAmpGain):m_ID(ID)
 {
   //Generate the file name

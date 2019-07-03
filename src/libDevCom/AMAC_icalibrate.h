@@ -16,6 +16,7 @@ class AMAC_icalibrate {
   {LEFT,RIGHT};
 
   AMAC_icalibrate(std::string ID, Channel CH, uint8_t BandgapControl, uint8_t RampGain, uint8_t OpAmpGain);
+  AMAC_icalibrate(std::string ID);
   ~AMAC_icalibrate();
   
   //Change parameter for calibrate

@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
       //Set HV power supply
       ps->setCh(2);
       //ps->init();
-      ps->setVoltage(30);
+      ps->setVoltage(20);
       ps->setCurrent(0.05);
       ps->turnOn();
       ps->setCh(1);
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
       tb->getPB(pbidx)->init();
 
       //test.runGeneral();
-      //test.runLVEnable();
+      test.runLVEnable();
       ps->setCh(2);
       double HV = std::stod(ps->getVoltage());
       std::this_thread::sleep_for(std::chrono::milliseconds(100));

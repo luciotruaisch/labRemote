@@ -221,7 +221,7 @@ bool PBv2Test::runLeakage(std::string AMAC_ID)
   //Leakage current from AMAC
   double I_leak;
 
-  AMAC_icalibrate AMAC_Leakage(AMAC_ID,AMAC_icalibrate::LEFT,0,0,0);
+  AMAC_icalibrate AMAC_Leakage(AMAC_ID);
 
   //Choose the OpAmpGain to use for the measure
   unsigned OpAmpGain_init= 0;
@@ -253,7 +253,6 @@ bool PBv2Test::runLeakage(std::string AMAC_ID)
   double I_gain = 0.0;
   for(unsigned i=OpAmpGain_init;i<OpAmpGainMax;i++)
   {
-    AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,i);
 
     //Set the Gain of Leakage measure
     m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
@@ -265,6 +264,7 @@ bool PBv2Test::runLeakage(std::string AMAC_ID)
     //Read voltage value for Leakage measure
     unsigned Leak_count = 0;
     m_pb->read(AMACreg::VALUE_LEFT_CH6, Leak_count);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     //Convert in current value
     I_gain += AMAC_Leakage.Leakage_calibrate(Leak_count);

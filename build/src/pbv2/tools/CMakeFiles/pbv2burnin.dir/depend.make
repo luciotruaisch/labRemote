@@ -4,6 +4,7 @@
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/AD799X.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/ADCDevice.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/AMAC.h
+src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/AMAC_icalibrate.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/ComException.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/ComIOException.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/DAC5574.h
@@ -13,6 +14,7 @@ src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDev
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/DummyCalibration.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/I2CCom.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/I2CDevCom.h
+src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/MCP3428.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libDevCom/PCA9548ACom.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libGPIB/include/Logger.h
 src/pbv2/tools/CMakeFiles/pbv2burnin.dir/pbv2burnin.cpp.o: ../src/pbv2/../libGPIB/include/SerialCom.h
