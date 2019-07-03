@@ -139,6 +139,8 @@ iostream
 -
 cmath
 -
+string
+-
 sys/stat.h
 -
 dirent.h

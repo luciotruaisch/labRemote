@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <string>
 
 #include <sys/stat.h>
 #include <dirent.h>
@@ -15,6 +16,7 @@
 #include "AD799X.h"
 #include "I2CCom.h"
 #include "AMAC.h"
+#include "AMAC_icalibrate.h"
 #include "SorensenPs.h"
 
 #ifdef SCOPE
@@ -117,6 +119,9 @@ int main(int argc, char* argv[]) {
   std::shared_ptr<AD799X> adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7993, std::make_shared<PCA9548ACom>(0x22, 2, mux0_com));
   std::shared_ptr<AD799X> adc_lv0=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x21, 1, mux0_com));
   std::shared_ptr<AD799X> adc_lv1=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x22, 1, mux0_com));
+  std::make_shared<MCP3428> m_adc_hv0=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x68, 2, m_mux0));
+  std::make_shared<MCP3428> m_adc_hv1=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x6C, 2, m_mux0));
+  std::make_shared<MCP3428> m_adc_hv2=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x6A, 2, m_mux1));
 
   std::shared_ptr<DAC5574> dac0=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4C, 1, mux0_com));
   std::shared_ptr<DAC5574> dac1=std::make_shared<DAC5574>(3.3, std::make_shared<PCA9548ACom>(0x4D, 1, mux0_com));
@@ -487,6 +492,7 @@ int main(int argc, char* argv[]) {
  }
    //
   // Testing VIN measurement
+
   logger(logINFO) << "Testing VIN measurement ...";
 
   logpath = "log/" + TestName + "_VIN" + std::to_string(t) + ".log";
@@ -519,8 +525,140 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  //Testing the high voltage
+  for(int j = 1; j<=9; j++){
+    std::string name;
+    switch (j)
+    {
+    case 1 : 
+      name = TestName + "_" + pb1;
+      break;
+    case 2 : 
+      name = TestName + "_" + pb2;
+      break;
+    case 3 : 
+      name = TestName + "_" + pb3;
+      break;
+    case 4 : 
+      name = TestName + "_" + pb4;
+      break;
+    case 5 : 
+      name = TestName + "_" + pb5;
+      break;
+    case 6 : 
+      name = TestName + "_" + pb6;
+      break;
+    case 7 : 
+      name = TestName + "_" + pb7;
+      break;
+    case 8 : 
+      name = TestName + "_" + pb8;
+      break;
+    default: 
+      name = TestName + "_" + pb9;
+    }
 
-  //
+    logger(logINFO) << "Testing the high voltage" <<std::endl;
+    logpath = "log/" + name + "_HV" + std::to_string(t) + ".log";
+    logfile.open(logpath, std::fstream::out);
+    logfile << "HVin HVadc AMACleakage ADCleakage" << std::endl;
+  
+    //Specified the HV applied voltage
+    double HVmin = 10.0;
+    double HVmax = 30.0;
+
+    ps->setCh(2);
+    ps->setVoltage(Hmin);
+    ps->turnOn();
+
+    for(double HV=Hvmin;HV<=HVmax;HV+=HVmin)
+      {
+	ps->setVoltage(HV);
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	switch(i)
+	  {
+	  case 1:
+	    double HV_ADC = m_adc_hv0->read(ADC_HVOUT_PB1);
+	    double HV_supply =  HV_ADC*550/30;
+	    double Ileake_ADC = HV_ADC/(30.0*pow(10.0,3.0));
+	      if(Ileak_ADC < 20e-6)
+		{
+		  OpAmpGain_init = 0;
+		  OpAmpGainMax = 2;
+		}      
+	      else if((Ileak >= 20e-6)&&(Ileak < 1e-3))
+		{
+		  OpAmpGain_init = 2;
+		  OpAmpGainMax = 4;
+		}
+	      else if ((Ileak >= 1e-3)&&(Ileak < 7e-3))
+		{
+		  OpAmpGain_init = 4;
+		  OpAmpGainMax = 16;
+		}
+	      else
+		{
+		  OpAmpGain_init = 0;
+		  OpAmpGainMax = 16;
+		  std::cout << "Measured Leakage current is not in the range" << std::endl;
+		}
+	      //Do a mean value of the measured leakage current
+	      double I_gain = 0.0;
+	      for(unsigned i=OpAmpGain_init;i<OpAmpGainMax;i++)
+		{
+		  AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,i);
+
+		  //Set the Gain of Leakage measure
+		  amac1->write(AMACreg::OPAMP_GAIN_LEFT, i);
+		  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+		  //Set Paramater for conversion
+		  AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,i);
+
+		  //Read voltage value for Leakage measure
+		  unsigned Leak_count = 0;
+		  amac1->read(AMACreg::VALUE_LEFT_CH6, Leak_count);
+
+		  //Convert in current value
+		  I_gain += AMAC_Leakage.Leakage_calibrate(Leak_count);
+		}
+
+	      //Do the mean of the leakage current
+	      I_leak = I_gain/(OpAmpGainMax-OpAmpGain_init);
+	      
+	      logfile << ps->getVoltage()<<" "<<HV_supply<<" "<<I_leak<<" "<<Ileak_ADC;
+
+      break;
+    case 1:
+      return m_adc_hv0->read(ADC_HVOUT_PB2);
+      break;
+    case 2:
+      return m_adc_hv0->read(ADC_HVOUT_PB3);
+      break;
+    case 3:
+      return m_adc_hv0->read(ADC_HVOUT_PB4);
+      break;
+    case 4:
+      return m_adc_hv1->read(ADC_HVOUT_PB5);
+      break;
+    case 5:
+      return m_adc_hv1->read(ADC_HVOUT_PB6);
+      break;
+    case 6:
+      return m_adc_hv1->read(ADC_HVOUT_PB7);
+      break;
+    case 7:
+      return m_adc_hv1->read(ADC_HVOUT_PB8);
+      break;
+    case 8:
+      return m_adc_hv2->read(ADC_HVOUT_PB9);
+      break;
+    default:
+      return 0;
+      break;
+    }
+  //*/
   // Power-off
 #ifdef SCOPE
   pico.close();

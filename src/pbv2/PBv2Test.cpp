@@ -92,10 +92,10 @@ bool PBv2Test::runHVEnable(double InHV)
 
   if(!(HV_out_ON<(InHV+0.5) && HV_out_ON>(InHV-0.5) && HV_out_OFF<0.5 && HV_out_OFF>(-0.5)))
     {
-      logger(logERROR) << "++ HV enable not working! " << HV_out_ON << " " << HV_out_OFF;
+      logger(logERROR) << "++ HV enable not working! "<< InHV<< " " << HV_out_ON << " " << HV_out_OFF;
       return false;
     }
-  logger(logINFO) << " ++ HV enable good! " << HV_out_ON << " " << HV_out_OFF;
+  logger(logINFO) << " ++ HV enable good! "<< InHV<< " " << HV_out_ON << " " << HV_out_OFF;
   return true;
 }
 
@@ -208,7 +208,7 @@ bool PBv2Test::runLeakage(std::string AMAC_ID)
   //Measure Leakage current
   double hv = m_tb->getHVout(m_pbidx);
   double Ileak = hv/(30*pow(10.0,3.0));
-  std::cout << "Measured leakage is:" << Ileak << std::endl;
+  std::cout << "Measured leakage is:" << Ileak << "A" << std::endl;
 
   //Read BandGapControl
   unsigned BandGap;
@@ -272,7 +272,7 @@ bool PBv2Test::runLeakage(std::string AMAC_ID)
 
   //Do the mean of the leakage current
   I_leak = I_gain/(OpAmpGainMax-OpAmpGain_init);
-  std::cout << "AMAC Leakage current = " << I_leak  << " A" << std::endl;
+  std::cout << "AMAC Leakage current = " << I_leak  << "A" << std::endl;
 
   //Turn OFF HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x0);
