@@ -7,6 +7,7 @@
 #include "ADCDevice.h"
 #include "DACDevice.h"
 #include "AMAC.h"
+#include "PGA117.h"
 
 #define PBV2_ADC_CH_VIN 2
 #define PBV2_ADC_CH_VIN_CURR 0
@@ -51,6 +52,16 @@
 #define NTC_CH_L4L6 5
 #define NTC_CH_L6L8 7
 
+#define AMP_HV_PB1 0
+#define AMP_HV_PB2 1
+#define AMP_HV_PB3 2
+#define AMP_HV_PB4 3
+#define AMP_HV_PB5 4
+#define AMP_HV_PB6 5
+#define AMP_HV_PB7 6
+#define AMP_HV_PB8 7
+#define AMP_HV_PB9 8
+
 class PBv2TB
 {
 public:
@@ -71,6 +82,9 @@ public:
 
   double getVout(uint8_t pbNum);
   double getHVout(uint8_t pbNum);
+
+  void setHVamp(uint8_t pbNum, uint8_t Gain);
+  void getHVamp(uint8_t& pbNum, uint8_t& Gain);
   
 private:
   //
@@ -78,6 +92,10 @@ private:
   std::shared_ptr<I2CCom> m_mux0;
   std::shared_ptr<I2CCom> m_mux1;
 
+  //SPI device
+  std::shared_ptr<PGA117> m_amp_hv;
+
+  //I2C devices
   std::shared_ptr<ADCDevice> m_adc_pwr;
   std::shared_ptr<ADCDevice> m_adc_lv0;
   std::shared_ptr<ADCDevice> m_adc_lv1;

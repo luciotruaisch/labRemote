@@ -9,6 +9,8 @@ set(SrcFiles DeviceCom.cpp
   PCA9548ACom.cpp
 
   SPICom.cpp
+  SPIDevCom.cpp
+  PGA117.cpp
 
   ComIOException.cpp
   NotSupportedException.cpp

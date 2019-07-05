@@ -10,6 +10,7 @@
 #include "DAC5574.h"
 #include "MCP3428.h"
 
+
 #include "GainCalibration.h"
 #include "LinearCalibration.h"
 #include "DeviceCalibration.h"
@@ -24,6 +25,9 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   // Multiplexers
   m_mux0=std::make_shared<I2CDevCom>(0x70, "/dev/i2c-0");
   m_mux1=std::make_shared<I2CDevCom>(0x74, "/dev/i2c-0");
+
+  //Amplifier
+  m_amp_hv=std::make_shared<PGA117>(std::make_shared<SPIDevCom>(SPICom::mode_0, SPICom::MSB_first, 0, "/dev/spidev1.0"));
 
   // ADCs
   m_adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7994, std::make_shared<PCA9548ACom>(0x22, 2, m_mux0));
@@ -290,3 +294,46 @@ double PBv2TB::getHVout(uint8_t pbNum)
     }
 }
 
+
+//Set th HV measurement amplifier
+void PBv2TB::setHVamp(uint8_t pbNum, uint8_t Gain)
+{
+  switch(pbNum)
+    {
+    case 0:
+      m_amp_hv->write(AMP_HV_PB1,Gain);
+      break;
+    case 1:
+      m_amp_hv->write(AMP_HV_PB2,Gain);
+      break;
+    case 2:
+      m_amp_hv->write(AMP_HV_PB3,Gain);
+      break;
+    case 3:
+      m_amp_hv->write(AMP_HV_PB4,Gain);
+      break;
+    case 4:
+      m_amp_hv->write(AMP_HV_PB5,Gain);
+      break;
+    case 5:
+      m_amp_hv->write(AMP_HV_PB6,Gain);
+      break;
+    case 6:
+      m_amp_hv->write(AMP_HV_PB7,Gain);
+      break;
+    case 7:
+      m_amp_hv->write(AMP_HV_PB8,Gain);
+      break;
+    case 8:
+      m_amp_hv->write(AMP_HV_PB9,Gain);
+      break;
+    default:
+      m_amp_hv->write(AMP_HV_PB1,Gain);
+      break;      
+    }
+}
+
+void PBv2TB::getHVamp(uint8_t& pbNum, uint8_t& Gain)
+{
+  m_amp_hv->read(pbNum, Gain);
+}
