@@ -10,7 +10,6 @@
 #include "DAC5574.h"
 #include "MCP3428.h"
 
-
 #include "GainCalibration.h"
 #include "LinearCalibration.h"
 #include "DeviceCalibration.h"
@@ -33,9 +32,13 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   m_adc_pwr=std::make_shared<AD799X>(3.3, AD799X::AD7994, std::make_shared<PCA9548ACom>(0x22, 2, m_mux0));
   m_adc_lv0=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x21, 1, m_mux0));
   m_adc_lv1=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x22, 1, m_mux0));
+
+  //Szstem v2
+  m_adc_hv0=std::make_shared<AD799X>(3.3, AD799X::AD7997, std::make_shared<PCA9548ACom>(0x21, 3, m_mux0));
+  /* System v1
   m_adc_hv0=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x68, 2, m_mux0));
   m_adc_hv1=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x6C, 2, m_mux0));
-  m_adc_hv2=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x6A, 2, m_mux1));
+  m_adc_hv2=std::make_shared<MCP3428>(2.048, MCP3428::e12_bit, MCP3428::eShot, MCP3428::e_x1, std::make_shared<PCA9548ACom>(0x6A, 2, m_mux1));*/
 
   // DACs
   double maxcurr=3.3*4.02/(100+4.02)/25e-3;
@@ -72,7 +75,7 @@ PBv2TB::PBv2TB(const std::string& i2cdev)
   m_adc_pwr->setCalibration(PBV2_ADC_CH_M5V_CURR, std::make_shared<LinearCalibration>(3.3/(50*0.1)    ,0xFFF));
 
   // Initialize the PBs
-  for(uint8_t i=1;i<2;i++)
+  for(uint8_t i=0;i<1;i++)
     setLoad(i,0);
 }
 
@@ -259,6 +262,7 @@ double PBv2TB::getVout(uint8_t pbNum)
 //Measure the high voltage
 double PBv2TB::getHVout(uint8_t pbNum)
 {
+  /*
   switch(pbNum)
     {
     case 0:
@@ -291,7 +295,14 @@ double PBv2TB::getHVout(uint8_t pbNum)
     default:
       return 0;
       break;
-    }
+      }*/
+  return 0.0;
+}
+
+//System v2
+double PBv2TB::getHVout()
+{
+  return m_adc_hv0->read(0);
 }
 
 
@@ -330,10 +341,10 @@ void PBv2TB::setHVamp(uint8_t pbNum, uint8_t Gain)
     default:
       m_amp_hv->write(AMP_HV_PB1,Gain);
       break;      
-    }
+      }
 }
 
 void PBv2TB::getHVamp(uint8_t& pbNum, uint8_t& Gain)
 {
   m_amp_hv->read(pbNum, Gain);
-}
+  }

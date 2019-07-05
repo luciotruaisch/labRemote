@@ -1,5 +1,4 @@
 #include "LinearCalibration.h"
-
 #include <cmath>
 
 LinearCalibration::LinearCalibration(double reference, uint32_t max)

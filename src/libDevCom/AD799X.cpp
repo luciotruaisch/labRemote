@@ -4,6 +4,7 @@
 
 #include "NotSupportedException.h"
 
+
 const std::map<AD799X::Model, AD799XModelInfo> AD799X::ModelInfo =
   {
    {AD799X::Model::AD7993, AD799XModelInfo({.NumChannels=4, .MaxValue=0x3FF}) },
@@ -53,7 +54,6 @@ uint32_t AD799X::readCount(uint8_t ch)
 
   std::vector<uint8_t> data(2);
   m_com->read_block((chmask<<4)&0xFF, data);
-
   uint16_t chresult=(data[0]<<8)|(data[1]<<0);
   // TODO: Check if returned channel is the correct one
   //uint8_t  ch      =((chresult>>12)&0x007);

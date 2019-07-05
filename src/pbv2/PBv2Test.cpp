@@ -59,38 +59,86 @@ bool PBv2Test::runLVEnable()
       return false;
     }
 
-  logger(logINFO) << " ++ LV enable good! " << lv_on << " " << lv_off;
+    logger(logINFO) << " ++ LV enable good! " << lv_on << " " << lv_off;
   return true;
 }
 
 //Test the fonctioning of HV switch
 bool PBv2Test::runHVEnable(double InHV)
 {
+  //Add part for new system
+  //This part may be changed if the hardware change
+  double R1 = 520*pow(10.0,3.0);//ohm
+  double R2 = 5.2*pow(10.0,3.0);//ohm
+  double Vref = 3.3; //V
+
+  //Calculate the actual current in circuit
+  double I = InHV/(R1+R2);
+
+  //Range of possible gains
+  uint8_t Gain[] = {1,2,5,10,20,50,100,200};
+  uint8_t nrGain = sizeof(Gain)/sizeof(Gain[0]);
+  uint8_t currentGain = 1;
+
+  //Determine Gain application
+  for(uint8_t i=0; i<nrGain; i++)
+    {
+      //Applicable current limit
+      double I_limits = (Vref/R2)/Gain[i];
+      //If the actual current is ion the range than set the right GAIN
+      if(I<I_limits)
+	{
+	  currentGain = Gain[i];
+	}
+    }
+
+  //Set gain parameter
+  std::cout << "Used Gain is:"<< (unsigned)currentGain << std::endl;
+  m_tb->setHVamp(m_pbidx,currentGain);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  //Read sended parameter
+  uint8_t tested_PB;
+  uint8_t hv_Gain;
+  m_tb->getHVamp(tested_PB,hv_Gain);
+
+  //Activate the HV power supply
+  m_ps->setCh(2);
+  m_ps->setVoltage(InHV);
+  m_ps->turnOn();
+  std::this_thread::sleep_for(std::chrono::seconds(5));
+  //Measure HV activated
+  double HV_supply = std::stod(m_ps->getVoltage());
+
   //Activate the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x1);
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  std::this_thread::sleep_for(std::chrono::seconds(10));//500ms
   
-  //Measure the voltage
-  double hv_on = m_tb->getHVout(m_pbidx);
+
+	   
+  double hv_on = (m_tb->getHVout())/hv_Gain;
+  logger(logINFO) << " measured hv is:" << hv_on;
+  /*//Measure the voltage
+    double hv_on = m_tb->getHVout(m_pbidx);*/
 
 
   //Turn off the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x0);
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  std::this_thread::sleep_for(std::chrono::seconds(5));//500ms
 
-  //Measure the voltage
-  double hv_off = m_tb->getHVout(m_pbidx);
+  /* //Measure the voltage
+     double hv_off = m_tb->getHVout(m_pbidx);*/
+  double hv_off = (m_tb->getHVout())/hv_Gain;
 
-  //Check if the resulted voltage is good
-  double R1 = 520*pow(10.0,3.0);
-  double R2 = 30*pow(10.0,3.0);
-  
+  //Turn OFF HV Power Supply
+  m_ps->turnOff();
+  m_ps->setCh(1);
+
   //For power ON
   double HV_out_ON = hv_on*(R2+R1)/R2;
   //For powr OFF
-  double HV_out_OFF = hv_off*(R2+R1)/R2;
+  double HV_out_OFF = hv_off;
 
-  if(!(HV_out_ON<(InHV+0.5) && HV_out_ON>(InHV-0.5) && HV_out_OFF<0.5 && HV_out_OFF>(-0.5)))
+  if(!(HV_out_ON<(HV_supply+5) && HV_out_ON>(HV_supply-5) && HV_out_OFF<0.5 && HV_out_OFF>(-0.5)))
     {
       logger(logERROR) << "++ HV enable not working! "<< InHV<< " " << HV_out_ON << " " << HV_out_OFF;
       return false;

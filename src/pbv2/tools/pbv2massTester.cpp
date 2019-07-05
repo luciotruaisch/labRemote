@@ -68,13 +68,6 @@ int main(int argc, char* argv[])
       ps->setVoltage(11);
       ps->setCurrent(5);
       ps->turnOn();
-      //Set HV power supply
-      ps->setCh(2);
-      //ps->init();
-      ps->setVoltage(20);
-      ps->setCurrent(0.05);
-      ps->turnOn();
-      ps->setCh(1);
     }
   catch(std::string e)
     {
@@ -82,27 +75,27 @@ int main(int argc, char* argv[])
       return 1;
     }
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
+ 
   std::shared_ptr<PBv2TB> tb=std::make_shared<PBv2TB>();
 
-  for(uint pbidx=2; pbidx<3; pbidx++)
+  for(uint pbidx=0; pbidx<1; pbidx++)
     {
-      PBv2Test test(TestName+"_"+PBNames[pbidx], tb, pbidx, ps);
 
+      PBv2Test test(TestName+"_"+PBNames[pbidx], tb, pbidx, ps);
       std::cout << ": " << tb->getP5VCurrent() << std::endl;
+     
+
       std::cout << "Input LV Current (TB): " << tb->getVinCurrent() << std::endl;
       std::cout << "Input LV Voltage (TB): " << tb->getVin() << std::endl;
 
       tb->getPB(pbidx)->init();
 
-      //test.runGeneral();
+      test.runGeneral();
       test.runLVEnable();
-      ps->setCh(2);
-      double HV = std::stod(ps->getVoltage());
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      test.runHVEnable(HV);
+      test.runHVEnable(30.0);
       ps->setCh(1);
-      test.runLeakage(AMACNames[pbidx]);
+      //test.runLeakage(AMACNames[pbidx]);
       //test.runDCDCEfficiency();
       //test.runVin();
       //test.runVinIn();

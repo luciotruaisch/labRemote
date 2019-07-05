@@ -82,6 +82,7 @@ public:
 
   double getVout(uint8_t pbNum);
   double getHVout(uint8_t pbNum);
+  double getHVout();
 
   void setHVamp(uint8_t pbNum, uint8_t Gain);
   void getHVamp(uint8_t& pbNum, uint8_t& Gain);
@@ -100,8 +101,8 @@ private:
   std::shared_ptr<ADCDevice> m_adc_lv0;
   std::shared_ptr<ADCDevice> m_adc_lv1;
   std::shared_ptr<ADCDevice> m_adc_hv0;
-  std::shared_ptr<ADCDevice> m_adc_hv1;
-  std::shared_ptr<ADCDevice> m_adc_hv2;
+/*std::shared_ptr<ADCDevice> m_adc_hv1;
+  std::shared_ptr<ADCDevice> m_adc_hv2;*/
 
   std::shared_ptr<DACDevice> m_dac_0;
   std::shared_ptr<DACDevice> m_dac_1;

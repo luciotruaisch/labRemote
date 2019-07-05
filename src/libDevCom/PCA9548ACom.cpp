@@ -1,5 +1,7 @@
 #include "PCA9548ACom.h"
 
+#include <iostream>
+
 PCA9548ACom::PCA9548ACom(uint8_t deviceAddr, uint8_t channel, std::shared_ptr<I2CCom> com)
   : I2CCom(deviceAddr),
     m_com(com), m_muxAddr(com->deviceAddr()), m_channel(channel)
@@ -149,7 +151,6 @@ uint8_t  PCA9548ACom::read_reg8 ()
 void PCA9548ACom::read_block(uint32_t address, std::vector<uint8_t>& data)
 {
   m_com->write_reg8(1<<m_channel);
-
   m_com->setDeviceAddr(deviceAddr());
   m_com->read_block(address, data);
   m_com->setDeviceAddr(m_muxAddr);
