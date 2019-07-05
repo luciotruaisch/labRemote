@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/tempsensor_monitor.dir/tempsensor_monitor.cpp.o  -o ../../bin/tempsensor_monitor  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lGPIB -lDevCom 

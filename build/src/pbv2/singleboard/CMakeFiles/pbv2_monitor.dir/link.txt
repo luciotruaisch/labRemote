@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/pbv2_monitor.dir/pbv2_monitor.cpp.o  -o ../../../bin/pbv2_monitor  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lGPIB -lDevCom 

@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/pbv2_tester.dir/pbv2_tester.cpp.o  -o ../../../bin/pbv2_tester  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lGPIB -lDevCom 

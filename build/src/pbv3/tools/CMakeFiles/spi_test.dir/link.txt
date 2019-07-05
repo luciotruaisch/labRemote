@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/spi_test.dir/spi_test.cpp.o  -o ../../../bin/spi_test  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lDevCom -lpbv3 -lGPIB 

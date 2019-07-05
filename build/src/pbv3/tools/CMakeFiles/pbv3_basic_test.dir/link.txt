@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/pbv3_basic_test.dir/pbv3_basic_test.cpp.o  -o ../../../bin/pbv3_basic_test  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lDevCom -lpbv3 -lGPIB 

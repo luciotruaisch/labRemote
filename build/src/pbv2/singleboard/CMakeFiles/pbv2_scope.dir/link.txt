@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/pbv2_scope.dir/pbv2_scope.cpp.o  -o ../../../bin/pbv2_scope  -L/home/ltruaisch/labRemote/build/lib -Wl,-rpath,/home/ltruaisch/labRemote/build/lib -lGPIB -lDevCom 
