@@ -36,7 +36,7 @@ int main()
       double Vref = 3.3; //V
 
       //Calculate the actual current in circuit
-      double I = V/(R1+R2);
+      double I = (V+0.1)/(R1+R2);
 
       //Range of possible gains
       uint8_t Gain[] = {1,2,5,10,20,50,100,200};
