@@ -113,9 +113,9 @@ bool PBv2Test::runHVEnable(double InHV)
   m_pb->write(AMACreg::HV_ENABLE,0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
   
-
+  std::cout << "Used Gain is:"<< (unsigned)hv_Gain << std::endl;
 	   
-  double hv_on = (m_tb->getHVout())/hv_Gain;
+  double hv_on = (m_tb->getHVout())/currentGain;
   logger(logINFO) << " measured hv is:" << hv_on;
   /*//Measure the voltage
     double hv_on = m_tb->getHVout(m_pbidx);*/
@@ -127,7 +127,7 @@ bool PBv2Test::runHVEnable(double InHV)
 
   /* //Measure the voltage
      double hv_off = m_tb->getHVout(m_pbidx);*/
-  double hv_off = (m_tb->getHVout())/hv_Gain;
+  double hv_off = (m_tb->getHVout())/currentGain;
 
   //Turn OFF HV Power Supply
   m_ps->turnOff();
@@ -337,19 +337,19 @@ bool PBv2Test::runLeakage(std::string AMAC_ID, double InHV)
   m_pb->write(AMACreg::OPAMP_GAIN_LEFT, OpAmpGain);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-  //Turn off  the HV switch
-  m_pb->write(AMACreg::HV_ENABLE,0x0);
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
   //Set Paramater for conversion
   AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,OpAmpGain);
   
    //Read voltage value for Leakage measure
   unsigned I_ADC  = 0;
   m_pb->read(AMACreg::VALUE_LEFT_CH6, I_ADC);
-
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
   //Convert value in Ampere
   double Ileak = AMAC_Leakage.Leakage_calibrate(I_ADC);
+
+  //Turn off  the HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x0);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
   
   std::cout << "AMAC Leakage current = " << Ileak  << "A" << std::endl;
   m_ps->turnOff();
@@ -418,7 +418,7 @@ bool PBv2Test::runLeakage(std::string AMAC_ID)
 
     //Set the Gain of Leakage measure
     m_pb->write(AMACreg::OPAMP_GAIN_LEFT, i);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     //Set Paramater for conversion
     AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,i);
