@@ -72,7 +72,7 @@ int main()
       unsigned RampGain;
       (tb.getPB(0))->read(AMACreg::LEFT_RAMP_GAIN,RampGain);
 
-      AMAC_icalibrate AMAC_Leakage("L01");
+      AMAC_icalibrate AMAC_Leakage("K01");
 
       //Choise the right GAIN for AMAC measurement
       unsigned OpAmpGain = 0;
@@ -91,16 +91,18 @@ int main()
 	}
        //Set the Gain of Leakage measure
       (tb.getPB(0))->write(AMACreg::OPAMP_GAIN_LEFT, OpAmpGain);
+       std::this_thread::sleep_for(std::chrono::milliseconds(500));
       //Set Paramater for conversion
       AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,OpAmpGain);
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+     
 
       ps.setCh(2);
       ps.setVoltage(V);
       ps.turnOn();
-      std::this_thread::sleep_for(std::chrono::seconds(2));
+      std::this_thread::sleep_for(std::chrono::seconds(1));
 
       (tb.getPB(0))->write(AMACreg::HV_ENABLE,0x1);
+      std::this_thread::sleep_for(std::chrono::seconds(5));
 
       double HVmes = (tb.getHVout())/currentGain;
       double HVexpected = V/(R1+R2)*R2;
@@ -110,6 +112,7 @@ int main()
       //Read voltage value for Leakage measure
       unsigned I_ADC  = 0;
       (tb.getPB(0))->read(AMACreg::VALUE_LEFT_CH6, I_ADC);
+       std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
       //Convert value in Ampere
       double Ileak = AMAC_Leakage.Leakage_calibrate(I_ADC);

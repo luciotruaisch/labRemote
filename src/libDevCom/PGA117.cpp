@@ -19,31 +19,41 @@ void PGA117::write(uint8_t CH, uint8_t Gain)
 
   //Set the gain measurement
   uint8_t setGain;
+
   switch(Gain)
     {
     case 1:
       setGain = 0;
+      break;
     case 2:
       setGain = 1;
+      break;
     case 5:
       setGain = 2;
+      break;
     case 10:
       setGain = 3;
+      break;
     case 20:
       setGain = 4;
+      break;
     case 50:
       setGain = 5;
+      break;
     case 100:
       setGain = 6;
+      break;
     case 200:
       setGain = 7;
+      break;
     default:
       setGain = 0;
+      break;
     }
 
   //Set the write command to send
   uint8_t wr_command = WR;
-  
+
   //Set the channel and the gain to send
   uint8_t data = ((0xF&setGain)<<4)|(0xF&CH); 
 
