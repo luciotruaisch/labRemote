@@ -1,7 +1,9 @@
 #include "AMAC_icalibrate.h"
 
 #include <limits>
-
+#include <errno.h>
+#include <iostream>
+#include <string.h>
 //Ignore the other line
 void Go2Line(std::fstream& file, unsigned num)
 {
@@ -110,12 +112,11 @@ AMAC_icalibrate::~AMAC_icalibrate()
 void AMAC_icalibrate::setParameter(Channel CH, uint8_t BandgapControl, uint8_t RampGain, uint8_t OpAmpGain)
 {
   //Generate the file name
-  std::string AMAC_ID = "AMAC_i_calibrate/icalib_AMAC_" + m_ID + ".csv";
+  std::string AMAC_ID = "bin/AMAC_i_calibrate/icalib_AMAC_" + m_ID + ".csv";
 
   //Open the file
   std::fstream calib_list;
   calib_list.open(AMAC_ID, std::ios::in);
-
   //Test if the file is correct open
   if (calib_list.is_open())
     {

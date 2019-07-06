@@ -105,13 +105,13 @@ bool PBv2Test::runHVEnable(double InHV)
   m_ps->setCh(2);
   m_ps->setVoltage(InHV);
   m_ps->turnOn();
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+  std::this_thread::sleep_for(std::chrono::seconds(2));
   //Measure HV activated
   double HV_supply = std::stod(m_ps->getVoltage());
 
   //Activate the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x1);
-  std::this_thread::sleep_for(std::chrono::seconds(10));//500ms
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
   
 
 	   
@@ -123,7 +123,7 @@ bool PBv2Test::runHVEnable(double InHV)
 
   //Turn off the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x0);
-  std::this_thread::sleep_for(std::chrono::seconds(5));//500ms
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
   /* //Measure the voltage
      double hv_off = m_tb->getHVout(m_pbidx);*/
@@ -247,9 +247,123 @@ bool PBv2Test::runVinIn()
   return true;
 }
 
+bool PBv2Test::runLeakage(std::string AMAC_ID, double InHV)
+{
+  //Add part for new system
+  //This part may be changed if the hardware change
+  double R1 = 520*pow(10.0,3.0);//ohm
+  double R2 = 5.2*pow(10.0,3.0);//ohm
+  double Vref = 3.3; //V
+
+  //Calculate the expeted current in circuit
+  double I = InHV/(R1+R2);
+
+  //Range of possible gains
+  uint8_t Gain[] = {1,2,5,10,20,50,100,200};
+  uint8_t nrGain = sizeof(Gain)/sizeof(Gain[0]);
+  uint8_t currentGain = 1;
+
+  //Determine Gain application
+  for(uint8_t i=0; i<nrGain; i++)
+    {
+      //Applicable current limit
+      double I_limits = (Vref/R2)/Gain[i];
+      //If the actual current is in the range than set the right GAIN
+      if(I<I_limits)
+	{
+	  currentGain = Gain[i];
+	}
+    }
+
+  //Set the gain
+  m_tb->setHVamp(m_pbidx,currentGain);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  //Set gain parameter
+  std::cout << "Used Gain is:"<< (unsigned)currentGain << std::endl;
+  m_tb->setHVamp(m_pbidx,currentGain);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  //Read sended parameter
+  uint8_t tested_PB;
+  uint8_t hv_Gain;
+  m_tb->getHVamp(tested_PB,hv_Gain);
+
+  //Activate the HV power supply
+  m_ps->setCh(2);
+  m_ps->setVoltage(InHV);
+  m_ps->setCurrent(0.1);
+  m_ps->turnOn();
+  std::this_thread::sleep_for(std::chrono::seconds(2));
+
+  //Activate the HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x1);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  //Read value from ADC
+  double HVmeas = (m_tb->getHVout())/currentGain;
+
+  //Measured Leakage current
+  double Imeas = HVmeas/R2;
+  std::cout << "Measured leakage = " << Imeas << " A" << std::endl;
+
+  //Read BandGapControl
+  unsigned BandGap;
+  m_pb->read(AMACreg::BANDGAP_CONTROL,BandGap);
+
+  //Read RampGain
+  unsigned RampGain;
+  m_pb->read(AMACreg::LEFT_RAMP_GAIN,RampGain);
+
+  AMAC_icalibrate AMAC_Leakage(AMAC_ID);
+
+  //Choise the right GAIN for AMAC measurement
+  unsigned OpAmpGain = 0;
+
+  if(Imeas < 20e-6)
+    {
+      OpAmpGain = 0;
+    }
+  else if((Imeas >= 20e-6)&&(Imeas < 100e-6))
+    {
+      OpAmpGain = 2;
+    }
+  else if(Imeas >= 100e-6) 
+    {
+      OpAmpGain = 4;
+    }
+  
+  //Set the Gain of Leakage measure
+  m_pb->write(AMACreg::OPAMP_GAIN_LEFT, OpAmpGain);
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  //Turn off  the HV switch
+  m_pb->write(AMACreg::HV_ENABLE,0x0);
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+  //Set Paramater for conversion
+  AMAC_Leakage.setParameter(AMAC_icalibrate::LEFT,BandGap,RampGain,OpAmpGain);
+  
+   //Read voltage value for Leakage measure
+  unsigned I_ADC  = 0;
+  m_pb->read(AMACreg::VALUE_LEFT_CH6, I_ADC);
+
+  //Convert value in Ampere
+  double Ileak = AMAC_Leakage.Leakage_calibrate(I_ADC);
+  
+  std::cout << "AMAC Leakage current = " << Ileak  << "A" << std::endl;
+  m_ps->turnOff();
+  m_ps->setCh(1);
+ 
+  return true;
+}
+
+
+
+//This test was developed for the previous system and could be eliminated
 bool PBv2Test::runLeakage(std::string AMAC_ID)
 {
-  //Activate the HV switch
+ //Activate the HV switch
   m_pb->write(AMACreg::HV_ENABLE,0x1);
   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 

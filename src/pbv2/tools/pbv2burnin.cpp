@@ -693,7 +693,7 @@ int main(int argc, char* argv[]) {
     logfile << "HVin HVadc AMACleakage ADCleakage" << std::endl;
   
     //Specified the HV applied voltage
-    double HVmin = 10.0;
+    double HVmin = 0.0;
     double HVmax = 30.0;
 
     ps.setCh(2);

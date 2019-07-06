@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       test.runHVEnable(30.0);
       ps->setCh(1);
-      //test.runLeakage(AMACNames[pbidx]);
+      test.runLeakage(AMACNames[pbidx],1.0);
       //test.runDCDCEfficiency();
       //test.runVin();
       //test.runVinIn();

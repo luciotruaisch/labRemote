@@ -22,6 +22,7 @@ public:
   bool runVin();
   bool runVinIn();
   bool runLeakage(std::string AMAC_ID);
+  bool runLeakage(std::string AMAC_ID, double InHV);
   
 private:
   std::string m_name;
